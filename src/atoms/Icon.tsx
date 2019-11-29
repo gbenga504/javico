@@ -3,7 +3,7 @@ import React from 'react';
 interface IProps {
   name: string;
   style?: object;
-  size: string;
+  size?: 'small' | 'large';
 }
 
 const Icon: React.FC<IProps> = ({ name, style, size = 'small' }) =>
