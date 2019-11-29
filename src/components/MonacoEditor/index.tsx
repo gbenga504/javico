@@ -1,7 +1,7 @@
 import React from 'react';
 
-const EditorSection: React.FC = () => {
+const MonacoEditor: React.FC = () => {
   return <div>My Code Environment</div>;
 };
 
-export default EditorSection;
+export default MonacoEditor;

@@ -1,14 +1,7 @@
 import React from 'react';
-import './App.css';
 
-import CodeEnvironmentView from './views/CodeEnvironment';
+import Home from './views/Home';
 
-const App: React.FC = () => {
-  return (
-    <div className="App">
-      <CodeEnvironmentView />
-    </div>
-  );
-};
+const App: React.FC = () => <Home />;
 
 export default App;
