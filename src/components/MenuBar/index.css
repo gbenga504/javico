@@ -1,0 +1,36 @@
+.menubar {
+  width: 50px;
+  height: 100vh;
+  background-color: #333333;
+  color: #fff;
+  text-align: center;
+  align-items: center;
+}
+
+.menubar__title,
+.menubar__icon {
+  text-align: center;
+}
+
+.menubar__title {
+  justify-content: center;
+  align-items: center;
+  background-color: #bfbfbf;
+  border-radius: 20px;
+  height: 30px;
+  width: 30px;
+}
+
+.menubar__title--text {
+  color: #fff;
+}
+
+.menubar__icon {
+  font-size: 30px;
+  color: #bfbfbf;
+  cursor: pointer;
+}
+
+.menubar__icon:hover {
+  color: #fff;
+}
