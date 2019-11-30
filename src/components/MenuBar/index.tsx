@@ -2,7 +2,7 @@ import React from 'react';
 import { Tooltip } from '@material-ui/core';
 
 import './index.css';
-import Icon from '../../atoms/Icon';
+import { Typography, Icon } from '../../atoms';
 
 const iconList = [
   { text: 'Search file', icon: 'ios-search' },
@@ -22,7 +22,7 @@ const MenuBar: React.FC = () => {
       <Tooltip title={'placement.js'} placement="bottom" enterDelay={100}>
         <div className="menubar__title flex-column center mt-16 mb-8">
           <div className="menubar__title-text flex-column center">
-            <p>P</p>
+            <Typography thickness="semi-bold">P</Typography>
           </div>
         </div>
       </Tooltip>
