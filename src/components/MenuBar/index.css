@@ -1,0 +1,45 @@
+.menubar {
+  width: 56px;
+  height: 100vh;
+  background-color: rgb(28, 32, 34);
+  color: #fff;
+  text-align: center;
+  align-items: center;
+}
+
+.menubar__title,
+.menubar__icon {
+  text-align: center;
+}
+
+.menubar__title {
+  background-color: #000;
+  border-radius: 5px;
+  box-shadow: 0 0 0 2pt #fff;
+  height: 40px;
+  width: 40px;
+}
+
+.menubar__title-text {
+  background-color: #0076c6;
+  border-radius: 5px;
+  width: 36px;
+  height: 36px;
+}
+
+.menubar__title {
+  font-weight: 600;
+  font-size: 18px;
+  color: #fff;
+}
+
+.menubar__icon {
+  width: 100%;
+  font-size: 30px;
+  color: #bfbfbf;
+  cursor: pointer;
+}
+
+.menubar__icon:hover {
+  color: #fff;
+}
