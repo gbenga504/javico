@@ -33,7 +33,7 @@ class MonacoIntegrator {
   }
 
   private injectScriptIntoBody(script: HTMLScriptElement) {
-    document.body.append(script);
+    document.body.appendChild(script);
   }
 
   private createLoaderScript(mainScript: HTMLScriptElement) {
@@ -46,20 +46,20 @@ class MonacoIntegrator {
   private createMainScript() {
     let mainScript = this.createScript();
     mainScript.innerHTML = `
-            require.config({ paths: { 'vs': ${this.config.MONACO_INTEGRATOR_BASE_URL} }});
+            require.config({ paths: { 'vs': '${this.config.MONACO_INTEGRATOR_BASE_URL}' }});
             require(['vs/editor/editor.main'], function() {
                 document.dispatchEvent(new Event('monaco_editor_init'));
-            }
+            })
         `;
     mainScript.onerror = (event: string | Event) => this.reject(event);
     return mainScript;
   }
 
-  private init() {
+  public init() {
     if (window.monaco && window.monaco.editor) {
       return new Promise<void>(resolve => resolve(window.monaco));
     }
-    document.addEventListener('monaco_editor_init', this.handleMonacoEditorLoadedState);
+    document.addEventListener('monaco_editor_init', this.handleMonacoEditorLoadedState.bind(this));
     let mainScript = this.createMainScript();
     this.injectScriptIntoBody(this.createLoaderScript(mainScript));
     return new Promise((resolve, reject) => {

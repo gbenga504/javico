@@ -1,19 +1,11 @@
 import React from 'react';
 
-import MenuBar from '../../components/MenuBar';
 import MonacoEditor from '../../components/MonacoEditor';
-import Console from '../../components/Console';
-import Comments from '../../components/Comments';
 
 const Home: React.FC = () => {
   return (
-    <div className="flex-row">
-      <MenuBar />
-      <MonacoEditor />
-      <div>
-        <Console />
-        <Comments />
-      </div>
+    <div className="flex-row" style={{ height: '100%' }}>
+      <MonacoEditor onChangeValue={value => console.log(value)} />
     </div>
   );
 };
