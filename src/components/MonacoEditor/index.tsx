@@ -36,6 +36,7 @@ const MonacoEditor: React.FC<IProps> = ({
     subscriptionRef.current = model.onDidChangeContent(() => {
       onChangeValue && onChangeValue(model.getValue());
     });
+    editorRef.current.focus();
     setIsEditorReady(true);
   }, [onChangeValue, language, theme, value]);
 
