@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 
+import './index.css';
 import MonacoIntegrator from '../../utils/MonacoIntegrator';
 import MonacoThemes from '../../utils/MonacoThemes';
 import AnimatedCircularLoader from '../../atoms/AnimatedCircularLoader';
@@ -102,10 +103,7 @@ const MonacoEditor: React.FC<IProps> = ({
   return (
     <React.Fragment>
       {renderLoading()}
-      <div
-        ref={nodeRef}
-        style={{ display: 'flex', overflow: 'hidden', width: '100%', height: '100%' }}
-      />
+      <div ref={nodeRef} className="monaco-editor" />
     </React.Fragment>
   );
 };

@@ -1,0 +1,9 @@
+.main {
+  width: 100%;
+}
+
+.main--right {
+  flex: 1;
+  height: 100%;
+  background-color: #1e1e1e;
+}
