@@ -1,6 +1,6 @@
 .comments {
   height: 70vh;
-  background-color: #131417;
+  background-color: rgb(28, 32, 34);
   position: relative;
 }
 
@@ -17,7 +17,7 @@
 }
 
 .comment:hover {
-  background-color: rgb(28, 32, 34);
+  background-color: rgb(19, 23, 26);
 }
 
 .comment--user-image {
@@ -74,8 +74,8 @@
   height: 100px;
   background-image: linear-gradient(
     to top,
-    rgba(0, 0, 0) 70%,
-    rgba(0, 0, 0, 0.1) 100%
+    rgba(28, 32, 34) 70%,
+    rgba(28, 32, 34, 0.1) 100%
   );
 }
 

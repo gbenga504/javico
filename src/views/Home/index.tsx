@@ -11,7 +11,7 @@ const Home: React.FC = () => {
     <div className="flex-row">
       <MenuBar />
       <main className="main flex-row">
-        <MonacoEditor />
+        <MonacoEditor onChangeValue={value => console.log(value)} />
         <div className="main--right">
           <Console />
           <Comments />
