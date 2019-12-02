@@ -1,0 +1,115 @@
+.comments {
+  height: 70vh;
+  background-color: #131417;
+  position: relative;
+}
+
+.comments--body {
+  overflow: scroll;
+  height: 100%;
+  width: 100%;
+  padding-bottom: 100px;
+}
+
+.comment {
+  background-color: inherit;
+  transition: all 0.3s;
+}
+
+.comment:hover {
+  background-color: rgb(28, 32, 34);
+}
+
+.comment--user-image {
+  height: 50px;
+  width: 50px;
+  border-radius: 5px;
+}
+
+.comment--username,
+.reply--username {
+  text-decoration: underline;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.comment--time {
+  font-size: 12px;
+}
+
+.comment--user-comment {
+  font-size: 14px;
+}
+
+.comment--num-of-reply {
+  font-size: 12px;
+  color: #0076c6 !important;
+  cursor: pointer;
+}
+
+.reply {
+  border-left: 1px solid #fff;
+}
+
+.reply--username,
+.reply--user-reply {
+  font-size: 12px;
+}
+
+.reply--user-image {
+  height: 30px;
+  width: 30px;
+  border-radius: 3px;
+}
+
+.reply--time {
+  font-size: 8px;
+}
+
+.comment--input {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  height: 100px;
+  background-image: linear-gradient(
+    to top,
+    rgba(0, 0, 0) 70%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+}
+
+.comment--input-wrapper {
+  height: 100%;
+  width: 100%;
+}
+
+.comment--input-field-container {
+  width: 90%;
+  height: 50px;
+  border: 1px solid #bfbfbf;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgb(28, 32, 34);
+  border-radius: 10px;
+}
+
+.comment--input-field {
+  height: 100%;
+  color: #fff;
+  width: 80%;
+  border: 1px solid transparent;
+  background-color: transparent;
+  font-size: 14px;
+}
+
+.comment--input-send-icon {
+  height: 30px;
+  width: 30px;
+  color: #0076c6;
+  cursor: pointer;
+}
+
+.comment--input-field:focus {
+  outline: none;
+}
