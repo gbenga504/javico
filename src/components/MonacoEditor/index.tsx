@@ -103,11 +103,7 @@ const MonacoEditor: React.FC<IProps> = ({
   return (
     <React.Fragment>
       {renderLoading()}
-      <div
-        ref={nodeRef}
-        className="monaco-editor"
-        // style={{ display: 'flex', overflow: 'hidden', width: '100%', height: '100%' }}
-      />
+      <div ref={nodeRef} className="monaco-editor" />
     </React.Fragment>
   );
 };

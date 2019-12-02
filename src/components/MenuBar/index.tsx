@@ -12,10 +12,6 @@ const iconList = [
   { text: 'Light theme', icon: 'ios-bulb' },
 ];
 
-{
-  /* <ion-icon name="contract"></ion-icon> */
-}
-
 const MenuBar: React.FC = () => {
   return (
     <section className="menubar flex-column">

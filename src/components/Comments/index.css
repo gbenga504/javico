@@ -4,7 +4,7 @@
   position: relative;
 }
 
-.comments--body {
+.comments__body {
   overflow: scroll;
   height: 100%;
   width: 100%;
@@ -20,28 +20,28 @@
   background-color: rgb(19, 23, 26);
 }
 
-.comment--user-image {
+.comment__user-image {
   height: 50px;
   width: 50px;
   border-radius: 5px;
 }
 
-.comment--username,
-.reply--username {
+.comment__username,
+.reply__username {
   text-decoration: underline;
   cursor: pointer;
   display: inline-block;
 }
 
-.comment--time {
+.comment__time {
   font-size: 12px;
 }
 
-.comment--user-comment {
+.comment__user-comment {
   font-size: 14px;
 }
 
-.comment--num-of-reply {
+.comment__num-of-reply {
   font-size: 12px;
   color: #0076c6 !important;
   cursor: pointer;
@@ -51,22 +51,22 @@
   border-left: 1px solid #fff;
 }
 
-.reply--username,
-.reply--user-reply {
+.reply__username,
+.reply__user-reply {
   font-size: 12px;
 }
 
-.reply--user-image {
+.reply__user-image {
   height: 30px;
   width: 30px;
   border-radius: 3px;
 }
 
-.reply--time {
+.reply__time {
   font-size: 8px;
 }
 
-.comment--input {
+.comment__input {
   position: absolute;
   bottom: 0;
   right: 0;
@@ -79,12 +79,12 @@
   );
 }
 
-.comment--input-wrapper {
+.comment__input-wrapper {
   height: 100%;
   width: 100%;
 }
 
-.comment--input-field-container {
+.comment__input-field-container {
   width: 90%;
   height: 50px;
   border: 1px solid #bfbfbf;
@@ -94,7 +94,7 @@
   border-radius: 10px;
 }
 
-.comment--input-field {
+.comment__input-field {
   height: 100%;
   color: #fff;
   width: 80%;
@@ -103,13 +103,13 @@
   font-size: 14px;
 }
 
-.comment--input-send-icon {
+.comment__input-send-icon {
   height: 30px;
   width: 30px;
   color: #0076c6;
   cursor: pointer;
 }
 
-.comment--input-field:focus {
+.comment__input-field:focus {
   outline: none;
 }
