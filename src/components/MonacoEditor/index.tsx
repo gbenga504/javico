@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 
 import MonacoIntegrator from '../../utils/MonacoIntegrator';
 import MonacoThemes from '../../utils/MonacoThemes';
+import AnimatedCircularLoader from '../../atoms/AnimatedCircularLoader';
 
 interface IProps {
   value?: string;
@@ -81,9 +82,26 @@ const MonacoEditor: React.FC<IProps> = ({
     }
   }, [theme]);
 
+  function renderLoading() {
+    return isEditorReady === false ? (
+      <div
+        style={{
+          display: 'flex',
+          overflow: 'hidden',
+          width: '100%',
+          height: '100%',
+          background: '#1E1E1E',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <AnimatedCircularLoader />
+      </div>
+    ) : null;
+  }
+
   return (
     <React.Fragment>
-      {!isEditorReady && <span>Loading...</span>}
+      {renderLoading()}
       <div
         ref={nodeRef}
         style={{ display: 'flex', overflow: 'hidden', width: '100%', height: '100%' }}
