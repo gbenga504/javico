@@ -1,14 +1,15 @@
 .comments {
-  height: 70vh;
+  height: 50vh;
   background-color: rgb(28, 32, 34);
   position: relative;
+  border-top: 1px solid rgba(255, 255, 255, 0.15)
 }
 
 .comments__body {
   overflow: scroll;
   height: 100%;
   width: 100%;
-  padding-bottom: 100px;
+  padding-bottom: 68px;
 }
 
 .comment {
@@ -17,18 +18,17 @@
 }
 
 .comment:hover {
-  background-color: rgb(19, 23, 26);
+  background-color: rgba(255, 255, 255, 0.04);
 }
 
 .comment__user-image {
-  height: 50px;
-  width: 50px;
+  height: 35px;
+  width: 35px;
   border-radius: 5px;
 }
 
 .comment__username,
 .reply__username {
-  text-decoration: underline;
   cursor: pointer;
   display: inline-block;
 }
@@ -38,7 +38,7 @@
 }
 
 .comment__user-comment {
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .comment__num-of-reply {
@@ -71,7 +71,6 @@
   bottom: 0;
   right: 0;
   left: 0;
-  height: 100px;
   background-image: linear-gradient(
     to top,
     rgba(28, 32, 34) 70%,
@@ -79,19 +78,14 @@
   );
 }
 
-.comment__input-wrapper {
-  height: 100%;
-  width: 100%;
-}
-
 .comment__input-field-container {
-  width: 90%;
   height: 50px;
-  border: 1px solid #bfbfbf;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   align-items: center;
   justify-content: space-between;
   background-color: rgb(28, 32, 34);
-  border-radius: 10px;
+  border-radius: 3px;
 }
 
 .comment__input-field {
@@ -104,8 +98,8 @@
 }
 
 .comment__input-send-icon {
-  height: 30px;
-  width: 30px;
+  height: 18px;
+  width: 18px;
   color: #0076c6;
   cursor: pointer;
 }

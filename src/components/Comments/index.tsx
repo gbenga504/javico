@@ -11,7 +11,7 @@ const Comments: React.FC = () => {
         {comments.map(el => {
           return (
             <div className="comment pl-16 pr-16" key={el._id}>
-              <div className="pb-8 pt-8 flex-row">
+              <div className="pb-12 pt-12 flex-row">
                 <img className="comment__user-image" src={`${image}`} alt={el.username} />
                 <div className="pl-8">
                   <Typography className="comment__username mb-4" thickness="semi-bold" variant="p">
@@ -28,15 +28,13 @@ const Comments: React.FC = () => {
         })}
       </div>
       <div className="comment__input">
-        <div className="comment__input-wrapper flex-column center">
-          <div className="comment__input-field-container flex-row">
-            <input
-              className="comment__input-field pl-16"
-              type="text"
-              placeholder="Add your review on gad's code"
-            />
-            <Icon className="comment__input-send-icon mr-16" name="send" />
-          </div>
+        <div className="comment__input-field-container flex-row ml-16 mr-16 mb-16">
+          <input
+            className="comment__input-field pl-16"
+            type="text"
+            placeholder="Add your review on gad's code"
+          />
+          <Icon className="comment__input-send-icon mr-8" name="send" />
         </div>
       </div>
     </section>

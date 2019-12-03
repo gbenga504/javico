@@ -28,15 +28,18 @@
 }
 
 .menubar__title {
-  font-weight: 600;
   font-size: 18px;
   color: #fff;
 }
 
 .menubar__icon {
-  width: 100%;
-  font-size: 30px;
-  color: #bfbfbf;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+  color: rgba(255, 255, 255, 0.4);
   cursor: pointer;
 }
 

@@ -23,11 +23,13 @@ const MenuBar: React.FC = () => {
         </div>
       </Tooltip>
       {iconList.map(el => (
-        <Tooltip title={el.text} placement="bottom" enterDelay={100}>
-          <div key={el.icon} className="menubar__icon mt-16">
-            <Icon name={el.icon} />
-          </div>
-        </Tooltip>
+        <div key={el.icon} className="menubar__icon">
+          <Tooltip title={el.text} placement="bottom" enterDelay={100}>
+            <span style={{ display: 'flex' }}>
+              <Icon name={el.icon} />
+            </span>
+          </Tooltip>
+        </div>
       ))}
     </section>
   );
