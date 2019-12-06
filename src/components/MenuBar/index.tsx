@@ -28,10 +28,13 @@ const MenuBar: React.FC = () => {
 
   useEffect(() => {
     window.addEventListener('resize', function() {
-      if (window.screen.width === window.innerWidth) {
+      if (window.screen.height !== window.innerHeight) {
         toggleFullScreen(notFullScreen());
       }
     });
+    return () => {
+      window.removeEventListener('resize', () => null);
+    };
   }, []);
 
   function handleToggleFullScreen() {

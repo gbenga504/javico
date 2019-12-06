@@ -2,10 +2,6 @@ import React from 'react';
 
 import Home from './views/Home';
 
-const App: React.FC = () => (
-  <div id="app">
-    <Home />
-  </div>
-);
+const App: React.FC = () => <Home />;
 
 export default App;
