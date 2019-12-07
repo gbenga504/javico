@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -30,6 +30,15 @@ const Console: React.FC<{ classes: any }> = ({ classes }) => {
   const handleTabChange = (event: React.ChangeEvent<{}>, currentTab: number) => {
     setCurrentTab(currentTab);
   };
+
+  useEffect(() => {
+    const worker = new Worker('CodeEvaluatorWorker.js');
+    worker.postMessage({ code: 'console.warn(window)' });
+
+    worker.addEventListener('message', function(e) {
+      console.log('Lagos', e);
+    });
+  }, []);
 
   return (
     <section className="console">
