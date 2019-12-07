@@ -4,12 +4,21 @@ import { Tooltip } from '@material-ui/core';
 import './index.css';
 import { Typography, Icon } from '../../atoms';
 
-var doc = window.document;
-var docEl = doc.documentElement;
+const doc: any = window.document;
+const docEl: any = doc.documentElement;
 
-var requestFullScreen = docEl.requestFullscreen; // || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-var cancelFullScreen = doc.exitFullscreen; //|| doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-var notFullScreen = () => !doc.fullscreenElement; // && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement;
+const requestFullScreen =
+  docEl.requestFullscreen ||
+  docEl.mozRequestFullScreen ||
+  docEl.webkitRequestFullScreen ||
+  docEl.msRequestFullscreen;
+const cancelFullScreen =
+  doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+const notFullScreen = () =>
+  !doc.fullscreenElement &&
+  !doc.mozFullScreenElement &&
+  !doc.webkitFullscreenElement &&
+  !doc.msFullscreenElement;
 
 const iconList = (screenSize: boolean) => [
   { text: 'Search file', action: '', icon: 'ios-search' },
