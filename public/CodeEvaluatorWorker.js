@@ -24,7 +24,7 @@ const console = {
       message: console.getMessage(arguments)
     });
   },
-  warning: function() {
+  warn: function() {
     worker.postMessage({
       type: MessageType.WARNING,
       message: console.getMessage(arguments)
@@ -33,9 +33,9 @@ const console = {
 };
 
 worker.addEventListener("message", function(e) {
-  let code = e.data.code;
+  let sourceCode = e.data.sourceCode;
   try {
-    eval(code);
+    eval(sourceCode);
   } catch (error) {
     worker.postMessage({ type: MessageType.ERROR, message: error });
   }
