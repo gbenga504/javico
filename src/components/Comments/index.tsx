@@ -2,7 +2,7 @@ import React from 'react';
 
 import './index.css';
 import { Typography, Icon } from '../../atoms';
-import { comments, image } from '../../utils';
+import { comments, image } from './comments_dummy';
 
 const Comments: React.FC = () => {
   return (

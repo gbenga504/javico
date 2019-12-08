@@ -4,8 +4,7 @@ import { Button, withStyles } from '@material-ui/core';
 import './index.css';
 import MonacoIntegrator from '../../utils/MonacoIntegrator';
 import MonacoThemes from '../../utils/MonacoThemes';
-import AnimatedCircularLoader from '../../atoms/AnimatedCircularLoader';
-import Icon from '../../atoms/Icon';
+import { Icon, AnimatedCircularLoader } from '../../atoms';
 
 interface IProps {
   value?: string;

@@ -4,8 +4,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
 import './index.css';
-import Typography from '../../atoms/Typography';
-import Icon from '../../atoms/Icon';
+import { Typography, Icon } from '../../atoms';
 
 const styles = {
   consoleTabWrapper: {
