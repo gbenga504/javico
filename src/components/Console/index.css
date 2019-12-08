@@ -8,15 +8,15 @@
 }
 
 .console__terminal {
-   width: 100%;
-   height: calc(100% - 48px);
-   overflow-y: scroll;
-   border-top: 1px solid rgba(255,255,255,0.07);
+  width: 100%;
+  height: calc(100% - 48px);
+  overflow-y: scroll;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .console__terminal-log-messages {
   padding: 3px 15px;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   font-size: 12.5px !important;
 }
 
