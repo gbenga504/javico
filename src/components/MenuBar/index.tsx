@@ -77,9 +77,12 @@ const MenuBar: React.FC = () => {
       </Tooltip>
       {iconList(fullScreenMode).map(el => {
         return (
-          <div key={el.icon} className="menubar__icon" onClick={() => triggerAction(el.action)}>
+          <div
+            key={el.icon}
+            className="flex-row center menubar__icon"
+            onClick={() => triggerAction(el.action)}>
             <Tooltip title={el.text} placement="bottom" enterDelay={100}>
-              <span style={{ display: 'flex' }}>
+              <span className="flex-row">
                 <Icon name={el.icon} />
               </span>
             </Tooltip>

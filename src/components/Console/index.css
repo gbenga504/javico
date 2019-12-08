@@ -24,7 +24,6 @@
   padding: 3px 15px;
   border-bottom: 1px solid var(--warning-light-color);
   font-size: 12.5px !important;
-  display: flex;
   white-space: pre-wrap;
   background: var(--warning-dark-color);
 }
@@ -39,7 +38,6 @@
   padding: 3px 15px;
   border-bottom: 1px solid var(--error-light-color);
   font-size: 12.5px !important;
-  display: flex;
   white-space: pre-wrap;
   background: var(--error-dark-color);
 }

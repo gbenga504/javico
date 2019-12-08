@@ -114,14 +114,10 @@ const MonacoEditor: React.FC<IProps> = ({
   function renderLoading() {
     return isEditorReady === false ? (
       <div
+        className="flex-row center full-height-and-width"
         style={{
-          display: 'flex',
           overflow: 'hidden',
-          width: '100%',
-          height: '100%',
-          background: '#1E1E1E',
-          alignItems: 'center',
-          justifyContent: 'center',
+          background: 'var(--dark-theme-black-color)',
         }}>
         <AnimatedCircularLoader />
       </div>

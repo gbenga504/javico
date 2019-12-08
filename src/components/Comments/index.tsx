@@ -7,7 +7,7 @@ import { comments, image } from './comments_dummy';
 const Comments: React.FC = () => {
   return (
     <section className="comments">
-      <div className="comments__body">
+      <div className="full-height-and-width comments__body">
         {comments.map(el => {
           return (
             <div className="comment pl-16 pr-16" key={el._id}>

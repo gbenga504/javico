@@ -68,7 +68,7 @@ const Console: React.FC<{ classes: any; sourceCode: string }> = ({ classes, sour
 
   function renderWarningBasedMessages(message: string, index: number) {
     return (
-      <div className="console__terminal-warning-messages" key={index}>
+      <div className="flex-row console__terminal-warning-messages" key={index}>
         <div>
           <Icon className="console__terminal-warning-icon" name="warning"></Icon>
         </div>
@@ -81,7 +81,7 @@ const Console: React.FC<{ classes: any; sourceCode: string }> = ({ classes, sour
 
   function renderErrorBasedMessages(message: string, index: number) {
     return (
-      <div className="console__terminal-error-messages" key={index}>
+      <div className="flex-row console__terminal-error-messages" key={index}>
         <div>
           <Icon className="console__terminal-error-icon" name="close-circle"></Icon>
         </div>
