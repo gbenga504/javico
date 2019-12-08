@@ -14,18 +14,18 @@ const requestFullScreen =
   docEl.msRequestFullscreen;
 const cancelFullScreen =
   doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-const notFullScreen = () =>
-  !doc.fullscreenElement &&
-  !doc.mozFullScreenElement &&
-  !doc.webkitFullscreenElement &&
-  !doc.msFullscreenElement;
+const fullScreenEnabled =
+  doc.fullscreenElement ||
+  doc.mozFullscreenElement ||
+  doc.webkitFullscreenElement ||
+  doc.msFullscreenElement;
 
-const iconList = (screenSize: boolean) => [
+const iconList = (fullScreenMode: boolean) => [
   { text: 'Search file', action: '', icon: 'ios-search' },
   {
-    text: screenSize ? 'Make full screen' : 'Resize screen',
+    text: fullScreenMode === false ? 'Make full screen' : 'Resize screen',
     action: 'toggleFullScreen',
-    icon: screenSize ? 'ios-expand' : 'ios-contract',
+    icon: fullScreenMode === false ? 'ios-expand' : 'ios-contract',
   },
   { text: 'Share code', action: '', icon: 'ios-share-alt' },
   { text: 'Sign in', action: '', icon: 'logo-github' },
@@ -33,12 +33,12 @@ const iconList = (screenSize: boolean) => [
 ];
 
 const MenuBar: React.FC = () => {
-  const [fullScreen, toggleFullScreen] = useState(notFullScreen());
+  const [fullScreenMode, setFullScreenMode] = useState<boolean>(!!fullScreenEnabled);
 
   useEffect(() => {
     window.addEventListener('resize', function() {
       if (window.screen.height !== window.innerHeight) {
-        toggleFullScreen(notFullScreen());
+        setFullScreenMode(false);
       }
     });
     return () => {
@@ -47,11 +47,11 @@ const MenuBar: React.FC = () => {
   }, []);
 
   function handleToggleFullScreen() {
-    if (fullScreen) {
-      requestFullScreen.call(docEl).then(() => toggleFullScreen(!fullScreen));
+    if (fullScreenMode === false) {
+      requestFullScreen.call(docEl).then(() => setFullScreenMode(true));
     } else {
       if (cancelFullScreen) {
-        cancelFullScreen.call(doc).then(() => toggleFullScreen(!fullScreen));
+        cancelFullScreen.call(doc).then(() => setFullScreenMode(false));
       }
     }
   }
@@ -75,7 +75,7 @@ const MenuBar: React.FC = () => {
           </div>
         </div>
       </Tooltip>
-      {iconList(fullScreen).map(el => {
+      {iconList(fullScreenMode).map(el => {
         return (
           <div key={el.icon} className="menubar__icon" onClick={() => triggerAction(el.action)}>
             <Tooltip title={el.text} placement="bottom" enterDelay={100}>
