@@ -1,8 +1,8 @@
 .comments {
   height: 50vh;
-  background-color: rgb(28, 32, 34);
+  background-color: var(--deep-blue-color);
   position: relative;
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-top: 1px solid var(--dark-theme-light-border-color);
 }
 
 .comments__body {
@@ -15,10 +15,6 @@
 .comment {
   background-color: inherit;
   transition: all 0.3s;
-}
-
-.comment:hover {
-  background-color: rgba(255, 255, 255, 0.04);
 }
 
 .comment__user-image {
@@ -43,12 +39,12 @@
 
 .comment__num-of-reply {
   font-size: 12px;
-  color: #0076c6 !important;
+  color: var(--theme-blue-color) !important;
   cursor: pointer;
 }
 
 .reply {
-  border-left: 1px solid #fff;
+  border-left: 1px solid var(--white-color);
 }
 
 .reply__username,
@@ -81,16 +77,16 @@
 .comment__input-field-container {
   height: 50px;
   box-sizing: border-box;
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: 1px solid var(--dark-theme-dark-border-color);
   align-items: center;
   justify-content: space-between;
-  background-color: rgb(28, 32, 34);
+  background-color: var(--deep-blue-color);
   border-radius: 3px;
 }
 
 .comment__input-field {
   height: 100%;
-  color: #fff;
+  color: var(--white-color);
   width: 80%;
   border: 1px solid transparent;
   background-color: transparent;
@@ -100,7 +96,7 @@
 .comment__input-send-icon {
   height: 18px;
   width: 18px;
-  color: #0076c6;
+  color: var(--theme-blue-color);
   cursor: pointer;
 }
 

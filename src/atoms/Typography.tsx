@@ -19,11 +19,11 @@ const Typography: React.FC<IProps> = ({
   function getColor(): string {
     switch (color) {
       case 'initial':
-        return '#fff';
+        return '#fff'; //Mapped to --white-color in our color.css file
       case 'warning':
-        return '#F9A825';
+        return 'rgb(247, 168, 41)'; //Mapped to --warning-light-color in our color.css file
       case 'error':
-        return 'rgb(214, 118, 116)';
+        return 'rgb(214, 118, 116)'; //Mapped to --error-light-color in our color.css file
     }
   }
 

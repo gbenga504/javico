@@ -12,7 +12,7 @@ body {
   text-rendering: optimizeLegibility;
   letter-spacing: -0.015em;
   font-family: "Eina Regular", sans-serif;
-  color: "#fff";
+  color: var(--white-color);
 }
 
 code {
