@@ -1,25 +1,50 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { Button, withStyles } from '@material-ui/core';
 
 import './index.css';
 import MonacoIntegrator from '../../utils/MonacoIntegrator';
 import MonacoThemes from '../../utils/MonacoThemes';
 import AnimatedCircularLoader from '../../atoms/AnimatedCircularLoader';
+import Icon from '../../atoms/Icon';
 
 interface IProps {
   value?: string;
-  onChangeValue?: (value: string) => void;
+  onRunSourceCode?: (value: string) => void;
   theme?: 'light' | 'dark' | 'ace' | 'night-dark';
   language?: string;
+  classes: any;
 }
+
+const styles = {
+  monacoEditorRunButton: {
+    height: 50,
+    width: 50,
+    minWidth: 50,
+    borderRadius: '50%',
+    background: '#0076C6',
+    position: 'absolute',
+    bottom: 10,
+    right: 25,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    cursor: 'pointer',
+    '&:hover': {
+      background: '#0D47A1',
+    },
+  },
+} as any;
 
 const MonacoEditor: React.FC<IProps> = ({
   value,
-  onChangeValue,
+  onRunSourceCode,
   theme = 'vs-dark',
   language = 'javascript',
+  classes,
 }) => {
   const [isMonacoReady, setIsMonacoReady] = useState(false);
   const [isEditorReady, setIsEditorReady] = useState(false);
+  const [sourceCode, setSourceCode] = useState('');
   const monacoRef = useRef<any>(null);
   const editorRef = useRef<any>(null);
   const subscriptionRef = useRef<any>(null);
@@ -36,11 +61,11 @@ const MonacoEditor: React.FC<IProps> = ({
 
     monacoRef.current.editor.setTheme(theme);
     subscriptionRef.current = model.onDidChangeContent(() => {
-      onChangeValue && onChangeValue(model.getValue());
+      setSourceCode(model.getValue());
     });
     editorRef.current.focus();
     setIsEditorReady(true);
-  }, [onChangeValue, language, theme, value]);
+  }, [language, theme, value]);
 
   useEffect(() => {
     MonacoIntegrator.init()
@@ -83,6 +108,10 @@ const MonacoEditor: React.FC<IProps> = ({
     }
   }, [theme]);
 
+  function handleSourceCodeExecution() {
+    onRunSourceCode && onRunSourceCode(sourceCode);
+  }
+
   function renderLoading() {
     return isEditorReady === false ? (
       <div
@@ -101,11 +130,17 @@ const MonacoEditor: React.FC<IProps> = ({
   }
 
   return (
-    <React.Fragment>
+    <div className="monaco-editor__container">
       {renderLoading()}
-      <div ref={nodeRef} className="monaco-editor" />
-    </React.Fragment>
+      <div ref={nodeRef} className="monaco-editor-editor" />
+      <Button
+        onClick={handleSourceCodeExecution}
+        variant="contained"
+        classes={{ root: classes.monacoEditorRunButton }}>
+        <Icon name="play" className="monaco-editor-run-button-icon" />
+      </Button>
+    </div>
   );
 };
 
-export default React.memo(MonacoEditor);
+export default React.memo(withStyles(styles)(MonacoEditor));

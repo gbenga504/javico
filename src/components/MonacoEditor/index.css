@@ -1,3 +1,15 @@
-.monaco-editor {
+.monaco-editor__container {
   flex: 1;
+  position: relative;
+}
+
+.monaco-editor-editor {
+  flex: 1;
+  height: 100%;
+}
+
+.monaco-editor-run-button-icon {
+  color: #fff;
+  font-size: 20px;
+  margin-left: 2px;
 }

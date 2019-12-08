@@ -6,3 +6,46 @@
 .console__tab {
   color: #fff;
 }
+
+.console__terminal {
+   width: 100%;
+   height: calc(100% - 48px);
+   overflow-y: scroll;
+   border-top: 1px solid rgba(255,255,255,0.07);
+}
+
+.console__terminal-log-messages {
+  padding: 3px 15px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  font-size: 12.5px !important;
+}
+
+.console__terminal-warning-messages {
+  padding: 3px 15px;
+  border-bottom: 1px solid rgb(247, 168, 41);
+  font-size: 12.5px !important;
+  display: flex;
+  white-space: pre-wrap;
+  background: #715f1a;
+}
+
+.console__terminal-warning-icon {
+  font-size: 13px;
+  margin-right: 6px;
+  color: rgb(247, 168, 41);
+}
+
+.console__terminal-error-messages {
+  padding: 3px 15px;
+  border-bottom: 1px solid rgb(214, 118, 116);
+  font-size: 12.5px !important;
+  display: flex;
+  white-space: pre-wrap;
+  background: #310e0e;
+}
+
+.console__terminal-error-icon {
+  font-size: 14px;
+  margin-right: 6px;
+  color: rgb(214, 118, 116);
+}
