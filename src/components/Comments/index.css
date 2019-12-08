@@ -95,9 +95,12 @@
   height: 18px;
   width: 18px;
   color: var(--theme-blue-color);
-  cursor: pointer;
 }
 
 .comment__input-field:focus {
   outline: none;
+}
+
+.comment__not-live {
+  color: var(--dark-theme-dark-border-color) !important;
 }
