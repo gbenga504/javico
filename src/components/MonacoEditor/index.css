@@ -1,6 +1,7 @@
 .monaco-editor__container {
   flex: 1;
   position: relative;
+  background: var(--dark-theme-black-color);
 }
 
 .monaco-editor-editor {
