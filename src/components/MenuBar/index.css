@@ -1,8 +1,8 @@
 .menubar {
   width: 56px;
   height: 100vh;
-  background-color: rgb(28, 32, 34);
-  color: #fff;
+  background-color: var(--deep-blue-color);
+  color: var(--white-color);
   text-align: center;
   align-items: center;
 }
@@ -13,15 +13,15 @@
 }
 
 .menubar__title {
-  background-color: #000;
+  background-color: var(--black-color);
   border-radius: 5px;
-  box-shadow: 0 0 0 2pt #fff;
+  box-shadow: 0 0 0 2pt var(--white-color);
   height: 40px;
   width: 40px;
 }
 
 .menubar__title-text {
-  background-color: #0076c6;
+  background-color: var(--theme-blue-color);
   border-radius: 5px;
   width: 36px;
   height: 36px;
@@ -29,20 +29,17 @@
 
 .menubar__title {
   font-size: 18px;
-  color: #fff;
+  color: var(--white-color);
 }
 
 .menubar__icon {
   width: 56px;
   height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   font-size: 25px;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--dark-theme-menubar-icon-color);
   cursor: pointer;
 }
 
 .menubar__icon:hover {
-  color: #fff;
+  color: var(--white-color);
 }

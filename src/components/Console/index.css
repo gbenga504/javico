@@ -1,8 +1,49 @@
 .console {
   height: 50vh;
-  background-color: #1e1e1e;
+  background-color: var(--dark-theme-black-color);
 }
 
 .console__tab {
-  color: #fff;
+  color: var(--white-color);
+}
+
+.console__terminal {
+  width: 100%;
+  height: calc(100% - 48px);
+  overflow-y: scroll;
+  border-top: 1px solid var(--dark-theme-light-border-color);
+}
+
+.console__terminal-log-messages {
+  padding: 3px 15px;
+  border-bottom: 1px solid var(--dark-theme-light-border-color);
+  font-size: 12.5px !important;
+}
+
+.console__terminal-warning-messages {
+  padding: 3px 15px;
+  border-bottom: 1px solid var(--warning-light-color);
+  font-size: 12.5px !important;
+  white-space: pre-wrap;
+  background: var(--warning-dark-color);
+}
+
+.console__terminal-warning-icon {
+  font-size: 13px;
+  margin-right: 6px;
+  color: var(--warning-light-color);
+}
+
+.console__terminal-error-messages {
+  padding: 3px 15px;
+  border-bottom: 1px solid var(--error-light-color);
+  font-size: 12.5px !important;
+  white-space: pre-wrap;
+  background: var(--error-dark-color);
+}
+
+.console__terminal-error-icon {
+  font-size: 14px;
+  margin-right: 6px;
+  color: var(--error-light-color);
 }

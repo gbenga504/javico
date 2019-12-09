@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import './index.css';
 import MenuBar from '../../components/MenuBar';
@@ -7,14 +7,16 @@ import Console from '../../components/Console';
 import Comments from '../../components/Comments';
 
 const Home: React.FC = () => {
+  const [terminalExecutableCode, setTerminalExecutableCode] = useState('');
+
   return (
     <div className="flex-row">
       <MenuBar />
       <main className="main flex-row">
-        <MonacoEditor onChangeValue={value => console.log(value)} />
+        <MonacoEditor onRunSourceCode={setTerminalExecutableCode} />
         <div className="main--right">
-          <Console />
-          <Comments />
+          <Console sourceCode={terminalExecutableCode} />
+          <Comments comments={[]} />
         </div>
       </main>
     </div>
