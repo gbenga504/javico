@@ -1,6 +1,7 @@
 .monaco-editor__container {
   flex: 1;
   position: relative;
+  background: var(--dark-theme-black-color);
 }
 
 .monaco-editor-editor {
@@ -9,7 +10,7 @@
 }
 
 .monaco-editor-run-button-icon {
-  color: #fff;
+  color: var(--white-color);
   font-size: 20px;
   margin-left: 2px;
 }

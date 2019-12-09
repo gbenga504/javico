@@ -16,7 +16,7 @@ const Home: React.FC = () => {
         <MonacoEditor onRunSourceCode={setTerminalExecutableCode} />
         <div className="main--right">
           <Console sourceCode={terminalExecutableCode} />
-          <Comments />
+          <Comments comments={[]} />
         </div>
       </main>
     </div>

@@ -22,7 +22,7 @@ const styles = {
     borderRadius: '50%',
     background: '#0076C6',
     position: 'absolute',
-    bottom: 10,
+    bottom: 15,
     right: 25,
     display: 'flex',
     justifyContent: 'center',
@@ -114,14 +114,10 @@ const MonacoEditor: React.FC<IProps> = ({
   function renderLoading() {
     return isEditorReady === false ? (
       <div
+        className="flex-row center full-height-and-width"
         style={{
-          display: 'flex',
           overflow: 'hidden',
-          width: '100%',
-          height: '100%',
-          background: '#1E1E1E',
-          alignItems: 'center',
-          justifyContent: 'center',
+          background: 'var(--dark-theme-black-color)',
         }}>
         <AnimatedCircularLoader />
       </div>
@@ -129,7 +125,7 @@ const MonacoEditor: React.FC<IProps> = ({
   }
 
   return (
-    <div className="monaco-editor__container">
+    <div className="monaco-editor__container pt-12">
       {renderLoading()}
       <div ref={nodeRef} className="monaco-editor-editor" />
       <Button
