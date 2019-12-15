@@ -27,6 +27,12 @@
   height: 36px;
 }
 
+.menubar__user {
+  border-radius: 5px;
+  width: 36px;
+  height: 36px;
+}
+
 .menubar__title {
   font-size: 18px;
   color: var(--white-color);
