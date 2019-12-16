@@ -1,20 +1,12 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import {
-  Fab,
-  withStyles,
-  Dialog,
-  DialogContent,
-  DialogActions,
-  DialogTitle,
-  Button,
-} from '@material-ui/core';
+import { Fab, withStyles } from '@material-ui/core';
 
 import './index.css';
 import MonacoIntegrator from '../../utils/MonacoIntegrator';
 import MonacoThemes from '../../utils/MonacoThemes';
 import { withFirebase } from '../../utils/FirebaseConnector';
-import { Icon, AnimatedCircularLoader, withNotificationBanner } from '../../atoms';
-import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
+import { Icon, AnimatedCircularLoader } from '../../atoms';
+import SignInViaGithubModal from '../SignInViaGithubModal';
 
 interface IProps {
   value?: string;
@@ -23,7 +15,6 @@ interface IProps {
   language?: string;
   classes: any;
   firebase: any;
-  setNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
 }
 
 const styles = {
@@ -41,37 +32,6 @@ const styles = {
       background: '#0D47A1',
     },
   },
-  signInDialog: {
-    width: 600,
-  },
-  signInDialogTitle: {
-    marginBottom: '5px',
-    padding: '15px 24px',
-    borderBottom: '1px solid #e0e0e0',
-    '& span': {
-      fontSize: 14,
-      fontFamily: 'Eina SemiBold',
-    },
-  },
-  signInDialogContent: {
-    fontSize: 15,
-  },
-  signInCancelButton: {
-    width: 100,
-    marginRight: 5,
-    fontSize: 13,
-    fontFamily: 'Eina SemiBold',
-  },
-  signInWithGithubModalButton: {
-    background: '#0076c6',
-    color: '#fff',
-    fontSize: 13,
-    fontFamily: 'Eina SemiBold',
-    width: 100,
-    '&:hover': {
-      background: '#0076c6',
-    },
-  },
 } as any;
 
 const MonacoEditor: React.FC<IProps> = ({
@@ -81,7 +41,6 @@ const MonacoEditor: React.FC<IProps> = ({
   language = 'javascript',
   classes,
   firebase,
-  setNotificationSettings,
 }) => {
   const [isMonacoReady, setIsMonacoReady] = useState<boolean>(false);
   const [isEditorReady, setIsEditorReady] = useState<boolean>(false);
@@ -168,23 +127,15 @@ const MonacoEditor: React.FC<IProps> = ({
     onRunSourceCode && onRunSourceCode(sourceCode);
   }
 
-  function handleCloseSignInModal() {
-    setIsSignInModalVisible(false);
+  function handleSaveDeveloperCode() {
+    /**
+     * @todo
+     * Save the developer code here
+     */
   }
 
-  function handleSignInWithGithub() {
-    firebase
-      .signInWithGithub()
-      .then(function(result: any) {
-        /**
-         * @todo
-         * Save the users code in firestore
-         */
-        setIsSignInModalVisible(false);
-      })
-      .catch(function(error: any) {
-        setNotificationSettings(error.message, 'danger', 'long');
-      });
+  function handleCloseSignInModal() {
+    setIsSignInModalVisible(false);
   }
 
   function renderLoading() {
@@ -200,35 +151,6 @@ const MonacoEditor: React.FC<IProps> = ({
     ) : null;
   }
 
-  function renderDialogModal() {
-    return (
-      <Dialog
-        open={isSignInModalVisible}
-        onClose={handleCloseSignInModal}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        classes={{ paper: classes.signInDialog }}>
-        <DialogTitle id="alert-dialog-title" className={classes.signInDialogTitle}>
-          SignIn via Github
-        </DialogTitle>
-        <DialogContent classes={{ root: classes.signInDialogContent }}>
-          You need to signin via github to save your code.
-        </DialogContent>
-        <DialogActions>
-          <Button className={classes.signInCancelButton} onClick={handleCloseSignInModal}>
-            Cancel
-          </Button>
-          <Button
-            className={classes.signInWithGithubModalButton}
-            onClick={handleSignInWithGithub}
-            autoFocus>
-            Sign In
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
-
   return (
     <>
       <div className="monaco-editor__container pt-12">
@@ -241,9 +163,13 @@ const MonacoEditor: React.FC<IProps> = ({
         classes={{ root: classes.monacoEditorRunButton }}>
         <Icon name="play" className="monaco-editor-run-button-icon" />
       </Fab>
-      {renderDialogModal()}
+      <SignInViaGithubModal
+        visible={isSignInModalVisible}
+        onRequestClose={handleCloseSignInModal}
+        onSignInSuccess={handleSaveDeveloperCode}
+      />
     </>
   );
 };
 
-export default React.memo(withNotificationBanner(withFirebase(withStyles(styles)(MonacoEditor))));
+export default React.memo(withFirebase(withStyles(styles)(MonacoEditor)));
