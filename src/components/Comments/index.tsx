@@ -43,7 +43,7 @@ const Comments: React.FC<{ comments: any[] }> = ({ comments }) => {
           <input
             className="comment__input-field pl-16"
             type="text"
-            placeholder="Add your review on gad's code"
+            placeholder="Drop a review on this code"
           />
           <Icon
             className="comment__input-send-icon mr-8"

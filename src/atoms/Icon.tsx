@@ -5,8 +5,9 @@ interface IProps {
   style?: object;
   size?: 'small' | 'large';
   className?: string;
+  onClick?: Function;
 }
 
-const Icon: React.FC<IProps> = ({ name, style, size, className }) =>
-  React.createElement('ion-icon', { name, style, size, class: className });
+const Icon: React.FC<IProps> = ({ name, style, size, className, onClick }) =>
+  React.createElement('ion-icon', { name, style, size, class: className, onClick });
 export default Icon;

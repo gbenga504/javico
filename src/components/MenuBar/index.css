@@ -1,4 +1,4 @@
-.menubar {
+.menubar-container {
   width: 56px;
   height: 100vh;
   background-color: var(--deep-blue-color);
@@ -22,6 +22,12 @@
 
 .menubar__title-text {
   background-color: var(--theme-blue-color);
+  border-radius: 5px;
+  width: 36px;
+  height: 36px;
+}
+
+.menubar__user {
   border-radius: 5px;
   width: 36px;
   height: 36px;

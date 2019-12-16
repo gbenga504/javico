@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip, Menu, MenuItem, Button, withStyles } from '@material-ui/core';
 
 import './index.css';
-import { Typography, Icon } from '../../atoms';
+import { Typography, Icon, withNotificationBanner } from '../../atoms';
+import { withFirebase } from '../../utils/FirebaseConnector';
+import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
+
+interface IProps {
+  classes: any;
+  firebase: any;
+  setNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
+}
 
 const doc: any = window.document;
 const docEl: any = doc.documentElement;
@@ -28,12 +36,24 @@ const iconList = (fullScreenMode: boolean) => [
     icon: fullScreenMode === false ? 'ios-expand' : 'ios-contract',
   },
   { text: 'Share code', action: '', icon: 'ios-share-alt' },
-  { text: 'Sign in', action: '', icon: 'logo-github' },
+  { text: 'Sign in', action: 'signInWithGithub', icon: 'logo-github' },
   { text: 'Light theme', action: '', icon: 'ios-bulb' },
 ];
 
-const MenuBar: React.FC = () => {
+const styles = {
+  menuItemList: {
+    padding: 0,
+  },
+  menuItem: {
+    fontFamily: 'Eina SemiBold',
+    fontSize: 14,
+  },
+};
+
+const MenuBar: React.FC<IProps> = ({ classes, firebase, setNotificationSettings }) => {
   const [fullScreenMode, setFullScreenMode] = useState<boolean>(!!fullScreenEnabled);
+  const [menuElement, setMenuElement] = React.useState<null | HTMLElement>(null);
+  const [currentUser, setCurrentUser] = React.useState<any>(null);
 
   useEffect(() => {
     window.addEventListener('resize', function() {
@@ -46,6 +66,24 @@ const MenuBar: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    firebase.getCurrentUser(function(user: any) {
+      if (user) {
+        setCurrentUser(user);
+      } else {
+        setCurrentUser(null);
+      }
+    });
+  }, [firebase]);
+
+  function handleOpenMenu(event: React.MouseEvent<HTMLElement>) {
+    setMenuElement(event.currentTarget);
+  }
+
+  function handleCloseMenu() {
+    setMenuElement(null);
+  }
+
   function handleToggleFullScreen() {
     if (fullScreenMode === false) {
       requestFullScreen.call(docEl).then(() => setFullScreenMode(true));
@@ -56,10 +94,39 @@ const MenuBar: React.FC = () => {
     }
   }
 
+  function handleSignInWithGithub() {
+    firebase
+      .signInWithGithub()
+      .then(function(result: any) {
+        /**
+         * @todo
+         * Save the users code in firestore
+         */
+      })
+      .catch(function(error: any) {
+        setNotificationSettings(error.message, 'danger', 'long');
+      });
+  }
+
+  function handleLogout() {
+    firebase
+      .logout()
+      .then(function() {
+        setCurrentUser(null);
+        handleCloseMenu();
+      })
+      .catch(function(error: any) {
+        setNotificationSettings(error.message, 'danger', 'long');
+      });
+  }
+
   function triggerAction(action: string) {
     switch (action) {
       case 'toggleFullScreen':
         handleToggleFullScreen();
+        break;
+      case 'signInWithGithub':
+        handleSignInWithGithub();
         break;
       default:
         break;
@@ -67,7 +134,25 @@ const MenuBar: React.FC = () => {
   }
 
   return (
-    <section className="menubar flex-column">
+    <section className="menubar-container flex-column">
+      {!!currentUser === true && (
+        <Button onClick={handleOpenMenu}>
+          <div className="menubar__title flex-column center mt-16 mb-8">
+            <img src={currentUser.photoURL} alt="Current User" className="menubar__user" />
+          </div>
+        </Button>
+      )}
+      <Menu
+        id="current-user-menu"
+        anchorEl={menuElement}
+        keepMounted
+        open={Boolean(menuElement)}
+        onClose={handleCloseMenu}
+        classes={{ list: classes.menuItemList }}>
+        <MenuItem classes={{ root: classes.menuItem }} onClick={handleLogout}>
+          Logout
+        </MenuItem>
+      </Menu>
       <Tooltip title={'placement.js'} placement="bottom" enterDelay={100}>
         <div className="menubar__title flex-column center mt-16 mb-8">
           <div className="menubar__title-text flex-column center">
@@ -76,7 +161,7 @@ const MenuBar: React.FC = () => {
         </div>
       </Tooltip>
       {iconList(fullScreenMode).map(el => {
-        return (
+        return el.text === 'Sign in' && !!currentUser === true ? null : (
           <div
             key={el.icon}
             className="flex-row center menubar__icon"
@@ -93,4 +178,4 @@ const MenuBar: React.FC = () => {
   );
 };
 
-export default React.memo(MenuBar);
+export default React.memo(withNotificationBanner(withFirebase(withStyles(styles)(MenuBar))));
