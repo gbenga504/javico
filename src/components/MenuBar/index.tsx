@@ -2,8 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Tooltip, Menu, MenuItem, Button, withStyles } from '@material-ui/core';
 
 import './index.css';
-import { Typography, Icon } from '../../atoms';
+import { Typography, Icon, withNotificationBanner } from '../../atoms';
 import { withFirebase } from '../../utils/FirebaseConnector';
+import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
+
+interface IProps {
+  classes: any;
+  firebase: any;
+  setNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
+}
 
 const doc: any = window.document;
 const docEl: any = doc.documentElement;
@@ -43,7 +50,7 @@ const styles = {
   },
 };
 
-const MenuBar: React.FC<{ classes: any; firebase: any }> = ({ classes, firebase }) => {
+const MenuBar: React.FC<IProps> = ({ classes, firebase, setNotificationSettings }) => {
   const [fullScreenMode, setFullScreenMode] = useState<boolean>(!!fullScreenEnabled);
   const [menuElement, setMenuElement] = React.useState<null | HTMLElement>(null);
   const [currentUser, setCurrentUser] = React.useState<any>(null);
@@ -97,10 +104,7 @@ const MenuBar: React.FC<{ classes: any; firebase: any }> = ({ classes, firebase 
          */
       })
       .catch(function(error: any) {
-        /**
-         * @todo
-         * Report error to user in an error dialog modal
-         */
+        setNotificationSettings(error.message, 'danger', 'long');
       });
   }
 
@@ -112,10 +116,7 @@ const MenuBar: React.FC<{ classes: any; firebase: any }> = ({ classes, firebase 
         handleCloseMenu();
       })
       .catch(function(error: any) {
-        /**
-         * @todo
-         * Report error to user in an error dialog modal
-         */
+        setNotificationSettings(error.message, 'danger', 'long');
       });
   }
 
@@ -133,7 +134,7 @@ const MenuBar: React.FC<{ classes: any; firebase: any }> = ({ classes, firebase 
   }
 
   return (
-    <section className="menubar flex-column">
+    <section className="menubar-container flex-column">
       {!!currentUser === true && (
         <Button onClick={handleOpenMenu}>
           <div className="menubar__title flex-column center mt-16 mb-8">
@@ -177,4 +178,4 @@ const MenuBar: React.FC<{ classes: any; firebase: any }> = ({ classes, firebase 
   );
 };
 
-export default React.memo(withFirebase(withStyles(styles)(MenuBar)));
+export default React.memo(withNotificationBanner(withFirebase(withStyles(styles)(MenuBar))));
