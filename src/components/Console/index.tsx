@@ -101,7 +101,7 @@ const Console: React.FC<{ classes: any; sourceCode: string }> = ({ classes, sour
           } else if (terminalMessage.type === MessageType.WARNING) {
             return renderWarningBasedMessages(terminalMessage.message, i);
           }
-          return renderErrorBasedMessages(terminalMessage.message.stack, i);
+          return renderErrorBasedMessages(terminalMessage.message, i);
         })}
       </div>
     ) : null;
