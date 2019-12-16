@@ -67,7 +67,7 @@ const MenuBar: React.FC<IProps> = ({ classes, firebase, setNotificationSettings 
   }, []);
 
   useEffect(() => {
-    firebase.getCurrentUser(function(user: any) {
+    firebase.onAuthStateChanged(function(user: any) {
       if (user) {
         setCurrentUser(user);
       } else {

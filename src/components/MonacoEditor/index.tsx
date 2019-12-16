@@ -1,10 +1,20 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { Fab, withStyles } from '@material-ui/core';
+import {
+  Fab,
+  withStyles,
+  Dialog,
+  DialogContent,
+  DialogActions,
+  DialogTitle,
+  Button,
+} from '@material-ui/core';
 
 import './index.css';
 import MonacoIntegrator from '../../utils/MonacoIntegrator';
 import MonacoThemes from '../../utils/MonacoThemes';
-import { Icon, AnimatedCircularLoader } from '../../atoms';
+import { withFirebase } from '../../utils/FirebaseConnector';
+import { Icon, AnimatedCircularLoader, withNotificationBanner } from '../../atoms';
+import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 
 interface IProps {
   value?: string;
@@ -12,6 +22,8 @@ interface IProps {
   theme?: 'light' | 'dark' | 'ace' | 'night-dark';
   language?: string;
   classes: any;
+  firebase: any;
+  setNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
 }
 
 const styles = {
@@ -29,6 +41,37 @@ const styles = {
       background: '#0D47A1',
     },
   },
+  signInDialog: {
+    width: 600,
+  },
+  signInDialogTitle: {
+    marginBottom: '5px',
+    padding: '15px 24px',
+    borderBottom: '1px solid #e0e0e0',
+    '& span': {
+      fontSize: 14,
+      fontFamily: 'Eina SemiBold',
+    },
+  },
+  signInDialogContent: {
+    fontSize: 15,
+  },
+  signInCancelButton: {
+    width: 100,
+    marginRight: 5,
+    fontSize: 13,
+    fontFamily: 'Eina SemiBold',
+  },
+  signInWithGithubModalButton: {
+    background: '#0076c6',
+    color: '#fff',
+    fontSize: 13,
+    fontFamily: 'Eina SemiBold',
+    width: 100,
+    '&:hover': {
+      background: '#0076c6',
+    },
+  },
 } as any;
 
 const MonacoEditor: React.FC<IProps> = ({
@@ -37,9 +80,12 @@ const MonacoEditor: React.FC<IProps> = ({
   theme = 'vs-dark',
   language = 'javascript',
   classes,
+  firebase,
+  setNotificationSettings,
 }) => {
-  const [isMonacoReady, setIsMonacoReady] = useState(false);
-  const [isEditorReady, setIsEditorReady] = useState(false);
+  const [isMonacoReady, setIsMonacoReady] = useState<boolean>(false);
+  const [isEditorReady, setIsEditorReady] = useState<boolean>(false);
+  const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
   const [sourceCode, setSourceCode] = useState('');
   const monacoRef = useRef<any>(null);
   const editorRef = useRef<any>(null);
@@ -50,6 +96,20 @@ const MonacoEditor: React.FC<IProps> = ({
     const model = monacoRef.current.editor.createModel(value, language);
     editorRef.current = monacoRef.current.editor.create(nodeRef.current, { automaticLayout: true });
     editorRef.current.setModel(model);
+    editorRef.current.onKeyDown(function(event: any) {
+      if ((event.ctrlKey === true || event.metaKey === true) && event.keyCode === 49) {
+        event.preventDefault();
+        let currentUser = firebase.getCurrentUser();
+        if (currentUser) {
+          /**
+           * @todo
+           * Save the code
+           */
+        } else {
+          setIsSignInModalVisible(true);
+        }
+      }
+    });
 
     for (let themeName in MonacoThemes) {
       monacoRef.current.editor.defineTheme(themeName, MonacoThemes[themeName]);
@@ -61,7 +121,7 @@ const MonacoEditor: React.FC<IProps> = ({
     });
     editorRef.current.focus();
     setIsEditorReady(true);
-  }, [language, theme, value]);
+  }, [language, theme, value, firebase]);
 
   useEffect(() => {
     MonacoIntegrator.init()
@@ -108,6 +168,25 @@ const MonacoEditor: React.FC<IProps> = ({
     onRunSourceCode && onRunSourceCode(sourceCode);
   }
 
+  function handleCloseSignInModal() {
+    setIsSignInModalVisible(false);
+  }
+
+  function handleSignInWithGithub() {
+    firebase
+      .signInWithGithub()
+      .then(function(result: any) {
+        /**
+         * @todo
+         * Save the users code in firestore
+         */
+        setIsSignInModalVisible(false);
+      })
+      .catch(function(error: any) {
+        setNotificationSettings(error.message, 'danger', 'long');
+      });
+  }
+
   function renderLoading() {
     return isEditorReady === false ? (
       <div
@@ -119,6 +198,35 @@ const MonacoEditor: React.FC<IProps> = ({
         <AnimatedCircularLoader />
       </div>
     ) : null;
+  }
+
+  function renderDialogModal() {
+    return (
+      <Dialog
+        open={isSignInModalVisible}
+        onClose={handleCloseSignInModal}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        classes={{ paper: classes.signInDialog }}>
+        <DialogTitle id="alert-dialog-title" className={classes.signInDialogTitle}>
+          SignIn via Github
+        </DialogTitle>
+        <DialogContent classes={{ root: classes.signInDialogContent }}>
+          You need to signin via github to save your code.
+        </DialogContent>
+        <DialogActions>
+          <Button className={classes.signInCancelButton} onClick={handleCloseSignInModal}>
+            Cancel
+          </Button>
+          <Button
+            className={classes.signInWithGithubModalButton}
+            onClick={handleSignInWithGithub}
+            autoFocus>
+            Sign In
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
   }
 
   return (
@@ -133,8 +241,9 @@ const MonacoEditor: React.FC<IProps> = ({
         classes={{ root: classes.monacoEditorRunButton }}>
         <Icon name="play" className="monaco-editor-run-button-icon" />
       </Fab>
+      {renderDialogModal()}
     </>
   );
 };
 
-export default React.memo(withStyles(styles)(MonacoEditor));
+export default React.memo(withNotificationBanner(withFirebase(withStyles(styles)(MonacoEditor))));
