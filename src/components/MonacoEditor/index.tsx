@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { Button, withStyles } from '@material-ui/core';
+import { Fab, withStyles } from '@material-ui/core';
 
 import './index.css';
 import MonacoIntegrator from '../../utils/MonacoIntegrator';
@@ -16,17 +16,14 @@ interface IProps {
 
 const styles = {
   monacoEditorRunButton: {
-    height: 50,
-    width: 50,
-    minWidth: 50,
-    borderRadius: '50%',
     background: '#0076C6',
     position: 'absolute',
     bottom: 15,
-    right: 25,
+    right: '50%',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 2000,
     cursor: 'pointer',
     '&:hover': {
       background: '#0D47A1',
@@ -125,16 +122,18 @@ const MonacoEditor: React.FC<IProps> = ({
   }
 
   return (
-    <div className="monaco-editor__container pt-12">
-      {renderLoading()}
-      <div ref={nodeRef} className="monaco-editor-editor" />
-      <Button
+    <>
+      <div className="monaco-editor__container pt-12">
+        {renderLoading()}
+        <div ref={nodeRef} className="monaco-editor-editor" />
+      </div>
+      <Fab
         onClick={handleSourceCodeExecution}
-        variant="contained"
+        variant="round"
         classes={{ root: classes.monacoEditorRunButton }}>
         <Icon name="play" className="monaco-editor-run-button-icon" />
-      </Button>
-    </div>
+      </Fab>
+    </>
   );
 };
 
