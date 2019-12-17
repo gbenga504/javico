@@ -26,8 +26,12 @@ export default class Firebase {
     return this.auth.signInWithPopup(this.provider);
   };
 
-  getCurrentUser = (handleUserChanged: Function): any => {
+  onAuthStateChanged = (handleUserChanged: Function): any => {
     return this.auth.onAuthStateChanged(handleUserChanged);
+  };
+
+  getCurrentUser = () => {
+    return this.auth.currentUser;
   };
 
   logout = (): Promise<any> => {

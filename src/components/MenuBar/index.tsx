@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Tooltip, Menu, MenuItem, Button, withStyles } from '@material-ui/core';
 
 import './index.css';
-import { Typography, Icon, withNotificationBanner } from '../../atoms';
+import { Icon, withNotificationBanner } from '../../atoms';
 import { withFirebase } from '../../utils/FirebaseConnector';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 
@@ -67,7 +67,7 @@ const MenuBar: React.FC<IProps> = ({ classes, firebase, setNotificationSettings 
   }, []);
 
   useEffect(() => {
-    firebase.getCurrentUser(function(user: any) {
+    firebase.onAuthStateChanged(function(user: any) {
       if (user) {
         setCurrentUser(user);
       } else {
@@ -153,13 +153,6 @@ const MenuBar: React.FC<IProps> = ({ classes, firebase, setNotificationSettings 
           Logout
         </MenuItem>
       </Menu>
-      <Tooltip title={'placement.js'} placement="bottom" enterDelay={100}>
-        <div className="menubar__title flex-column center mt-16 mb-8">
-          <div className="menubar__title-text flex-column center">
-            <Typography thickness="semi-bold">P</Typography>
-          </div>
-        </div>
-      </Tooltip>
       {iconList(fullScreenMode).map(el => {
         return el.text === 'Sign in' && !!currentUser === true ? null : (
           <div

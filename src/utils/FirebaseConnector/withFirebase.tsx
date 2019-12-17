@@ -2,7 +2,7 @@ import React from 'react';
 
 import FirebaseContext from './FirebaseContext';
 
-const withFirebase = (Component: any) => (props: React.Props<any>) => (
+const withFirebase = (Component: any) => (props: any) => (
   <FirebaseContext.Consumer>
     {firebase => <Component {...props} firebase={firebase} />}
   </FirebaseContext.Consumer>
