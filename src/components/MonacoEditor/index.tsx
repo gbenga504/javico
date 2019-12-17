@@ -4,7 +4,9 @@ import { Fab, withStyles } from '@material-ui/core';
 import './index.css';
 import MonacoIntegrator from '../../utils/MonacoIntegrator';
 import MonacoThemes from '../../utils/MonacoThemes';
+import { withFirebase } from '../../utils/FirebaseConnector';
 import { Icon, AnimatedCircularLoader } from '../../atoms';
+import SignInViaGithubModal from '../SignInViaGithubModal';
 
 interface IProps {
   value?: string;
@@ -12,6 +14,7 @@ interface IProps {
   theme?: 'light' | 'dark' | 'ace' | 'night-dark';
   language?: string;
   classes: any;
+  firebase: any;
 }
 
 const styles = {
@@ -37,9 +40,11 @@ const MonacoEditor: React.FC<IProps> = ({
   theme = 'vs-dark',
   language = 'javascript',
   classes,
+  firebase,
 }) => {
-  const [isMonacoReady, setIsMonacoReady] = useState(false);
-  const [isEditorReady, setIsEditorReady] = useState(false);
+  const [isMonacoReady, setIsMonacoReady] = useState<boolean>(false);
+  const [isEditorReady, setIsEditorReady] = useState<boolean>(false);
+  const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
   const [sourceCode, setSourceCode] = useState('');
   const monacoRef = useRef<any>(null);
   const editorRef = useRef<any>(null);
@@ -50,6 +55,20 @@ const MonacoEditor: React.FC<IProps> = ({
     const model = monacoRef.current.editor.createModel(value, language);
     editorRef.current = monacoRef.current.editor.create(nodeRef.current, { automaticLayout: true });
     editorRef.current.setModel(model);
+    editorRef.current.onKeyDown(function(event: any) {
+      if ((event.ctrlKey === true || event.metaKey === true) && event.keyCode === 49) {
+        event.preventDefault();
+        let currentUser = firebase.getCurrentUser();
+        if (currentUser) {
+          /**
+           * @todo
+           * Save the code
+           */
+        } else {
+          setIsSignInModalVisible(true);
+        }
+      }
+    });
 
     for (let themeName in MonacoThemes) {
       monacoRef.current.editor.defineTheme(themeName, MonacoThemes[themeName]);
@@ -61,7 +80,7 @@ const MonacoEditor: React.FC<IProps> = ({
     });
     editorRef.current.focus();
     setIsEditorReady(true);
-  }, [language, theme, value]);
+  }, [language, theme, value, firebase]);
 
   useEffect(() => {
     MonacoIntegrator.init()
@@ -108,6 +127,17 @@ const MonacoEditor: React.FC<IProps> = ({
     onRunSourceCode && onRunSourceCode(sourceCode);
   }
 
+  function handleSaveDeveloperCode() {
+    /**
+     * @todo
+     * Save the developer code here
+     */
+  }
+
+  function handleCloseSignInModal() {
+    setIsSignInModalVisible(false);
+  }
+
   function renderLoading() {
     return isEditorReady === false ? (
       <div
@@ -133,8 +163,13 @@ const MonacoEditor: React.FC<IProps> = ({
         classes={{ root: classes.monacoEditorRunButton }}>
         <Icon name="play" className="monaco-editor-run-button-icon" />
       </Fab>
+      <SignInViaGithubModal
+        visible={isSignInModalVisible}
+        onRequestClose={handleCloseSignInModal}
+        onSignInSuccess={handleSaveDeveloperCode}
+      />
     </>
   );
 };
 
-export default React.memo(withStyles(styles)(MonacoEditor));
+export default React.memo(withFirebase(withStyles(styles)(MonacoEditor)));
