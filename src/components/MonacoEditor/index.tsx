@@ -5,6 +5,7 @@ import './index.css';
 import MonacoIntegrator from '../../utils/MonacoIntegrator';
 import MonacoThemes from '../../utils/MonacoThemes';
 import { Icon, AnimatedCircularLoader } from '../../atoms';
+import { any } from 'prop-types';
 
 interface IProps {
   value?: string;
@@ -40,6 +41,8 @@ const MonacoEditor: React.FC<IProps> = ({
 }) => {
   const [isMonacoReady, setIsMonacoReady] = useState(false);
   const [isEditorReady, setIsEditorReady] = useState(false);
+  const [displayComment, setDisplayComment] = useState(false);
+  const [mousePosition, setMousePosition] = useState<any>({});
   const [sourceCode, setSourceCode] = useState('');
   const monacoRef = useRef<any>(null);
   const editorRef = useRef<any>(null);
@@ -50,6 +53,7 @@ const MonacoEditor: React.FC<IProps> = ({
     const model = monacoRef.current.editor.createModel(value, language);
     editorRef.current = monacoRef.current.editor.create(nodeRef.current, { automaticLayout: true });
     editorRef.current.setModel(model);
+    editorRef.current.onMouseUp(highlightText);
 
     for (let themeName in MonacoThemes) {
       monacoRef.current.editor.defineTheme(themeName, MonacoThemes[themeName]);
@@ -108,6 +112,43 @@ const MonacoEditor: React.FC<IProps> = ({
     onRunSourceCode && onRunSourceCode(sourceCode);
   }
 
+  function colorHighlight(selection: any) {
+    const { endColumn, endLineNumber, startColumn, startLineNumber } = selection;
+    editorRef.current.deltaDecorations(
+      [],
+      [
+        {
+          range: new monacoRef.current.Range(
+            startLineNumber,
+            startColumn,
+            endLineNumber,
+            endColumn,
+          ),
+          options: { inlineClassName: 'UPDATE' },
+        },
+        {
+          range: new monacoRef.current.Range(startLineNumber, 1, endLineNumber, 1000),
+          options: { inlineClassName: 'INSERT' },
+        },
+      ],
+    );
+  }
+
+  function showCommentBox(position: any) {
+    setDisplayComment(true);
+    setMousePosition(position);
+  }
+
+  function highlightText(e: any) {
+    const selection = editorRef.current.getSelection();
+    const value = editorRef.current.getModel().getValueInRange(selection);
+    if (!!value) {
+      colorHighlight(selection);
+      showCommentBox(e.event.pos);
+      console.log('selection.startLineNumber ', selection, value, e.event.pos);
+    }
+  }
+
   function renderLoading() {
     return isEditorReady === false ? (
       <div
@@ -133,6 +174,15 @@ const MonacoEditor: React.FC<IProps> = ({
         classes={{ root: classes.monacoEditorRunButton }}>
         <Icon name="play" className="monaco-editor-run-button-icon" />
       </Fab>
+      {displayComment && (
+        <div
+          className="monaco-editor__code-comment"
+          style={{
+            position: 'absolute',
+            top: mousePosition.y + 20,
+            left: 150,
+          }}></div>
+      )}
     </>
   );
 };

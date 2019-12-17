@@ -14,3 +14,25 @@
   font-size: 20px;
   margin-left: 2px;
 }
+
+.monaco-editor__code-comment {
+  background-color: green;
+  height: 100px;
+  width: 500px;
+}
+
+.INSERT {
+  background-color: red;
+}
+
+.UPDATE {
+  background-color: yellow;
+}
+
+.UPDATE:hover {
+  padding: 3px;
+}
+
+.INSERT:hover {
+  padding: 3px;
+}
