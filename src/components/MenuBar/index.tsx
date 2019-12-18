@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Tooltip, Menu, MenuItem, Button, withStyles } from '@material-ui/core';
+import { Tooltip, Menu, MenuItem, Button } from '@material-ui/core';
 import { TwitterShareButton } from 'react-share';
 
 import './index.css';
@@ -8,7 +8,6 @@ import { withFirebase } from '../../utils/FirebaseConnector';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 
 interface IProps {
-  classes: any;
   firebase: any;
   setNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
 }
@@ -41,17 +40,7 @@ const iconList = (fullScreenMode: boolean) => [
   { text: 'Light theme', action: '', icon: 'ios-bulb' },
 ];
 
-const styles = {
-  menuItemList: {
-    padding: 0,
-  },
-  menuItem: {
-    fontFamily: 'Eina SemiBold',
-    fontSize: 14,
-  },
-};
-
-const MenuBar: React.FC<IProps> = ({ classes, firebase, setNotificationSettings }) => {
+const MenuBar: React.FC<IProps> = ({ firebase, setNotificationSettings }) => {
   const [fullScreenMode, setFullScreenMode] = useState<boolean>(!!fullScreenEnabled);
   const [menuElement, setMenuElement] = React.useState<null | HTMLElement>(null);
   const [currentUser, setCurrentUser] = React.useState<any>(null);
@@ -149,11 +138,8 @@ const MenuBar: React.FC<IProps> = ({ classes, firebase, setNotificationSettings 
         anchorEl={menuElement}
         keepMounted
         open={Boolean(menuElement)}
-        onClose={handleCloseMenu}
-        classes={{ list: classes.menuItemList }}>
-        <MenuItem classes={{ root: classes.menuItem }} onClick={handleLogout}>
-          Logout
-        </MenuItem>
+        onClose={handleCloseMenu}>
+        <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
       {iconList(fullScreenMode).map(el => {
         return el.text === 'Sign in' && !!currentUser === true ? null : (
@@ -183,4 +169,4 @@ const MenuBar: React.FC<IProps> = ({ classes, firebase, setNotificationSettings 
   );
 };
 
-export default React.memo(withNotificationBanner(withFirebase(withStyles(styles)(MenuBar))));
+export default React.memo(withNotificationBanner(withFirebase(MenuBar)));

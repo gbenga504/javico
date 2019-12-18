@@ -34,7 +34,7 @@
 }
 
 .menubar__title {
-  font-size: 18px;
+  font-size: var(--large-font);
   color: var(--white-color);
 }
 

@@ -21,36 +21,8 @@ interface IProps {
 }
 
 const styles = {
-  signInDialog: {
-    width: 600,
-  },
-  signInDialogTitle: {
-    marginBottom: '5px',
-    padding: '15px 24px',
-    borderBottom: '1px solid #e0e0e0',
-    '& span': {
-      fontSize: 14,
-      fontFamily: 'Eina SemiBold',
-    },
-  },
-  signInDialogContent: {
-    fontSize: 15,
-  },
   signInCancelButton: {
-    width: 100,
     marginRight: 5,
-    fontSize: 13,
-    fontFamily: 'Eina SemiBold',
-  },
-  signInWithGithubModalButton: {
-    background: '#0076c6',
-    color: '#fff',
-    fontSize: 13,
-    fontFamily: 'Eina SemiBold',
-    width: 100,
-    '&:hover': {
-      background: '#0076c6',
-    },
   },
 } as any;
 
@@ -79,22 +51,14 @@ const SignInViaGithubModal: React.FC<IProps> = ({
       open={visible}
       onClose={onRequestClose}
       aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-      classes={{ paper: classes.signInDialog }}>
-      <DialogTitle id="alert-dialog-title" className={classes.signInDialogTitle}>
-        SignIn via Github
-      </DialogTitle>
-      <DialogContent classes={{ root: classes.signInDialogContent }}>
-        You need to signin via github to save your code.
-      </DialogContent>
+      aria-describedby="alert-dialog-description">
+      <DialogTitle id="alert-dialog-title">SignIn via Github</DialogTitle>
+      <DialogContent>You need to signin via github to save your code.</DialogContent>
       <DialogActions>
         <Button className={classes.signInCancelButton} onClick={onRequestClose}>
           Cancel
         </Button>
-        <Button
-          className={classes.signInWithGithubModalButton}
-          onClick={handleSignInWithGithub}
-          autoFocus>
+        <Button color="primary" variant="contained" onClick={handleSignInWithGithub} autoFocus>
           Sign In
         </Button>
       </DialogActions>

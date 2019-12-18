@@ -11,6 +11,6 @@
 
 .monaco-editor-run-button-icon {
   color: var(--white-color);
-  font-size: 20px;
+  font-size: var(--xlarge-font);
   margin-left: 2px;
 }
