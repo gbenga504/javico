@@ -17,19 +17,19 @@
 .console__terminal-log-messages {
   padding: 3px 15px;
   border-bottom: 1px solid var(--dark-theme-light-border-color);
-  font-size: 12.5px !important;
+  font-size: var(--terminal-font) !important;
 }
 
 .console__terminal-warning-messages {
   padding: 3px 15px;
   border-bottom: 1px solid var(--warning-light-color);
-  font-size: 12.5px !important;
+  font-size: var(--terminal-font) !important;
   white-space: pre-wrap;
   background: var(--warning-dark-color);
 }
 
 .console__terminal-warning-icon {
-  font-size: 13px;
+  font-size: var(--small-font);
   margin-right: 6px;
   color: var(--warning-light-color);
 }
@@ -37,13 +37,13 @@
 .console__terminal-error-messages {
   padding: 3px 15px;
   border-bottom: 1px solid var(--error-light-color);
-  font-size: 12.5px !important;
+  font-size: var(--terminal-font) !important;
   white-space: pre-wrap;
   background: var(--error-dark-color);
 }
 
 .console__terminal-error-icon {
-  font-size: 14px;
+  font-size: var(--base-font);
   margin-right: 6px;
   color: var(--error-light-color);
 }
