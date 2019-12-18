@@ -3,6 +3,7 @@ import { Paper, withStyles } from '@material-ui/core';
 
 import { Icon, Typography } from '../index';
 import { INotificationBannerProps } from './typeDefinition';
+import { color, fontsize } from '../../Css';
 
 interface IProps extends INotificationBannerProps {
   classes: any;
@@ -17,14 +18,14 @@ const styles = {
     maxWidth: 350,
     minHeight: 80,
     zIndex: 1000,
-    background: '#1e1e1e',
+    background: color.darkThemeBlack,
     display: 'flex',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
     transition: 'bottom 1s',
     '& ion-icon': {
-      fontSize: '20px',
-      color: '#fff',
+      fontSize: fontsize.xlarge,
+      color: color.white,
       cursor: 'pointer',
     },
   },
@@ -35,7 +36,7 @@ const styles = {
     display: 'flex',
   },
   text: {
-    fontSize: 12,
+    fontSize: fontsize.xsmall,
     marginLeft: 8,
   },
 } as any;
@@ -71,14 +72,14 @@ const DefaultNotificationView: React.FC<IProps> = ({
   function getPaperStyle() {
     switch (style) {
       case 'danger':
-        return { background: '#DD2C00' };
+        return { background: color.alertDanger };
       case 'warning':
-        return { background: 'rgb(247, 168, 41)' }; //Mapped to --warning-light-color
+        return { background: color.warningLight };
       case 'success':
-        return { background: '#1B5E20' };
+        return { background: color.success };
       case 'info':
       default:
-        return { background: '#1e1e1e' };
+        return { background: color.darkThemeBlack };
     }
   }
 
@@ -97,7 +98,7 @@ const DefaultNotificationView: React.FC<IProps> = ({
         root: `${classes.container} ${isBannerHidden === false && classes.containerShow}`,
       }}>
       <div className={classes.leftContainer}>
-        {renderIcon('ios-alert', { color: style === 'info' ? '#0076c6' : '#fff' })}
+        {renderIcon('ios-alert', { color: style === 'info' ? color.themeBlue : color.white })}
         <Typography className={classes.text}>{text}</Typography>
       </div>
       <span>{renderIcon('ios-close', null, handleCloseBanner)}</span>

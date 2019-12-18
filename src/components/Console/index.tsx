@@ -1,22 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
 import './index.css';
 import { Typography, Icon } from '../../atoms';
-
-const styles = {
-  consoleTabWrapper: {
-    color: '#fff',
-    fontSize: 11,
-    fontFamily: 'Eina semiBold',
-  },
-  consoleTabsindicator: {
-    backgroundColor: '#fff',
-    height: 1,
-  },
-};
 
 const MessageType = {
   ERROR: `error`,
@@ -34,7 +21,7 @@ function a11yProps(index: number) {
 type TerminalMessageType = { type: string; message: string | any };
 type TerminalMessagesType = TerminalMessageType[];
 
-const Console: React.FC<{ classes: any; sourceCode: string }> = ({ classes, sourceCode }) => {
+const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
   const [currentTab, setCurrentTab] = useState(0);
   const workerRef = useRef<any>(null);
   const [terminalMessages, setTerminalMessages] = useState<TerminalMessagesType>([]);
@@ -109,17 +96,13 @@ const Console: React.FC<{ classes: any; sourceCode: string }> = ({ classes, sour
 
   return (
     <section className="console">
-      <Tabs
-        value={currentTab}
-        onChange={handleTabChange}
-        aria-label="console tabs"
-        classes={{ indicator: classes.consoleTabsindicator }}>
-        <Tab label="PROBLEMS" {...a11yProps(0)} classes={{ wrapper: classes.consoleTabWrapper }} />
-        <Tab label="TERMINAL" {...a11yProps(1)} classes={{ wrapper: classes.consoleTabWrapper }} />
+      <Tabs value={currentTab} onChange={handleTabChange} aria-label="console tabs">
+        <Tab label="PROBLEMS" {...a11yProps(0)} />
+        <Tab label="TERMINAL" {...a11yProps(1)} />
       </Tabs>
       {renderTerminal()}
     </section>
   );
 };
 
-export default withStyles(styles)(Console);
+export default Console;
