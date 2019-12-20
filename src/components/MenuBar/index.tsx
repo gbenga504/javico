@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Tooltip, Menu, MenuItem, Button, withStyles } from '@material-ui/core';
+import { Tooltip, Menu, MenuItem, Button } from '@material-ui/core';
+import { TwitterShareButton } from 'react-share';
 
 import './index.css';
 import { Icon, withNotificationBanner } from '../../atoms';
@@ -7,7 +8,6 @@ import { withFirebase } from '../../utils/FirebaseConnector';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 
 interface IProps {
-  classes: any;
   firebase: any;
   setNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
 }
@@ -35,25 +35,16 @@ const iconList = (fullScreenMode: boolean) => [
     action: 'toggleFullScreen',
     icon: fullScreenMode === false ? 'ios-expand' : 'ios-contract',
   },
-  { text: 'Share code', action: '', icon: 'ios-share-alt' },
+  { text: 'Share code', action: 'shareCodeViaTwitter', icon: 'ios-share-alt' },
   { text: 'Sign in', action: 'signInWithGithub', icon: 'logo-github' },
   { text: 'Light theme', action: '', icon: 'ios-bulb' },
 ];
 
-const styles = {
-  menuItemList: {
-    padding: 0,
-  },
-  menuItem: {
-    fontFamily: 'Eina SemiBold',
-    fontSize: 14,
-  },
-};
-
-const MenuBar: React.FC<IProps> = ({ classes, firebase, setNotificationSettings }) => {
+const MenuBar: React.FC<IProps> = ({ firebase, setNotificationSettings }) => {
   const [fullScreenMode, setFullScreenMode] = useState<boolean>(!!fullScreenEnabled);
   const [menuElement, setMenuElement] = React.useState<null | HTMLElement>(null);
   const [currentUser, setCurrentUser] = React.useState<any>(null);
+  const DEVELOPER_CODE_URL = 'https://www.google.com'; //@todo This needs to be changed to the actual developer code
 
   useEffect(() => {
     window.addEventListener('resize', function() {
@@ -147,11 +138,8 @@ const MenuBar: React.FC<IProps> = ({ classes, firebase, setNotificationSettings 
         anchorEl={menuElement}
         keepMounted
         open={Boolean(menuElement)}
-        onClose={handleCloseMenu}
-        classes={{ list: classes.menuItemList }}>
-        <MenuItem classes={{ root: classes.menuItem }} onClick={handleLogout}>
-          Logout
-        </MenuItem>
+        onClose={handleCloseMenu}>
+        <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
       {iconList(fullScreenMode).map(el => {
         return el.text === 'Sign in' && !!currentUser === true ? null : (
@@ -159,11 +147,21 @@ const MenuBar: React.FC<IProps> = ({ classes, firebase, setNotificationSettings 
             key={el.icon}
             className="flex-row center menubar__icon"
             onClick={() => triggerAction(el.action)}>
-            <Tooltip title={el.text} placement="bottom" enterDelay={100}>
-              <span className="flex-row">
-                <Icon name={el.icon} />
-              </span>
-            </Tooltip>
+            {el.action === 'shareCodeViaTwitter' ? (
+              <TwitterShareButton url={DEVELOPER_CODE_URL}>
+                <Tooltip title={el.text} placement="bottom" enterDelay={100}>
+                  <span className="flex-row">
+                    <Icon name={el.icon} />
+                  </span>
+                </Tooltip>
+              </TwitterShareButton>
+            ) : (
+              <Tooltip title={el.text} placement="bottom" enterDelay={100}>
+                <span className="flex-row">
+                  <Icon name={el.icon} />
+                </span>
+              </Tooltip>
+            )}
           </div>
         );
       })}
@@ -171,4 +169,4 @@ const MenuBar: React.FC<IProps> = ({ classes, firebase, setNotificationSettings 
   );
 };
 
-export default React.memo(withNotificationBanner(withFirebase(withStyles(styles)(MenuBar))));
+export default React.memo(withNotificationBanner(withFirebase(MenuBar)));

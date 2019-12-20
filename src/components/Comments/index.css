@@ -28,15 +28,15 @@
 }
 
 .comment__time {
-  font-size: 12px;
+  font-size: var(--xsmall-font);
 }
 
 .comment__user-comment {
-  font-size: 13px;
+  font-size:  var(--small-font);
 }
 
 .comment__num-of-reply {
-  font-size: 12px;
+  font-size:  var(--xsmall-font);
   color: var(--theme-blue-color) !important;
   cursor: pointer;
 }
@@ -47,7 +47,7 @@
 
 .reply__username,
 .reply__user-reply {
-  font-size: 12px;
+  font-size:  var(--xsmall-font);
 }
 
 .reply__user-image {
@@ -88,7 +88,7 @@
   width: 80%;
   border: 1px solid transparent;
   background-color: transparent;
-  font-size: 14px;
+  font-size:  var(--base-font);
 }
 
 .comment__input-send-icon {

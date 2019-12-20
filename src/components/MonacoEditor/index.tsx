@@ -21,18 +21,10 @@ interface IProps {
 
 const styles = {
   monacoEditorRunButton: {
-    background: '#0076C6',
     position: 'absolute',
     bottom: 15,
     right: '50%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
     zIndex: 2000,
-    cursor: 'pointer',
-    '&:hover': {
-      background: '#0D47A1',
-    },
   },
 } as any;
 
@@ -255,6 +247,7 @@ const MonacoEditor: React.FC<IProps> = ({
         <div onKeyUp={handleKeyUP} ref={nodeRef} className="monaco-editor-editor" />
       </div>
       <Fab
+        color="primary"
         onClick={handleSourceCodeExecution}
         variant="round"
         classes={{ root: classes.monacoEditorRunButton }}>
