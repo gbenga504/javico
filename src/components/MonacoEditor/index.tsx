@@ -71,7 +71,7 @@ const MonacoEditor: React.FC<IProps> = ({
            * Save the code
            */
         } else {
-          setIsSignInModalVisible(true);
+          openSignInModal();
         }
       }
     });
@@ -195,6 +195,10 @@ const MonacoEditor: React.FC<IProps> = ({
     setIsSignInModalVisible(false);
   }
 
+  function openSignInModal() {
+    setIsSignInModalVisible(true);
+  }
+
   function handleKeyUP() {
     if (displayInitCommentIcon) {
       setInitDisplayCommentIcon(false);
@@ -255,7 +259,8 @@ const MonacoEditor: React.FC<IProps> = ({
       </Fab>
       {displayComment && (
         <InlineCodeComment
-          hideCommentBox={hideCommentBox}
+          onHideCommentBox={hideCommentBox}
+          onOpenSignInModal={openSignInModal}
           user={user}
           mousePosition={mousePosition}
           displayComment={displayComment}

@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { withStyles, Paper, Button } from '@material-ui/core';
 import { withFirebase } from '../utils/FirebaseConnector';
 import { IBannerStyle, IDuration } from '../atoms/NotificationBanner';
+import userAvatar from '../assets/images/user.svg';
 import { withNotificationBanner } from '../atoms';
 
 interface IProps {
@@ -9,9 +10,10 @@ interface IProps {
   visible: boolean;
   displayComment: boolean;
   user: any;
-  hideCommentBox: any;
+  onHideCommentBox: any;
   mousePosition: any;
   onRequestClose: () => null;
+  onOpenSignInModal: () => null;
   onSignInSuccess: (user: any) => null;
   firebase: any;
   setNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
@@ -51,7 +53,13 @@ const styles = {
   },
 } as any;
 
-const InlineCodeComment: React.FC<IProps> = ({ classes, user, hideCommentBox, mousePosition }) => {
+const InlineCodeComment: React.FC<IProps> = ({
+  classes,
+  user,
+  onOpenSignInModal,
+  onHideCommentBox,
+  mousePosition,
+}) => {
   const [comment, setComment] = useState('');
   const commentRef = useRef<any>(null);
 
@@ -59,16 +67,19 @@ const InlineCodeComment: React.FC<IProps> = ({ classes, user, hideCommentBox, mo
     setComment(e.target.value);
   }
 
-  function submitComment(e: any) {
+  function handleSubmitComment(e: any) {
     e.preventDefault();
     if (!commentRef.current.reportValidity()) {
       return;
     }
+    if (!user) {
+      onOpenSignInModal();
+    }
   }
 
-  function cancelComment(e: any) {
+  function handleCancelComment(e: any) {
     setComment('');
-    hideCommentBox();
+    onHideCommentBox();
   }
 
   return (
@@ -79,13 +90,18 @@ const InlineCodeComment: React.FC<IProps> = ({ classes, user, hideCommentBox, mo
       style={{
         top: mousePosition.y + 20,
       }}>
-      <div className="m-12 flex-row">
+      <form ref={commentRef} className="m-12 flex-row">
         <div
           style={{
             borderRadius: '50%',
             margin: '5px 20px 0 10px',
           }}>
-          <img src={user.photoURL} alt="User commenting" className="" style={styles.commentUser} />
+          <img
+            src={user ? user.photoURL : userAvatar}
+            alt="User commenting"
+            className=""
+            style={styles.commentUser}
+          />
         </div>
 
         <div className="full-width">
@@ -100,15 +116,15 @@ const InlineCodeComment: React.FC<IProps> = ({ classes, user, hideCommentBox, mo
             </div>
           </div>
           <div className="mt-12">
-            <Button className={classes.submitButton} onClick={submitComment}>
+            <Button className={classes.submitButton} onClick={handleSubmitComment}>
               Comment
             </Button>
-            <Button className={classes.commentCancelButton} onClick={cancelComment}>
+            <Button className={classes.commentCancelButton} onClick={handleCancelComment}>
               Cancel
             </Button>
           </div>
         </div>
-      </div>
+      </form>
     </Paper>
   );
 };
