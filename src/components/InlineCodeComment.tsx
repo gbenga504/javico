@@ -5,7 +5,7 @@ import { withFirebase } from '../utils/FirebaseConnector';
 import { IBannerStyle, IDuration } from '../atoms/NotificationBanner';
 import userAvatar from '../assets/images/user.svg';
 import { withNotificationBanner } from '../atoms';
-import { useStyles } from '../Css';
+import { useStyles, fonts, fontsize } from '../Css';
 
 interface IProps {
   classes: any;
@@ -90,7 +90,7 @@ const InlineCodeComment: React.FC<IProps> = ({
         style={{
           top: mousePosition.y + 20,
         }}>
-        <form ref={commentRef} className="m-12 flex-row">
+        <form ref={commentRef} onSubmit={e => e.preventDefault()} className="m-12 flex-row">
           <div
             style={{
               borderRadius: '50%',
@@ -107,12 +107,20 @@ const InlineCodeComment: React.FC<IProps> = ({
           <div className="full-width">
             <div className="relative">
               <div className="monaco-editor__inline-comment left show">
-                <input
-                  type="text"
+                <textarea
                   onChange={handleChange}
+                  required={true}
                   value={comment}
-                  placeholder="Drop your comment"
-                />
+                  autoFocus={true}
+                  rows={7}
+                  style={{
+                    width: '100%',
+                    border: 0,
+                    fontFamily: fonts.regular,
+                    padding: 5,
+                    fontSize: fontsize.base,
+                  }}
+                  placeholder="Drop your comment"></textarea>
               </div>
             </div>
             <div className={`${classes.commentButtonContainer} mt-12`}>

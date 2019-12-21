@@ -36,7 +36,7 @@ const MonacoEditor: React.FC<IProps> = ({
   firebase,
 }) => {
   const [displayComment, setDisplayComment] = useState<boolean>(false);
-  const [displayInitCommentIcon, setInitDisplayCommentIcon] = useState<boolean>(false);
+  const [displayCommentIcon, setDisplayCommentIcon] = useState<boolean>(false);
   const [mousePosition, setMousePosition] = useState<any>({});
   const [isMonacoReady, setIsMonacoReady] = useState<boolean>(false);
   const [isEditorReady, setIsEditorReady] = useState<boolean>(false);
@@ -130,7 +130,7 @@ const MonacoEditor: React.FC<IProps> = ({
 
   useEffect(() => {
     if (selectionValue) {
-      setInitDisplayCommentIcon(true);
+      setDisplayCommentIcon(true);
     }
   }, [selectionValue, selectionRange]);
 
@@ -163,7 +163,7 @@ const MonacoEditor: React.FC<IProps> = ({
   function handleShowCommentBox() {
     colorHighlight();
     setDisplayComment(true);
-    setInitDisplayCommentIcon(false);
+    setDisplayCommentIcon(false);
   }
 
   function handleHideCommentBox() {
@@ -176,7 +176,7 @@ const MonacoEditor: React.FC<IProps> = ({
   function highlightText(e: any) {
     const selection = editorRef.current.getSelection();
     const value = editorRef.current.getModel().getValueInRange(selection);
-    if (!!value) {
+    if (!!value && value.trim().length > 0) {
       setSelectionRange(selection);
       setMousePosition(e.event.pos);
       setSelectionValue(value);
@@ -198,9 +198,9 @@ const MonacoEditor: React.FC<IProps> = ({
     setIsSignInModalVisible(true);
   }
 
-  function handleKeyUP() {
-    if (displayInitCommentIcon) {
-      setInitDisplayCommentIcon(false);
+  function handleKeyUp() {
+    if (displayCommentIcon) {
+      setDisplayCommentIcon(false);
     }
   }
 
@@ -218,7 +218,7 @@ const MonacoEditor: React.FC<IProps> = ({
   }
 
   function renderCommentIcon() {
-    if (!displayInitCommentIcon) return null;
+    if (!displayCommentIcon) return null;
     return (
       <div
         onClick={handleShowCommentBox}
@@ -247,7 +247,7 @@ const MonacoEditor: React.FC<IProps> = ({
     <>
       <div className="monaco-editor__container pt-12">
         {renderLoading()}
-        <div onKeyUp={handleKeyUP} ref={nodeRef} className="monaco-editor-editor" />
+        <div onKeyUp={handleKeyUp} ref={nodeRef} className="monaco-editor-editor" />
         {displayComment && (
           <InlineCodeComment
             onHideCommentBox={handleHideCommentBox}

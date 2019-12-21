@@ -6,7 +6,6 @@ import { withNotificationBanner } from '../atoms';
 import { useStyles } from '../Css';
 
 interface IProps {
-  classes: any;
   visible: boolean;
   onRequestClose: () => null;
   onSignInSuccess: (user: any) => null;
@@ -15,7 +14,6 @@ interface IProps {
 }
 
 const SignInViaGithubModal: React.FC<IProps> = ({
-  classes,
   visible,
   onRequestClose,
   firebase,
