@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { Fab, withStyles } from '@material-ui/core';
+import { Fab, withStyles, Tooltip } from '@material-ui/core';
 
 import './index.css';
 import MonacoIntegrator from '../../utils/MonacoIntegrator';
@@ -7,6 +7,8 @@ import MonacoThemes from '../../utils/MonacoThemes';
 import { withFirebase } from '../../utils/FirebaseConnector';
 import { Icon, AnimatedCircularLoader } from '../../atoms';
 import SignInViaGithubModal from '../SignInViaGithubModal';
+import InlineCodeComment from '../InlineCodeComment';
+import { initializeApp } from 'firebase';
 
 interface IProps {
   value?: string;
@@ -34,8 +36,14 @@ const MonacoEditor: React.FC<IProps> = ({
   classes,
   firebase,
 }) => {
+  const [displayComment, setDisplayComment] = useState<boolean>(false);
+  const [displayInitCommentIcon, setInitDisplayCommentIcon] = useState<boolean>(false);
+  const [mousePosition, setMousePosition] = useState<any>({});
   const [isMonacoReady, setIsMonacoReady] = useState<boolean>(false);
   const [isEditorReady, setIsEditorReady] = useState<boolean>(false);
+  const [selectionRange, setSelectionRange] = useState<any>(null);
+  const [selectionValue, setSelectionValue] = useState<any>(null);
+  const [user, setUser] = useState<any>(null);
   const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
   const [sourceCode, setSourceCode] = useState('');
   const monacoRef = useRef<any>(null);
@@ -43,21 +51,27 @@ const MonacoEditor: React.FC<IProps> = ({
   const subscriptionRef = useRef<any>(null);
   const nodeRef = useRef<HTMLDivElement>(null);
 
+  let currentUser = firebase.getCurrentUser();
+
+  if (!user && !!currentUser) {
+    setUser(currentUser);
+  }
+
   const createEditor = useCallback(() => {
     const model = monacoRef.current.editor.createModel(value, language);
     editorRef.current = monacoRef.current.editor.create(nodeRef.current, { automaticLayout: true });
     editorRef.current.setModel(model);
+    editorRef.current.onMouseUp(highlightText);
     editorRef.current.onKeyDown(function(event: any) {
       if ((event.ctrlKey === true || event.metaKey === true) && event.keyCode === 49) {
         event.preventDefault();
-        let currentUser = firebase.getCurrentUser();
-        if (currentUser) {
+        if (user) {
           /**
            * @todo
            * Save the code
            */
         } else {
-          setIsSignInModalVisible(true);
+          openSignInModal();
         }
       }
     });
@@ -72,7 +86,7 @@ const MonacoEditor: React.FC<IProps> = ({
     });
     editorRef.current.focus();
     setIsEditorReady(true);
-  }, [language, theme, value, firebase]);
+  }, [language, theme, value, firebase, displayInitCommentIcon]);
 
   useEffect(() => {
     MonacoIntegrator.init()
@@ -115,8 +129,59 @@ const MonacoEditor: React.FC<IProps> = ({
     }
   }, [theme]);
 
+  useEffect(() => {
+    if (selectionValue) {
+      setInitDisplayCommentIcon(true);
+    }
+  }, [selectionValue, selectionRange]);
+
   function handleSourceCodeExecution() {
     onRunSourceCode && onRunSourceCode(sourceCode);
+  }
+
+  function colorHighlight() {
+    const { endColumn, endLineNumber, startColumn, startLineNumber } = selectionRange;
+    editorRef.current.deltaDecorations(
+      [],
+      [
+        {
+          range: new monacoRef.current.Range(
+            startLineNumber,
+            startColumn,
+            endLineNumber,
+            endColumn,
+          ),
+          options: { inlineClassName: 'highlight-main' },
+        },
+        {
+          range: new monacoRef.current.Range(startLineNumber, 1, endLineNumber, 1000),
+          options: { inlineClassName: 'highlight-remain' },
+        },
+      ],
+    );
+  }
+
+  function showCommentBox() {
+    colorHighlight();
+    setDisplayComment(true);
+    setInitDisplayCommentIcon(false);
+  }
+
+  function hideCommentBox() {
+    setDisplayComment(false);
+    setSelectionRange(null);
+    setSelectionValue(null);
+    editorRef.current.getModel().setValue(sourceCode);
+  }
+
+  function highlightText(e: any) {
+    const selection = editorRef.current.getSelection();
+    const value = editorRef.current.getModel().getValueInRange(selection);
+    if (!!value) {
+      setSelectionRange(selection);
+      setMousePosition(e.event.pos);
+      setSelectionValue(value);
+    }
   }
 
   function handleSaveDeveloperCode() {
@@ -128,6 +193,16 @@ const MonacoEditor: React.FC<IProps> = ({
 
   function handleCloseSignInModal() {
     setIsSignInModalVisible(false);
+  }
+
+  function openSignInModal() {
+    setIsSignInModalVisible(true);
+  }
+
+  function handleKeyUP() {
+    if (displayInitCommentIcon) {
+      setInitDisplayCommentIcon(false);
+    }
   }
 
   function renderLoading() {
@@ -143,11 +218,37 @@ const MonacoEditor: React.FC<IProps> = ({
     ) : null;
   }
 
+  function renderCommentIcon() {
+    if (!displayInitCommentIcon) return null;
+    return (
+      <div
+        onClick={showCommentBox}
+        className="monaco-editor__code-comment-icon"
+        style={{
+          left: mousePosition.x,
+          top: mousePosition.y,
+        }}>
+        <Tooltip title="Comment on code" placement="bottom" enterDelay={100}>
+          <span className="flex-row">
+            <Icon
+              name="chatboxes"
+              size="small"
+              className="m-12"
+              style={{
+                color: '#074e68',
+              }}
+            />
+          </span>
+        </Tooltip>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="monaco-editor__container pt-12">
         {renderLoading()}
-        <div ref={nodeRef} className="monaco-editor-editor" />
+        <div onKeyUp={handleKeyUP} ref={nodeRef} className="monaco-editor-editor" />
       </div>
       <Fab
         color="primary"
@@ -156,11 +257,21 @@ const MonacoEditor: React.FC<IProps> = ({
         classes={{ root: classes.monacoEditorRunButton }}>
         <Icon name="play" className="monaco-editor-run-button-icon" />
       </Fab>
+      {displayComment && (
+        <InlineCodeComment
+          onHideCommentBox={hideCommentBox}
+          onOpenSignInModal={openSignInModal}
+          user={user}
+          mousePosition={mousePosition}
+          displayComment={displayComment}
+        />
+      )}
       <SignInViaGithubModal
         visible={isSignInModalVisible}
         onRequestClose={handleCloseSignInModal}
         onSignInSuccess={handleSaveDeveloperCode}
       />
+      {renderCommentIcon()}
     </>
   );
 };
