@@ -9,7 +9,7 @@ import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 
 interface IProps {
   firebase: any;
-  setNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
+  onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
 }
 
 const doc: any = window.document;
@@ -40,7 +40,7 @@ const iconList = (fullScreenMode: boolean) => [
   { text: 'Light theme', action: '', icon: 'ios-bulb' },
 ];
 
-const MenuBar: React.FC<IProps> = ({ firebase, setNotificationSettings }) => {
+const MenuBar: React.FC<IProps> = ({ firebase, onSetNotificationSettings }) => {
   const [fullScreenMode, setFullScreenMode] = useState<boolean>(!!fullScreenEnabled);
   const [menuElement, setMenuElement] = React.useState<null | HTMLElement>(null);
   const [currentUser, setCurrentUser] = React.useState<any>(null);
@@ -95,7 +95,7 @@ const MenuBar: React.FC<IProps> = ({ firebase, setNotificationSettings }) => {
          */
       })
       .catch(function(error: any) {
-        setNotificationSettings(error.message, 'danger', 'long');
+        onSetNotificationSettings(error.message, 'danger', 'long');
       });
   }
 
@@ -107,7 +107,7 @@ const MenuBar: React.FC<IProps> = ({ firebase, setNotificationSettings }) => {
         handleCloseMenu();
       })
       .catch(function(error: any) {
-        setNotificationSettings(error.message, 'danger', 'long');
+        onSetNotificationSettings(error.message, 'danger', 'long');
       });
   }
 

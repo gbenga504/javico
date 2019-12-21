@@ -8,7 +8,6 @@ import { withFirebase } from '../../utils/FirebaseConnector';
 import { Icon, AnimatedCircularLoader } from '../../atoms';
 import SignInViaGithubModal from '../SignInViaGithubModal';
 import InlineCodeComment from '../InlineCodeComment';
-import { initializeApp } from 'firebase';
 
 interface IProps {
   value?: string;
@@ -71,7 +70,7 @@ const MonacoEditor: React.FC<IProps> = ({
            * Save the code
            */
         } else {
-          openSignInModal();
+          handleOpenSignInModal();
         }
       }
     });
@@ -86,7 +85,7 @@ const MonacoEditor: React.FC<IProps> = ({
     });
     editorRef.current.focus();
     setIsEditorReady(true);
-  }, [language, theme, value, firebase, displayInitCommentIcon]);
+  }, [language, theme, value, user]);
 
   useEffect(() => {
     MonacoIntegrator.init()
@@ -161,13 +160,13 @@ const MonacoEditor: React.FC<IProps> = ({
     );
   }
 
-  function showCommentBox() {
+  function handleShowCommentBox() {
     colorHighlight();
     setDisplayComment(true);
     setInitDisplayCommentIcon(false);
   }
 
-  function hideCommentBox() {
+  function handleHideCommentBox() {
     setDisplayComment(false);
     setSelectionRange(null);
     setSelectionValue(null);
@@ -195,7 +194,7 @@ const MonacoEditor: React.FC<IProps> = ({
     setIsSignInModalVisible(false);
   }
 
-  function openSignInModal() {
+  function handleOpenSignInModal() {
     setIsSignInModalVisible(true);
   }
 
@@ -222,7 +221,7 @@ const MonacoEditor: React.FC<IProps> = ({
     if (!displayInitCommentIcon) return null;
     return (
       <div
-        onClick={showCommentBox}
+        onClick={handleShowCommentBox}
         className="monaco-editor__code-comment-icon"
         style={{
           left: mousePosition.x,
@@ -249,6 +248,15 @@ const MonacoEditor: React.FC<IProps> = ({
       <div className="monaco-editor__container pt-12">
         {renderLoading()}
         <div onKeyUp={handleKeyUP} ref={nodeRef} className="monaco-editor-editor" />
+        {displayComment && (
+          <InlineCodeComment
+            onHideCommentBox={handleHideCommentBox}
+            onOpenSignInModal={handleOpenSignInModal}
+            user={user}
+            mousePosition={mousePosition}
+            displayComment={displayComment}
+          />
+        )}
       </div>
       <Fab
         color="primary"
@@ -257,15 +265,6 @@ const MonacoEditor: React.FC<IProps> = ({
         classes={{ root: classes.monacoEditorRunButton }}>
         <Icon name="play" className="monaco-editor-run-button-icon" />
       </Fab>
-      {displayComment && (
-        <InlineCodeComment
-          onHideCommentBox={hideCommentBox}
-          onOpenSignInModal={openSignInModal}
-          user={user}
-          mousePosition={mousePosition}
-          displayComment={displayComment}
-        />
-      )}
       <SignInViaGithubModal
         visible={isSignInModalVisible}
         onRequestClose={handleCloseSignInModal}

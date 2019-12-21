@@ -39,6 +39,11 @@
   color: #fff !important;
 }
 
+
+
+
+
+/** Needs to be removed and scoped directly under the inlineCodeComment component **/
 .monaco-editor__inline-comment {
   background-color: #fff;
   border-radius: 5px;

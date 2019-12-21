@@ -108,7 +108,7 @@ export const theme = createMuiTheme({
     MuiButton: {
       root: {
         width: 100,
-        fontSize: fontsize.small,
+        fontSize: fontsize.xsmall,
         fontFamily: fonts.semiBold,
       },
     },
@@ -140,7 +140,7 @@ function createSpacing(type: string) {
   return { ...general, ...specific };
 }
 
-export const commonCss = makeStyles({
+export const useStyles = makeStyles({
   flexRow: {
     display: 'flex',
     flexDirection: 'row',
@@ -156,6 +156,9 @@ export const commonCss = makeStyles({
   fullHeightAndWidth: {
     width: '100%',
     height: '100%',
+  },
+  cancelButton: {
+    marginRight: 5,
   },
   ...createSpacing('margin'),
   ...createSpacing('padding'),
