@@ -10,7 +10,6 @@ import { useStyles as commonUseStyles } from '../../Css';
 
 interface IProps {
   visible: boolean;
-  displayComment: boolean;
   user: any;
   onHideCommentBox: any;
   mousePosition: any;

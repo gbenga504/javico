@@ -25,8 +25,8 @@ const MonacoEditor: React.FC<IProps> = ({
   language = 'javascript',
   firebase,
 }) => {
-  const [displayComment, setDisplayComment] = useState<boolean>(false);
-  const [displayCommentIcon, setDisplayCommentIcon] = useState<boolean>(false);
+  const [shouldDisplayCommentBox, setShouldDisplayCommentBox] = useState<boolean>(false);
+  const [shouldDisplayCommentIcon, setShouldDisplayCommentIcon] = useState<boolean>(false);
   const [mousePosition, setMousePosition] = useState<any>({});
   const [isMonacoReady, setIsMonacoReady] = useState<boolean>(false);
   const [isEditorReady, setIsEditorReady] = useState<boolean>(false);
@@ -41,12 +41,6 @@ const MonacoEditor: React.FC<IProps> = ({
   const nodeRef = useRef<HTMLDivElement>(null);
   const classes = useStyles();
   const commonCss = commonUseStyles();
-
-  let currentUser = firebase.getCurrentUser();
-
-  if (!user && !!currentUser) {
-    setUser(currentUser);
-  }
 
   const createEditor = useCallback(() => {
     const model = monacoRef.current.editor.createModel(value, language);
@@ -94,6 +88,16 @@ const MonacoEditor: React.FC<IProps> = ({
   }, []);
 
   useEffect(() => {
+    firebase.onAuthStateChanged(function(user: any) {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+  }, [firebase]);
+
+  useEffect(() => {
     isMonacoReady === true && isEditorReady === false && createEditor();
   }, [isMonacoReady, isEditorReady, createEditor]);
 
@@ -122,7 +126,7 @@ const MonacoEditor: React.FC<IProps> = ({
 
   useEffect(() => {
     if (selectionValue) {
-      setDisplayCommentIcon(true);
+      setShouldDisplayCommentIcon(true);
     }
   }, [selectionValue, selectionRange]);
 
@@ -154,12 +158,12 @@ const MonacoEditor: React.FC<IProps> = ({
 
   function handleShowCommentBox() {
     colorHighlight();
-    setDisplayComment(true);
-    setDisplayCommentIcon(false);
+    setShouldDisplayCommentBox(true);
+    setShouldDisplayCommentIcon(false);
   }
 
   function handleHideCommentBox() {
-    setDisplayComment(false);
+    setShouldDisplayCommentBox(false);
     setSelectionRange(null);
     setSelectionValue(null);
     editorRef.current.getModel().setValue(sourceCode);
@@ -191,8 +195,8 @@ const MonacoEditor: React.FC<IProps> = ({
   }
 
   function handleKeyUp() {
-    if (displayCommentIcon) {
-      setDisplayCommentIcon(false);
+    if (shouldDisplayCommentIcon === true) {
+      setShouldDisplayCommentIcon(false);
     }
   }
 
@@ -210,7 +214,7 @@ const MonacoEditor: React.FC<IProps> = ({
   }
 
   function renderCommentIcon() {
-    if (!displayCommentIcon) return null;
+    if (shouldDisplayCommentIcon === false) return null;
     return (
       <div
         onClick={handleShowCommentBox}
@@ -240,13 +244,12 @@ const MonacoEditor: React.FC<IProps> = ({
       <div className={classes.monacoEditorContainer}>
         {renderLoading()}
         <div onKeyUp={handleKeyUp} ref={nodeRef} className={classes.monacoEditor} />
-        {displayComment && (
+        {shouldDisplayCommentBox && (
           <InlineCodeComment
             onHideCommentBox={handleHideCommentBox}
             onOpenSignInModal={handleOpenSignInModal}
             user={user}
             mousePosition={mousePosition}
-            displayComment={displayComment}
           />
         )}
       </div>
