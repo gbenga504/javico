@@ -15,7 +15,7 @@ const NotificationProvider: React.FC = ({ children }) => {
 
   return (
     <NotificationContext.Provider
-      value={{ notificationSettings, setNotificationSettings: handleSetNotificationSettings }}>
+      value={{ notificationSettings, onSetNotificationSettings: handleSetNotificationSettings }}>
       <DefaultNotificationView
         id={notificationSettings.id}
         text={notificationSettings.text}

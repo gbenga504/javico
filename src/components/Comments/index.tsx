@@ -1,10 +1,14 @@
 import React from 'react';
 
-import './index.css';
+import { useStyles } from './styles';
+import { useStyles as commonUseStyles } from '../../Css';
 import { Typography, Icon } from '../../atoms';
 import { image } from './comments_dummy';
 
 const Comments: React.FC<{ comments: any[] }> = ({ comments }) => {
+  const classes = useStyles();
+  const commonCss = commonUseStyles();
+
   function renderComments() {
     return comments.map(el => {
       return (
@@ -26,27 +30,29 @@ const Comments: React.FC<{ comments: any[] }> = ({ comments }) => {
   }
 
   return (
-    <section className="comments">
-      <div className="full-height-and-width comments__body">
+    <section className={classes.comments}>
+      <div className={`${commonCss.fullHeightAndWidth} ${classes.commentsBody}`}>
         {process.env.REACT_APP_IS_COMMENT_FEATURE_AVAILABLE === 'true' ? (
           renderComments()
         ) : (
-          <div className="flex-row center full-height-and-width" style={{ cursor: 'not-allowed' }}>
-            <Typography variant="div" thickness="bold" className="comment__not-live">
+          <div
+            className={`${commonCss.flexRow} ${commonCss.center} ${commonCss.fullHeightAndWidth}`}
+            style={{ cursor: 'not-allowed' }}>
+            <Typography variant="div" thickness="bold" className={classes.commentNotLive}>
               COMMENTS NOT LIVE
             </Typography>
           </div>
         )}
       </div>
-      <div className="comment__input">
-        <div className="comment__input-field-container flex-row ml-16 mr-16 mb-16">
+      <div className={classes.commentInput}>
+        <div className={`${classes.commentInputFieldContainer} ${commonCss.flexRow}`}>
           <input
-            className="comment__input-field pl-16"
+            className={classes.commentInputField}
             type="text"
             placeholder="Drop a review on this code"
           />
           <Icon
-            className="comment__input-send-icon mr-8"
+            className={classes.commentInputSendIcon}
             name="send"
             style={{
               cursor:

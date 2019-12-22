@@ -1,15 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Paper, withStyles } from '@material-ui/core';
+import { Paper, makeStyles } from '@material-ui/core';
 
 import { Icon, Typography } from '../index';
 import { INotificationBannerProps } from './typeDefinition';
 import { color, fontsize } from '../../Css';
 
-interface IProps extends INotificationBannerProps {
-  classes: any;
-}
-
-const styles = {
+const useStyles = makeStyles(theme => ({
   container: {
     position: 'absolute',
     bottom: -100,
@@ -37,12 +33,11 @@ const styles = {
   },
   text: {
     fontSize: fontsize.xsmall,
-    marginLeft: 8,
+    marginLeft: theme.spacing(2),
   },
-} as any;
+})) as any;
 
-const DefaultNotificationView: React.FC<IProps> = ({
-  classes,
+const DefaultNotificationView: React.FC<INotificationBannerProps> = ({
   style,
   text,
   id,
@@ -50,6 +45,7 @@ const DefaultNotificationView: React.FC<IProps> = ({
 }) => {
   const [isBannerHidden, setIsBannerHidden] = useState<boolean>(true);
   const bannerTimerRef = useRef<any>(null);
+  const classes = useStyles();
 
   useEffect(() => {
     let timeOut = duration === 'short' ? 1000 : 5000;
@@ -106,4 +102,4 @@ const DefaultNotificationView: React.FC<IProps> = ({
   );
 };
 
-export default withStyles(styles)(DefaultNotificationView);
+export default DefaultNotificationView;

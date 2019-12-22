@@ -2,12 +2,12 @@ import React from 'react';
 
 interface INotificationContext {
   notificationSettings: any;
-  setNotificationSettings: Function;
+  onSetNotificationSettings: Function;
 }
 
 const NotificationContext = React.createContext({
   notificationSettings: null,
-  setNotificationSettings: () => null,
+  onSetNotificationSettings: () => null,
 } as INotificationContext);
 
 export default NotificationContext;

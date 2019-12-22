@@ -20,6 +20,10 @@ code {
     monospace;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 html,
 #root {
   width: 100%;
