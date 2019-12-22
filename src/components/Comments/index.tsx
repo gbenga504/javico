@@ -38,7 +38,7 @@ const Comments: React.FC<{ comments: any[] }> = ({ comments }) => {
           <div
             className={`${commonCss.flexRow} ${commonCss.center} ${commonCss.fullHeightAndWidth}`}
             style={{ cursor: 'not-allowed' }}>
-            <Typography variant="div" thickness="bold" className={classes.commentsBody}>
+            <Typography variant="div" thickness="bold" className={classes.commentNotLive}>
               COMMENTS NOT LIVE
             </Typography>
           </div>
