@@ -3,7 +3,7 @@ import { createMuiTheme, makeStyles } from '@material-ui/core';
 export const color = {
   white: '#fff',
   black: '#000',
-  blue: 'rgb(28, 32, 34)',
+  deepBlue: 'rgb(28, 32, 34)',
   themeBlue: '#0076c6',
   themeBlueDarker: '#0D47A1',
   darkThemeLightBorder: 'rgba(255, 255, 255, 0.07)',
@@ -16,6 +16,7 @@ export const color = {
   errorDark: '#310e0e',
   success: '#1B5E20',
   alertDanger: '#DD2C00',
+  gray: '#f7f7f7',
 };
 
 export const fontsize = {
@@ -114,31 +115,8 @@ export const theme = createMuiTheme({
     },
   },
   palette,
+  spacing: 4,
 });
-
-function createSpacing(type: string) {
-  let scope = ['Top', 'Bottom', 'Right', 'Left'];
-  let specific: any = scope.reduce((acc, value) => {
-    let prop: any = Array.apply(null, Array(6)).reduce((obj: any, v: any, index) => {
-      obj[`${type}${value}${(Number(index) + 1) * 4}`] = {
-        [`${type}${value}`]: (Number(index) + 1) * 4,
-      };
-      return obj;
-    }, {});
-
-    acc = {
-      ...acc,
-      ...prop,
-    };
-    return acc;
-  }, {});
-  let general: any = Array.apply(null, Array(6)).reduce((obj: any, v: any, index: number) => {
-    obj[`${type}${(Number(index) + 1) * 4}`] = { [`${type}`]: (Number(index) + 1) * 4 };
-    return obj;
-  }, {});
-
-  return { ...general, ...specific };
-}
 
 export const useStyles = makeStyles({
   flexRow: {
@@ -160,11 +138,18 @@ export const useStyles = makeStyles({
   cancelButton: {
     marginRight: 5,
   },
-  ...createSpacing('margin'),
-  ...createSpacing('padding'),
+  fullWidth: {
+    width: '100%',
+  },
+  relative: {
+    position: 'relative',
+  },
+  absolute: {
+    position: 'absolute',
+  },
 });
 
-export function _spacing(type: string, units?: number, directions?: string): any {
+export function spacingHelper(type: string, units?: number, directions?: string): any {
   units = units || baseSpacing;
   directions = directions || 'blrt';
   const rules: any = {};
@@ -184,9 +169,9 @@ export function _spacing(type: string, units?: number, directions?: string): any
 }
 
 export function padding(units?: number, directions?: string): any {
-  return _spacing('padding', units, directions);
+  return spacingHelper('padding', units, directions);
 }
 
 export function margin(units?: number, directions?: string): any {
-  return _spacing('margin', units, directions);
+  return spacingHelper('margin', units, directions);
 }

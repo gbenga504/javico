@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Tooltip, Menu, MenuItem, Button } from '@material-ui/core';
 import { TwitterShareButton } from 'react-share';
 
-import './index.css';
+import { useStyles } from './styles';
+import { useStyles as commonUseStyles } from '../../Css';
 import { Icon, withNotificationBanner } from '../../atoms';
 import { withFirebase } from '../../utils/FirebaseConnector';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
@@ -44,6 +45,8 @@ const MenuBar: React.FC<IProps> = ({ firebase, onSetNotificationSettings }) => {
   const [fullScreenMode, setFullScreenMode] = useState<boolean>(!!fullScreenEnabled);
   const [menuElement, setMenuElement] = React.useState<null | HTMLElement>(null);
   const [currentUser, setCurrentUser] = React.useState<any>(null);
+  const classes = useStyles();
+  const commonCss = commonUseStyles();
   const DEVELOPER_CODE_URL = 'https://www.google.com'; //@todo This needs to be changed to the actual developer code
 
   useEffect(() => {
@@ -125,11 +128,11 @@ const MenuBar: React.FC<IProps> = ({ firebase, onSetNotificationSettings }) => {
   }
 
   return (
-    <section className="menubar-container flex-column">
+    <section className={`${classes.menubarContainer} ${commonCss.flexColumn}`}>
       {!!currentUser === true && (
         <Button onClick={handleOpenMenu}>
-          <div className="menubar__title flex-column center mt-16 mb-8">
-            <img src={currentUser.photoURL} alt="Current User" className="menubar__user" />
+          <div className={`${classes.menubarTitle} ${commonCss.flexColumn}`}>
+            <img src={currentUser.photoURL} alt="Current User" className={classes.menubarUser} />
           </div>
         </Button>
       )}
@@ -145,19 +148,19 @@ const MenuBar: React.FC<IProps> = ({ firebase, onSetNotificationSettings }) => {
         return el.text === 'Sign in' && !!currentUser === true ? null : (
           <div
             key={el.icon}
-            className="flex-row center menubar__icon"
+            className={`${commonCss.flexRow} ${commonCss.center} ${classes.menubarIcon}`}
             onClick={() => triggerAction(el.action)}>
             {el.action === 'shareCodeViaTwitter' ? (
               <TwitterShareButton url={DEVELOPER_CODE_URL}>
                 <Tooltip title={el.text} placement="bottom" enterDelay={100}>
-                  <span className="flex-row">
+                  <span className={commonCss.flexRow}>
                     <Icon name={el.icon} />
                   </span>
                 </Tooltip>
               </TwitterShareButton>
             ) : (
               <Tooltip title={el.text} placement="bottom" enterDelay={100}>
-                <span className="flex-row">
+                <span className={commonCss.flexRow}>
                   <Icon name={el.icon} />
                 </span>
               </Tooltip>

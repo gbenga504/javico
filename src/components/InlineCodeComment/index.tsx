@@ -1,14 +1,14 @@
 import React, { useState, useRef } from 'react';
-import { withStyles, Paper, Button } from '@material-ui/core';
+import { Paper, Button } from '@material-ui/core';
 
-import { withFirebase } from '../utils/FirebaseConnector';
-import { IBannerStyle, IDuration } from '../atoms/NotificationBanner';
-import userAvatar from '../assets/images/user.svg';
-import { withNotificationBanner } from '../atoms';
-import { useStyles, fonts, fontsize } from '../Css';
+import { useStyles } from './styles';
+import { withFirebase } from '../../utils/FirebaseConnector';
+import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
+import userAvatar from '../../assets/images/user.svg';
+import { withNotificationBanner } from '../../atoms';
+import { useStyles as commonUseStyles } from '../../Css';
 
 interface IProps {
-  classes: any;
   visible: boolean;
   displayComment: boolean;
   user: any;
@@ -21,38 +21,7 @@ interface IProps {
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
 }
 
-const styles = {
-  commentBoxContainer: {
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
-    background: 'transparent',
-    zIndex: 2,
-    top: 0,
-  },
-  commentBox: {
-    position: 'absolute',
-    left: 60,
-    width: 'calc(100% - 160px)',
-    backgroundColor: '#f7f7f7',
-  },
-  commentUser: {
-    height: 40,
-    width: 40,
-    borderRadius: '50%',
-    border: '2px solid #074e68',
-  },
-  commentDialogContent: {
-    fontSize: 15,
-  },
-  commentButtonContainer: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-} as any;
-
 const InlineCodeComment: React.FC<IProps> = ({
-  classes,
   user,
   onOpenSignInModal,
   onHideCommentBox,
@@ -60,7 +29,8 @@ const InlineCodeComment: React.FC<IProps> = ({
 }) => {
   const [comment, setComment] = useState('');
   const commentRef = useRef<any>(null);
-  const commonCss = useStyles();
+  const commonCss = commonUseStyles();
+  const classes = useStyles();
 
   function handleChange(e: any) {
     setComment(e.target.value);
@@ -82,7 +52,7 @@ const InlineCodeComment: React.FC<IProps> = ({
   }
 
   return (
-    <div className={classes.commentBoxContainer}>
+    <div className={`${classes.commentBoxContainer} ${commonCss.fullHeightAndWidth}`}>
       <Paper
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
@@ -99,31 +69,23 @@ const InlineCodeComment: React.FC<IProps> = ({
             <img
               src={user ? user.photoURL : userAvatar}
               alt="User commenting"
-              className=""
-              style={styles.commentUser}
+              className={classes.commentUser}
             />
           </div>
 
-          <div className="full-width">
-            <div className="relative">
-              <div className="monaco-editor__inline-comment left show">
+          <div className={commonCss.fullWidth}>
+            <div className={commonCss.relative}>
+              <div className={`${classes.monacoEditorInlineComment} left show`}>
                 <textarea
                   onChange={handleChange}
                   required={true}
                   value={comment}
                   autoFocus={true}
                   rows={7}
-                  style={{
-                    width: '100%',
-                    border: 0,
-                    fontFamily: fonts.regular,
-                    padding: 5,
-                    fontSize: fontsize.base,
-                  }}
                   placeholder="Drop your comment"></textarea>
               </div>
             </div>
-            <div className={`${classes.commentButtonContainer} mt-12`}>
+            <div className={classes.commentButtonContainer}>
               <Button className={commonCss.cancelButton} onClick={handleCancelComment}>
                 Cancel
               </Button>
@@ -138,6 +100,4 @@ const InlineCodeComment: React.FC<IProps> = ({
   );
 };
 
-export default React.memo(
-  withNotificationBanner(withFirebase(withStyles(styles)(InlineCodeComment))),
-);
+export default React.memo(withNotificationBanner(withFirebase(InlineCodeComment)));

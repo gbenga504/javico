@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
-import './index.css';
+import { useStyles } from './styles';
+import { useStyles as commonUseStyles } from '../../Css';
 import { Typography, Icon } from '../../atoms';
 
 const MessageType = {
@@ -23,8 +24,10 @@ type TerminalMessagesType = TerminalMessageType[];
 
 const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
   const [currentTab, setCurrentTab] = useState(0);
-  const workerRef = useRef<any>(null);
   const [terminalMessages, setTerminalMessages] = useState<TerminalMessagesType>([]);
+  const workerRef = useRef<any>(null);
+  const classes = useStyles();
+  const commonCss = commonUseStyles();
 
   useEffect(() => {
     workerRef.current = new Worker(`${window.location.origin}/CodeEvaluatorWorker.js`);
@@ -47,7 +50,7 @@ const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
 
   function renderLogBasedMessages(message: string, index: number) {
     return (
-      <div className="console__terminal-log-messages" key={index}>
+      <div className={classes.consoleTerminalLogMessages} key={index}>
         <Typography thickness="semi-bold">{message}</Typography>
       </div>
     );
@@ -55,9 +58,9 @@ const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
 
   function renderWarningBasedMessages(message: string, index: number) {
     return (
-      <div className="flex-row console__terminal-warning-messages" key={index}>
+      <div className={`${commonCss.flexRow} ${classes.consoleTerminalWarningMessages}`} key={index}>
         <div>
-          <Icon className="console__terminal-warning-icon" name="warning"></Icon>
+          <Icon className={classes.consoleTerminalWarningIcon} name="warning"></Icon>
         </div>
         <Typography color="warning" thickness="semi-bold">
           {message}
@@ -68,9 +71,9 @@ const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
 
   function renderErrorBasedMessages(message: string, index: number) {
     return (
-      <div className="flex-row console__terminal-error-messages" key={index}>
+      <div className={`${commonCss.flexRow} ${classes.consoleTerminalErrorMessages}`} key={index}>
         <div>
-          <Icon className="console__terminal-error-icon" name="close-circle"></Icon>
+          <Icon className={classes.consoleTerminalErrorIcon} name="close-circle"></Icon>
         </div>
         <Typography color="error" thickness="semi-bold">
           {message}
@@ -81,7 +84,7 @@ const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
 
   function renderTerminal() {
     return currentTab === 1 ? (
-      <div className="console__terminal">
+      <div className={classes.consoleTerminal}>
         {terminalMessages.map((terminalMessage: TerminalMessageType, i: number) => {
           if (terminalMessage.type === MessageType.LOG) {
             return renderLogBasedMessages(terminalMessage.message, i);
@@ -95,7 +98,7 @@ const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
   }
 
   return (
-    <section className="console">
+    <section className={classes.console}>
       <Tabs value={currentTab} onChange={handleTabChange} aria-label="console tabs">
         <Tab label="PROBLEMS" {...a11yProps(0)} />
         <Tab label="TERMINAL" {...a11yProps(1)} />

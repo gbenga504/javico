@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { Fab, withStyles, Tooltip } from '@material-ui/core';
+import { Fab, Tooltip } from '@material-ui/core';
 
-import './index.css';
+import { useStyles } from './styles';
+import { useStyles as commonUseStyles, color } from '../../Css';
 import MonacoIntegrator from '../../utils/MonacoIntegrator';
 import MonacoThemes from '../../utils/MonacoThemes';
 import { withFirebase } from '../../utils/FirebaseConnector';
@@ -14,25 +15,14 @@ interface IProps {
   onRunSourceCode?: (value: string) => void;
   theme?: 'light' | 'dark' | 'ace' | 'night-dark';
   language?: string;
-  classes: any;
   firebase: any;
 }
-
-const styles = {
-  monacoEditorRunButton: {
-    position: 'absolute',
-    bottom: 15,
-    right: '50%',
-    zIndex: 2000,
-  },
-} as any;
 
 const MonacoEditor: React.FC<IProps> = ({
   value,
   onRunSourceCode,
   theme = 'vs-dark',
   language = 'javascript',
-  classes,
   firebase,
 }) => {
   const [displayComment, setDisplayComment] = useState<boolean>(false);
@@ -49,6 +39,8 @@ const MonacoEditor: React.FC<IProps> = ({
   const editorRef = useRef<any>(null);
   const subscriptionRef = useRef<any>(null);
   const nodeRef = useRef<HTMLDivElement>(null);
+  const classes = useStyles();
+  const commonCss = commonUseStyles();
 
   let currentUser = firebase.getCurrentUser();
 
@@ -150,11 +142,11 @@ const MonacoEditor: React.FC<IProps> = ({
             endLineNumber,
             endColumn,
           ),
-          options: { inlineClassName: 'highlight-main' },
+          options: { inlineClassName: classes.monacoEditorHighlightMainContent },
         },
         {
           range: new monacoRef.current.Range(startLineNumber, 1, endLineNumber, 1000),
-          options: { inlineClassName: 'highlight-remain' },
+          options: { inlineClassName: classes.monacoEditorHighlightRemainingContent },
         },
       ],
     );
@@ -207,10 +199,10 @@ const MonacoEditor: React.FC<IProps> = ({
   function renderLoading() {
     return isEditorReady === false ? (
       <div
-        className="flex-row center full-height-and-width"
+        className={`${commonCss.flexRow} ${commonCss.center} ${commonCss.fullHeightAndWidth}`}
         style={{
           overflow: 'hidden',
-          background: 'var(--dark-theme-black-color)',
+          background: color.darkThemeBlack,
         }}>
         <AnimatedCircularLoader />
       </div>
@@ -222,19 +214,19 @@ const MonacoEditor: React.FC<IProps> = ({
     return (
       <div
         onClick={handleShowCommentBox}
-        className="monaco-editor__code-comment-icon"
+        className={classes.monacoEditorCodeCommentIcon}
         style={{
           left: mousePosition.x,
           top: mousePosition.y,
         }}>
         <Tooltip title="Comment on code" placement="bottom" enterDelay={100}>
-          <span className="flex-row">
+          <span className={commonCss.flexRow}>
             <Icon
               name="chatboxes"
               size="small"
-              className="m-12"
               style={{
                 color: '#074e68',
+                margin: 12,
               }}
             />
           </span>
@@ -245,9 +237,9 @@ const MonacoEditor: React.FC<IProps> = ({
 
   return (
     <>
-      <div className="monaco-editor__container pt-12">
+      <div className={classes.monacoEditorContainer}>
         {renderLoading()}
-        <div onKeyUp={handleKeyUp} ref={nodeRef} className="monaco-editor-editor" />
+        <div onKeyUp={handleKeyUp} ref={nodeRef} className={classes.monacoEditor} />
         {displayComment && (
           <InlineCodeComment
             onHideCommentBox={handleHideCommentBox}
@@ -263,7 +255,7 @@ const MonacoEditor: React.FC<IProps> = ({
         onClick={handleSourceCodeExecution}
         variant="round"
         classes={{ root: classes.monacoEditorRunButton }}>
-        <Icon name="play" className="monaco-editor-run-button-icon" />
+        <Icon name="play" className={classes.monacoEditorRunButtonIcon} />
       </Fab>
       <SignInViaGithubModal
         visible={isSignInModalVisible}
@@ -275,4 +267,4 @@ const MonacoEditor: React.FC<IProps> = ({
   );
 };
 
-export default React.memo(withFirebase(withStyles(styles)(MonacoEditor)));
+export default React.memo(withFirebase(MonacoEditor));
