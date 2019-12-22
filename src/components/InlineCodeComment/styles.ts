@@ -26,8 +26,8 @@ export const useStyles = makeStyles(theme => ({
     '& > div': {
       marginRight: theme.spacing(1),
     },
-    '&.left:before &.left:after': {
-      content: '',
+    '&.left::before': {
+      content: "''",
       position: 'absolute',
       width: 0,
       height: 0,
@@ -36,14 +36,9 @@ export const useStyles = makeStyles(theme => ({
       borderLeft: 0,
       borderWidth: 12,
       borderRightColor: color.white,
-    },
-    '&.left:before': {
       bottom: '25%',
-      left: -12,
-    },
-    '&.left:after': {
-      bottom: '25%',
-      left: -11,
+      left: -24,
+      top: 15,
     },
   },
   commentBoxContainer: {
@@ -51,12 +46,15 @@ export const useStyles = makeStyles(theme => ({
     background: 'transparent',
     zIndex: 2,
     top: 0,
+    '& form': {
+      margin: theme.spacing(3),
+    },
   },
   commentBox: {
     position: 'absolute',
     left: 60,
     width: 'calc(100% - 160px)',
-    backgroundColor: color.gray,
+    backgroundColor: color.gray20,
   },
   commentUser: {
     height: 40,

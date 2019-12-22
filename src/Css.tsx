@@ -16,7 +16,7 @@ export const color = {
   errorDark: '#310e0e',
   success: '#1B5E20',
   alertDanger: '#DD2C00',
-  gray: '#f7f7f7',
+  gray20: '#eee', // Google gray color 200
 };
 
 export const fontsize = {

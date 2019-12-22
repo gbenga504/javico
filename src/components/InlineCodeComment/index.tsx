@@ -60,7 +60,7 @@ const InlineCodeComment: React.FC<IProps> = ({
         style={{
           top: mousePosition.y + 20,
         }}>
-        <form ref={commentRef} onSubmit={e => e.preventDefault()} className="m-12 flex-row">
+        <form ref={commentRef} onSubmit={e => e.preventDefault()} className={commonCss.flexRow}>
           <div
             style={{
               borderRadius: '50%',
