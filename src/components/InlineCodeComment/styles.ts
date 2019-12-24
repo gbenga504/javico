@@ -69,18 +69,3 @@ export const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(3),
   },
 }));
-
-export const useMarkDownStyles = makeStyles(theme => ({
-  markdownLink: {
-    color: `${color.themeBlueDarker} !important`,
-  },
-  markdownBlockquote: {
-    borderLeft: `5px solid ${color.themeBlue}`,
-    background: color.gray20,
-    padding: theme.spacing(2, 3),
-  },
-  markdownCode: {
-    background: color.gray20,
-    padding: theme.spacing(1),
-  },
-}));
