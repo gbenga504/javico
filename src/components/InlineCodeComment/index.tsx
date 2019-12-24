@@ -87,6 +87,35 @@ const InlineCodeComment: React.FC<IProps> = ({
     setCurrentTab(currentTab);
   }
 
+  function renderWriteComment() {
+    return (
+      <>
+        <textarea
+          onChange={handleChange}
+          required={true}
+          value={comment}
+          autoFocus={true}
+          rows={7}
+          placeholder="Drop your comment"></textarea>
+        <div className="inline-comment__footer">
+          <Typography
+            variant="a"
+            href="https://www.markdownguide.org/basic-syntax/"
+            target="_blank"
+            className={classes.markdownLink}>
+            Markdown is supported
+          </Typography>
+        </div>
+      </>
+    );
+  }
+
+  function renderPreviewComment() {
+    return comment.length === 0 ? (
+      <Typography className={classes.nothingToPreview}>Nothing to preview.</Typography>
+    ) : null;
+  }
+
   return (
     <div className={`${classes.commentBoxContainer} ${commonCss.fullHeightAndWidth}`}>
       <Paper
@@ -121,22 +150,7 @@ const InlineCodeComment: React.FC<IProps> = ({
                     <MuiTab label="Preview" {...a11yProps(1)} />
                   </MuiTabs>
                 </div>
-                <textarea
-                  onChange={handleChange}
-                  required={true}
-                  value={comment}
-                  autoFocus={true}
-                  rows={7}
-                  placeholder="Drop your comment"></textarea>
-                <div className="inline-comment__footer">
-                  <Typography
-                    variant="a"
-                    href="https://www.markdownguide.org/basic-syntax/"
-                    target="_blank"
-                    className={classes.markdownLink}>
-                    Markdown is supported
-                  </Typography>
-                </div>
+                {currentTab === 0 ? renderWriteComment() : renderPreviewComment()}
               </div>
             </div>
             <div className={classes.commentButtonContainer}>

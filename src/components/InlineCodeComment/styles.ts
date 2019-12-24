@@ -15,17 +15,22 @@ export const useStyles = makeStyles(theme => ({
       width: '100%',
       border: 0,
       fontFamily: fonts.regular,
-      padding: '5px 0px',
       fontSize: fontsize.base,
       outline: 'none',
+      resize: 'none',
     },
     '& .inline-comment__header': {
       borderBottom: `1px solid ${color.gray20}`,
+      marginBottom: 5,
     },
     '& .inline-comment__footer': {
       borderTop: `1px solid ${color.gray20}`,
       paddingTop: theme.spacing(1),
     },
+  },
+  nothingToPreview: {
+    color: `${color.black} !important`,
+    fontSize: fontsize.base,
   },
   markdownLink: {
     color: `${color.themeBlueDarker} !important`,
