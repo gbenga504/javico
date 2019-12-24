@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { Paper, Button, Tabs, Tab, withStyles } from '@material-ui/core';
+import ReactMarkDown from 'react-markdown';
 
-import { useStyles } from './styles';
+import { useStyles, useMarkDownStyles } from './styles';
 import { withFirebase } from '../../utils/FirebaseConnector';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import userAvatar from '../../assets/images/user.svg';
@@ -18,6 +19,21 @@ interface IProps {
   onSignInSuccess: (user: any) => null;
   firebase: any;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
+}
+
+interface IMarkDownLink {
+  target: string;
+  href: string;
+  children: React.ReactNode;
+}
+
+interface IMarkDownBlockQuote {
+  children: React.ReactNode;
+}
+
+interface IMarkDownCode {
+  children?: React.ReactNode;
+  value?: string;
 }
 
 const MuiTabs = withStyles({
@@ -63,6 +79,7 @@ const InlineCodeComment: React.FC<IProps> = ({
   const commentRef = useRef<any>(null);
   const commonCss = commonUseStyles();
   const classes = useStyles();
+  const markdownClasses = useMarkDownStyles();
 
   function handleChange(e: any) {
     setComment(e.target.value);
@@ -110,10 +127,33 @@ const InlineCodeComment: React.FC<IProps> = ({
     );
   }
 
+  function customRenderers() {
+    return {
+      link: ({ target, href, children }: IMarkDownLink) => (
+        <a href={href} target={target} className={markdownClasses.markdownLink}>
+          {children}
+        </a>
+      ),
+      blockquote: ({ children }: IMarkDownBlockQuote) => (
+        <blockquote className={markdownClasses.markdownBlockquote}>{children}</blockquote>
+      ),
+      inlineCode: ({ children }: IMarkDownCode) => (
+        <code className={markdownClasses.markdownCode}>{children}</code>
+      ),
+      code: ({ value }: IMarkDownCode) => (
+        <pre className={markdownClasses.markdownCode}>
+          <code>{value}</code>
+        </pre>
+      ),
+    };
+  }
+
   function renderPreviewComment() {
     return comment.length === 0 ? (
       <Typography className={classes.nothingToPreview}>Nothing to preview.</Typography>
-    ) : null;
+    ) : (
+      <ReactMarkDown source={comment} linkTarget="_blank" renderers={customRenderers()} />
+    );
   }
 
   return (

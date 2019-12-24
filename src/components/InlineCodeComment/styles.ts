@@ -9,6 +9,7 @@ export const useStyles = makeStyles(theme => ({
     textAlign: 'left',
     width: '100%',
     minHeight: 50,
+    fontSize: fontsize.base,
     padding: theme.spacing(3),
     zIndex: 99999,
     '& > textarea': {
@@ -66,5 +67,20 @@ export const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'flex-end',
     marginTop: theme.spacing(3),
+  },
+}));
+
+export const useMarkDownStyles = makeStyles(theme => ({
+  markdownLink: {
+    color: `${color.themeBlueDarker} !important`,
+  },
+  markdownBlockquote: {
+    borderLeft: `5px solid ${color.themeBlue}`,
+    background: color.gray20,
+    padding: theme.spacing(2, 3),
+  },
+  markdownCode: {
+    background: color.gray20,
+    padding: theme.spacing(1),
   },
 }));
