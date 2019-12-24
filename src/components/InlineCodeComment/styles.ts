@@ -3,43 +3,35 @@ import { makeStyles } from '@material-ui/core';
 import { color, fontsize, fonts } from '../../Css';
 
 export const useStyles = makeStyles(theme => ({
-  monacoEditorInlineComment: {
+  inlineCommentContainer: {
     backgroundColor: color.white,
     borderRadius: 5,
     textAlign: 'left',
     width: '100%',
     minHeight: 50,
+    padding: theme.spacing(3),
     zIndex: 99999,
     '& > textarea': {
       width: '100%',
       border: 0,
       fontFamily: fonts.regular,
-      padding: 5,
+      padding: '5px 0px',
       fontSize: fontsize.base,
+      outline: 'none',
     },
-    '&.hide': {
-      display: 'none',
+    '& .inline-comment__header': {
+      borderBottom: `1px solid ${color.gray20}`,
     },
-    '&.show': {
-      display: 'block',
+    '& .inline-comment__footer': {
+      borderTop: `1px solid ${color.gray20}`,
+      paddingTop: theme.spacing(1),
     },
-    '& > div': {
-      marginRight: theme.spacing(1),
-    },
-    '&.left::before': {
-      content: "''",
-      position: 'absolute',
-      width: 0,
-      height: 0,
-      borderStyle: 'solid',
-      borderColor: 'transparent',
-      borderLeft: 0,
-      borderWidth: 12,
-      borderRightColor: color.white,
-      bottom: '25%',
-      left: -24,
-      top: 15,
-    },
+  },
+  markdownLink: {
+    color: `${color.themeBlueDarker} !important`,
+    fontSize: fontsize.small,
+    fontFamily: `${fonts.semiBold} !important`,
+    textDecoration: 'none',
   },
   commentBoxContainer: {
     position: 'absolute',
@@ -53,7 +45,7 @@ export const useStyles = makeStyles(theme => ({
   commentBox: {
     position: 'absolute',
     left: 60,
-    width: 'calc(100% - 160px)',
+    width: 'calc(100% - 100px)',
     backgroundColor: color.gray20,
   },
   commentUser: {
