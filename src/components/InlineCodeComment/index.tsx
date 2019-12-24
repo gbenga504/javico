@@ -4,9 +4,8 @@ import { Paper, Button, Tabs, Tab, withStyles } from '@material-ui/core';
 import { useStyles } from './styles';
 import { withFirebase } from '../../utils/FirebaseConnector';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
-import userAvatar from '../../assets/images/user.svg';
 import { withNotificationBanner, Typography } from '../../atoms';
-import { useStyles as commonUseStyles, margin, color, fontsize } from '../../Css';
+import { useStyles as commonUseStyles, color, fontsize } from '../../Css';
 import MarkdownRenderer from '../MarkDownRenderer';
 
 interface IProps {
@@ -117,6 +116,14 @@ const InlineCodeComment: React.FC<IProps> = ({
             className={classes.markdownLink}>
             Markdown is supported
           </Typography>
+          <div className={commonCss.flexRow}>
+            <Button className={commonCss.cancelButton} onClick={handleCancelComment}>
+              Cancel
+            </Button>
+            <Button color="primary" variant="contained" onClick={handleSubmitComment}>
+              Comment
+            </Button>
+          </div>
         </div>
       </>
     );
@@ -140,18 +147,6 @@ const InlineCodeComment: React.FC<IProps> = ({
           top: mousePosition.y + 20,
         }}>
         <form ref={commentRef} onSubmit={e => e.preventDefault()} className={commonCss.flexRow}>
-          <div
-            style={{
-              borderRadius: '50%',
-              ...margin(12, 'r'),
-            }}>
-            <img
-              src={user ? user.photoURL : userAvatar}
-              alt="User commenting"
-              className={classes.commentUser}
-            />
-          </div>
-
           <div className={commonCss.fullWidth}>
             <div
               className={`${classes.inlineCommentContainer} ${
@@ -167,14 +162,6 @@ const InlineCodeComment: React.FC<IProps> = ({
                 </MuiTabs>
               </div>
               {currentTab === 0 ? renderWriteComment() : renderPreviewComment()}
-            </div>
-            <div className={classes.commentButtonContainer}>
-              <Button className={commonCss.cancelButton} onClick={handleCancelComment}>
-                Cancel
-              </Button>
-              <Button color="primary" variant="contained" onClick={handleSubmitComment}>
-                Comment
-              </Button>
             </div>
           </div>
         </form>

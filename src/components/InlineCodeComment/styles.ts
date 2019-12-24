@@ -27,6 +27,9 @@ export const useStyles = makeStyles(theme => ({
     '& .inline-comment__footer': {
       borderTop: `1px solid ${color.gray20}`,
       paddingTop: theme.spacing(1),
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
     },
   },
   nothingToPreview: {
@@ -54,18 +57,7 @@ export const useStyles = makeStyles(theme => ({
     width: 'calc(100% - 100px)',
     backgroundColor: color.gray20,
   },
-  commentUser: {
-    height: 40,
-    width: 40,
-    borderRadius: '50%',
-    border: '2px solid #074e68',
-  },
   commentDialogContent: {
     fontSize: 15,
-  },
-  commentButtonContainer: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    marginTop: theme.spacing(3),
   },
 }));
