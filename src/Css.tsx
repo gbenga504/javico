@@ -17,7 +17,8 @@ export const color = {
   success: '#1B5E20',
   alertDanger: '#DD2C00',
   gray20: '#eee', // Google gray color 200
-  gray60: '#757575', //Google gray color 600
+  gray60: '#757575', //Google gray color 600,
+  focused: '#80dbff',
 };
 
 export const fontsize = {
@@ -148,6 +149,10 @@ export const useStyles = makeStyles({
   },
   absolute: {
     position: 'absolute',
+  },
+  focused: {
+    border: color.focused,
+    boxShadow: '0 0 0 0.2rem rgba(0,123,255,0.25)',
   },
 });
 
