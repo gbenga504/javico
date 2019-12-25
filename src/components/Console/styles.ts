@@ -1,8 +1,8 @@
 import { makeStyles } from '@material-ui/core';
 
-import { color, fontsize, theme } from '../../Css';
+import { color, fontsize } from '../../Css';
 
-export const useStyles = makeStyles({
+export const useStyles = makeStyles(theme => ({
   console: {
     height: '50vh',
     backgroundColor: color.darkThemeBlack,
@@ -61,4 +61,4 @@ export const useStyles = makeStyles({
     width: '100%',
     height: '100%',
   },
-});
+}));
