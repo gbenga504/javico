@@ -83,7 +83,7 @@ const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
   }
 
   function renderTerminal() {
-    return currentTab === 1 ? (
+    return currentTab === 0 ? (
       <div className={classes.consoleTerminal}>
         {terminalMessages.map((terminalMessage: TerminalMessageType, i: number) => {
           if (terminalMessage.type === MessageType.LOG) {
@@ -100,8 +100,8 @@ const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
   return (
     <section className={classes.console}>
       <Tabs value={currentTab} onChange={handleTabChange} aria-label="console tabs">
-        <Tab label="PROBLEMS" {...a11yProps(0)} />
-        <Tab label="TERMINAL" {...a11yProps(1)} />
+        <Tab label="TERMINAL" {...a11yProps(0)} />
+        <Tab label="PROBLEMS" {...a11yProps(1)} />
       </Tabs>
       {renderTerminal()}
     </section>
