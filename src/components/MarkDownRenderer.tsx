@@ -31,15 +31,17 @@ const useStyles = makeStyles(theme => ({
   markdownBlockquote: {
     borderLeft: `5px solid ${color.themeBlue}`,
     background: color.gray20,
+    color: color.black,
     padding: theme.spacing(2, 3),
   },
   markdownCode: {
     background: color.gray20,
+    color: color.black,
     padding: theme.spacing(1),
   },
 }));
 
-const MarkDownRenderer: React.FC<IProps> = ({ source, linkTarget }) => {
+const MarkDownRenderer: React.FC<IProps> = ({ source, linkTarget = '_blank' }) => {
   const classes = useStyles();
 
   function customRenderers() {

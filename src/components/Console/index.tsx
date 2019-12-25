@@ -5,6 +5,7 @@ import Tab from '@material-ui/core/Tab';
 import { useStyles } from './styles';
 import { useStyles as commonUseStyles } from '../../Css';
 import { Typography, Icon } from '../../atoms';
+import MarDownRenderer from '../MarkDownRenderer';
 
 const MessageType = {
   ERROR: `error`,
@@ -23,8 +24,9 @@ type TerminalMessageType = { type: string; message: string | any };
 type TerminalMessagesType = TerminalMessageType[];
 
 const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
-  const [currentTab, setCurrentTab] = useState(0);
+  const [currentTab, setCurrentTab] = useState<number>(0);
   const [terminalMessages, setTerminalMessages] = useState<TerminalMessagesType>([]);
+  const [readMe, setReadMe] = useState<string>('');
   const workerRef = useRef<any>(null);
   const classes = useStyles();
   const commonCss = commonUseStyles();
@@ -46,6 +48,10 @@ const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
 
   function handleTabChange(event: React.ChangeEvent<{}>, currentTab: number) {
     setCurrentTab(currentTab);
+  }
+
+  function handleReadMeTextChange(e: any) {
+    setReadMe(e.target.value);
   }
 
   function renderLogBasedMessages(message: string, index: number) {
@@ -83,8 +89,8 @@ const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
   }
 
   function renderTerminal() {
-    return currentTab === 0 ? (
-      <div className={classes.consoleTerminal}>
+    return (
+      <div className={classes.consoleSection}>
         {terminalMessages.map((terminalMessage: TerminalMessageType, i: number) => {
           if (terminalMessage.type === MessageType.LOG) {
             return renderLogBasedMessages(terminalMessage.message, i);
@@ -94,16 +100,48 @@ const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
           return renderErrorBasedMessages(terminalMessage.message, i);
         })}
       </div>
-    ) : null;
+    );
+  }
+
+  function renderReadMe() {
+    return (
+      <div className={classes.consoleSection}>
+        <textarea
+          onChange={handleReadMeTextChange}
+          required={true}
+          className={classes.consoleReadMeTextarea}
+          value={readMe}
+          autoFocus={true}
+          rows={7}
+          placeholder="Add a ReadMe (Helps others understand your code. Markdown is supported)"></textarea>
+      </div>
+    );
+  }
+
+  function renderPreview() {
+    return (
+      <div className={classes.consoleSection}>
+        <div className={classes.consolePreview}>
+          <MarDownRenderer source={readMe} />
+        </div>
+      </div>
+    );
   }
 
   return (
     <section className={classes.console}>
       <Tabs value={currentTab} onChange={handleTabChange} aria-label="console tabs">
         <Tab label="TERMINAL" {...a11yProps(0)} />
-        <Tab label="PROBLEMS" {...a11yProps(1)} />
+        <Tab label="READ ME" {...a11yProps(1)} />
+        <Tab label="PREVIEW" {...a11yProps(2)} />
       </Tabs>
-      {renderTerminal()}
+      {currentTab === 0
+        ? renderTerminal()
+        : currentTab === 1
+        ? renderReadMe()
+        : currentTab === 2
+        ? renderPreview()
+        : null}
     </section>
   );
 };
