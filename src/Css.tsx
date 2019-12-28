@@ -17,6 +17,8 @@ export const color = {
   success: '#1B5E20',
   alertDanger: '#DD2C00',
   gray20: '#eee', // Google gray color 200
+  gray60: '#757575', //Google gray color 600,
+  focused: '#80dbff',
 };
 
 export const fontsize = {
@@ -60,10 +62,10 @@ export const theme = createMuiTheme({
       },
     },
     MuiTab: {
-      wrapper: {
-        color: color.white,
-        fontSize: 11,
-        fontFamily: fonts.semiBold,
+      root: {
+        color: `${color.white} !important`,
+        fontSize: `11px !important`,
+        fontFamily: `${fonts.semiBold} !important`,
       },
     },
     MuiMenu: {
@@ -109,8 +111,9 @@ export const theme = createMuiTheme({
     MuiButton: {
       root: {
         width: 100,
-        fontSize: fontsize.xsmall,
+        fontSize: fontsize.base,
         fontFamily: fonts.semiBold,
+        textTransform: 'capitalize',
       },
     },
   },
@@ -146,6 +149,10 @@ export const useStyles = makeStyles({
   },
   absolute: {
     position: 'absolute',
+  },
+  focused: {
+    border: color.focused,
+    boxShadow: '0 0 0 0.2rem rgba(0,123,255,0.25)',
   },
 });
 

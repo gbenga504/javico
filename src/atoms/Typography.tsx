@@ -8,6 +8,8 @@ interface IProps {
   style?: object;
   thickness?: 'bold' | 'regular' | 'semi-bold' | 'light';
   color?: 'initial' | 'warning' | 'error';
+  href?: string;
+  target?: string;
 }
 
 const Typography: React.FC<IProps> = ({
@@ -17,6 +19,7 @@ const Typography: React.FC<IProps> = ({
   thickness = 'regular',
   children,
   color = 'initial',
+  ...rest
 }) => {
   function getColor(): string {
     switch (color) {
@@ -39,7 +42,7 @@ const Typography: React.FC<IProps> = ({
 
   return React.createElement(
     variant,
-    { className, style: Object.assign({}, getFontStyle(), style) },
+    { className, style: Object.assign({}, getFontStyle(), style), ...rest },
     children,
   );
 };
