@@ -13,7 +13,7 @@ const config = {
   measurementId: process.env.REACT_MEASUREMENT_ID,
 };
 
-export default class Firebase {
+export default class Api {
   auth: any;
   firestore: any;
   provider: any;

@@ -5,11 +5,11 @@ import { TwitterShareButton } from 'react-share';
 import { useStyles } from './styles';
 import { useStyles as commonUseStyles } from '../../Css';
 import { Icon, withNotificationBanner } from '../../atoms';
-import { withFirebase } from '../../utils/FirebaseConnector';
+import { withApi } from '../../utils/ApiConnector';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 
 interface IProps {
-  firebase: any;
+  Api: any;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
 }
 
@@ -41,7 +41,7 @@ const iconList = (fullScreenMode: boolean) => [
   { text: 'Light theme', action: '', icon: 'ios-bulb' },
 ];
 
-const MenuBar: React.FC<IProps> = ({ firebase, onSetNotificationSettings }) => {
+const MenuBar: React.FC<IProps> = ({ Api, onSetNotificationSettings }) => {
   const [fullScreenMode, setFullScreenMode] = useState<boolean>(!!fullScreenEnabled);
   const [menuElement, setMenuElement] = React.useState<null | HTMLElement>(null);
   const [currentUser, setCurrentUser] = React.useState<any>(null);
@@ -61,14 +61,14 @@ const MenuBar: React.FC<IProps> = ({ firebase, onSetNotificationSettings }) => {
   }, []);
 
   useEffect(() => {
-    firebase.onAuthStateChanged(function(user: any) {
+    Api.onAuthStateChanged(function(user: any) {
       if (user) {
         setCurrentUser(user);
       } else {
         setCurrentUser(null);
       }
     });
-  }, [firebase]);
+  }, [Api]);
 
   function handleOpenMenu(event: React.MouseEvent<HTMLElement>) {
     setMenuElement(event.currentTarget);
@@ -89,8 +89,7 @@ const MenuBar: React.FC<IProps> = ({ firebase, onSetNotificationSettings }) => {
   }
 
   function handleSignInWithGithub() {
-    firebase
-      .signInWithGithub()
+    Api.signInWithGithub()
       .then(function(result: any) {
         /**
          * @todo
@@ -103,8 +102,7 @@ const MenuBar: React.FC<IProps> = ({ firebase, onSetNotificationSettings }) => {
   }
 
   function handleLogout() {
-    firebase
-      .logout()
+    Api.logout()
       .then(function() {
         setCurrentUser(null);
         handleCloseMenu();
@@ -172,4 +170,4 @@ const MenuBar: React.FC<IProps> = ({ firebase, onSetNotificationSettings }) => {
   );
 };
 
-export default React.memo(withNotificationBanner(withFirebase(MenuBar)));
+export default React.memo(withNotificationBanner(withApi(MenuBar)));

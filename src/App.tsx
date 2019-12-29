@@ -2,18 +2,18 @@ import React from 'react';
 import { MuiThemeProvider } from '@material-ui/core';
 
 import Home from './views/Home';
-import Firebase, { FirebaseContext } from './utils/FirebaseConnector';
+import Api, { ApiContext } from './utils/ApiConnector';
 import { NotificationProvider } from './atoms';
 import { theme } from './Css';
 
 const App: React.FC = () => (
-  <FirebaseContext.Provider value={new Firebase()}>
+  <ApiContext.Provider value={new Api()}>
     <MuiThemeProvider theme={theme}>
       <NotificationProvider>
         <Home />
       </NotificationProvider>
     </MuiThemeProvider>
-  </FirebaseContext.Provider>
+  </ApiContext.Provider>
 );
 
 export default App;

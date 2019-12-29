@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import { Paper, Button, Tabs, Tab, withStyles } from '@material-ui/core';
 
 import { useStyles } from './styles';
-import { withFirebase } from '../../utils/FirebaseConnector';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import { withNotificationBanner, Typography } from '../../atoms';
 import { useStyles as commonUseStyles, color, fontsize } from '../../Css';
@@ -16,7 +15,6 @@ interface IProps {
   onRequestClose: () => null;
   onOpenSignInModal: () => null;
   onSignInSuccess: (user: any) => null;
-  firebase: any;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
 }
 
@@ -170,4 +168,4 @@ const InlineCodeComment: React.FC<IProps> = ({
   );
 };
 
-export default React.memo(withNotificationBanner(withFirebase(InlineCodeComment)));
+export default React.memo(withNotificationBanner(InlineCodeComment));
