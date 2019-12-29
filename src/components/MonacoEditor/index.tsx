@@ -5,7 +5,7 @@ import { useStyles } from './styles';
 import { useStyles as commonUseStyles, color } from '../../Css';
 import MonacoIntegrator from '../../utils/MonacoIntegrator';
 import MonacoThemes from '../../utils/MonacoThemes';
-import { withFirebase } from '../../utils/FirebaseConnector';
+import { withApi } from '../../utils/ApiConnector';
 import { Icon, AnimatedCircularLoader } from '../../atoms';
 import SignInViaGithubModal from '../SignInViaGithubModal';
 import InlineCodeComment from '../InlineCodeComment';
@@ -15,7 +15,7 @@ interface IProps {
   onRunSourceCode?: (value: string) => void;
   theme?: 'light' | 'dark' | 'ace' | 'night-dark';
   language?: string;
-  firebase: any;
+  Api: any;
 }
 
 const MonacoEditor: React.FC<IProps> = ({
@@ -23,7 +23,7 @@ const MonacoEditor: React.FC<IProps> = ({
   onRunSourceCode,
   theme = 'vs-dark',
   language = 'javascript',
-  firebase,
+  Api,
 }) => {
   const [shouldDisplayCommentBox, setShouldDisplayCommentBox] = useState<boolean>(false);
   const [shouldDisplayCommentIcon, setShouldDisplayCommentIcon] = useState<boolean>(false);
@@ -88,14 +88,14 @@ const MonacoEditor: React.FC<IProps> = ({
   }, []);
 
   useEffect(() => {
-    firebase.onAuthStateChanged(function(user: any) {
+    Api.onAuthStateChanged(function(user: any) {
       if (user) {
         setUser(user);
       } else {
         setUser(null);
       }
     });
-  }, [firebase]);
+  }, [Api]);
 
   useEffect(() => {
     isMonacoReady === true && isEditorReady === false && createEditor();
@@ -274,4 +274,4 @@ const MonacoEditor: React.FC<IProps> = ({
   );
 };
 
-export default React.memo(withFirebase(MonacoEditor));
+export default React.memo(withApi(MonacoEditor));

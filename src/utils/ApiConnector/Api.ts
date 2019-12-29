@@ -1,5 +1,6 @@
 import * as app from 'firebase/app';
 import 'firebase/auth';
+import 'firebase/firestore';
 
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -12,13 +13,15 @@ const config = {
   measurementId: process.env.REACT_MEASUREMENT_ID,
 };
 
-export default class Firebase {
+export default class Api {
   auth: any;
+  firestore: any;
   provider: any;
 
   constructor() {
     app.initializeApp(config);
     this.auth = app.auth();
+    this.firestore = app.firestore();
     this.provider = new app.auth.GithubAuthProvider();
   }
 

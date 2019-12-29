@@ -2,7 +2,7 @@ import React from 'react';
 
 import NotificationContext from './NotificationContext';
 
-const withNotificationBanner = (Component: React.FC) => (props: any) => (
+const withNotificationBanner = (Component: React.FC<any>) => (props: any) => (
   <NotificationContext.Consumer>
     {({ onSetNotificationSettings }) => (
       <Component {...props} onSetNotificationSettings={onSetNotificationSettings} />
