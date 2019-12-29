@@ -149,7 +149,11 @@ const MonacoEditor: React.FC<IProps> = ({
           options: { inlineClassName: classes.monacoEditorHighlightMainContent },
         },
         {
-          range: new monacoRef.current.Range(startLineNumber, 1, endLineNumber, 1000),
+          range: new monacoRef.current.Range(startLineNumber, 1, startLineNumber, startColumn),
+          options: { inlineClassName: classes.monacoEditorHighlightRemainingContent },
+        },
+        {
+          range: new monacoRef.current.Range(endLineNumber, endColumn, endLineNumber, 1000),
           options: { inlineClassName: classes.monacoEditorHighlightRemainingContent },
         },
       ],
