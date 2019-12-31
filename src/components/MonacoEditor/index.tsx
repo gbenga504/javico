@@ -6,7 +6,7 @@ import { useStyles as commonUseStyles, color } from '../../Css';
 import MonacoIntegrator from '../../utils/MonacoIntegrator';
 import MonacoThemes from '../../utils/MonacoThemes';
 import { withApi } from '../../utils/ApiConnector';
-import CodeService from '../../services/codeServices';
+import CodeService from '../../services/sourceCodeServices';
 import { Icon, AnimatedCircularLoader } from '../../atoms';
 import SignInViaGithubModal from '../SignInViaGithubModal';
 import InlineCodeComment from '../InlineCodeComment';
@@ -54,14 +54,13 @@ const MonacoEditor: React.FC<IProps> = ({
         event.preventDefault();
         let me = Api.getCurrentUser();
         if (!!me && me.email) {
-          CodeService.persistCode({
+          CodeService.createSourceCode({
             data: {
               foreignKey: '',
               sourceCode,
               readme: '',
               title: '',
               tags: [],
-              id: generateID(),
             },
           });
         } else {
