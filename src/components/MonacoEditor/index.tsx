@@ -6,9 +6,11 @@ import { useStyles as commonUseStyles, color } from '../../Css';
 import MonacoIntegrator from '../../utils/MonacoIntegrator';
 import MonacoThemes from '../../utils/MonacoThemes';
 import { withApi } from '../../utils/ApiConnector';
+import CodeService from '../../services/codeServices';
 import { Icon, AnimatedCircularLoader } from '../../atoms';
 import SignInViaGithubModal from '../SignInViaGithubModal';
 import InlineCodeComment from '../InlineCodeComment';
+import { generateID } from '../../utils/misc';
 
 interface IProps {
   value?: string;
@@ -50,11 +52,18 @@ const MonacoEditor: React.FC<IProps> = ({
     editorRef.current.onKeyDown(function(event: any) {
       if ((event.ctrlKey === true || event.metaKey === true) && event.keyCode === 49) {
         event.preventDefault();
-        if (user) {
-          /**
-           * @todo
-           * Save the code
-           */
+        let me = Api.getCurrentUser();
+        if (!!me && me.email) {
+          CodeService.persistCode({
+            data: {
+              foreignKey: '',
+              sourceCode,
+              readme: '',
+              title: '',
+              tags: [],
+              id: generateID(),
+            },
+          });
         } else {
           handleOpenSignInModal();
         }
@@ -71,7 +80,7 @@ const MonacoEditor: React.FC<IProps> = ({
     });
     editorRef.current.focus();
     setIsEditorReady(true);
-  }, [language, theme, value, user]);
+  }, [language, theme, value, Api, sourceCode]);
 
   useEffect(() => {
     MonacoIntegrator.init()
