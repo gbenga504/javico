@@ -10,7 +10,6 @@ import CodeService from '../../services/sourceCodeServices';
 import { Icon, AnimatedCircularLoader } from '../../atoms';
 import SignInViaGithubModal from '../SignInViaGithubModal';
 import InlineCodeComment from '../InlineCodeComment';
-import { generateID } from '../../utils/misc';
 
 interface IProps {
   value?: string;

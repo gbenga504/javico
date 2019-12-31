@@ -1,6 +1,20 @@
 import Api from '../utils/ApiConnector';
 
-class commentService {
+interface IPayload {
+  data: {
+    foreignKey: string;
+    comment: string;
+    refCode?: string;
+    author: any;
+    tags?: Array<string>;
+  };
+}
+
+interface I_Id {
+  id: string;
+}
+
+class CommentService {
   commentRef: any;
   Api: any;
 
@@ -8,17 +22,17 @@ class commentService {
     this.commentRef = Api.firestore.collection('comments');
   }
 
-  createComment = (payload: any): Promise<any> => {
+  createComment = (payload: IPayload): Promise<any> => {
     const { data } = payload;
     return this.commentRef.add({ ...data, timestamp: Api.firestore.FieldValue.serverTimestamp() });
   };
 
-  deleteComment = (payload: any): Promise<any> => {
+  deleteComment = (payload: I_Id): Promise<any> => {
     const { id } = payload;
     return this.commentRef.doc(id).delete();
   };
 
-  fetchComment = (payload: any): Promise<any> => {
+  fetchComment = (payload: I_Id): Promise<any> => {
     const { id } = payload;
     return this.commentRef.doc(id).get();
   };
@@ -29,5 +43,5 @@ class commentService {
   };
 }
 
-const instance = new commentService();
+const instance = new CommentService();
 export default instance;
