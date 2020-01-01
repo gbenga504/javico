@@ -1,6 +1,6 @@
 import Api from '../utils/ApiConnector';
 
-class commentReplyService {
+class CommentReplyService {
   replyRef: any;
   Api: any;
 
@@ -29,5 +29,5 @@ class commentReplyService {
   };
 }
 
-const instance = new commentReplyService();
+const instance = new CommentReplyService();
 export default instance;

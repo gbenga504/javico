@@ -1,17 +1,13 @@
 import Api from '../utils/ApiConnector';
 
 interface IPayload {
-  data: {
+  data?: {
     foreignKey: string;
-    comment: string;
-    refCode?: string;
     author: any;
-    tags?: Array<string>;
+    comment: string;
+    codeRef?: string;
   };
-}
-
-interface I_Id {
-  id: string;
+  id?: string;
 }
 
 class CommentService {
@@ -27,12 +23,12 @@ class CommentService {
     return this.commentRef.add({ ...data, timestamp: Api.firestore.FieldValue.serverTimestamp() });
   };
 
-  deleteComment = (payload: I_Id): Promise<any> => {
+  deleteComment = (payload: IPayload): Promise<any> => {
     const { id } = payload;
     return this.commentRef.doc(id).delete();
   };
 
-  fetchComment = (payload: I_Id): Promise<any> => {
+  fetchComment = (payload: IPayload): Promise<any> => {
     const { id } = payload;
     return this.commentRef.doc(id).get();
   };

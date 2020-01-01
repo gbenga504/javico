@@ -83,7 +83,6 @@ const InlineCodeComment: React.FC<IProps> = ({
           author: {
             ...user,
           },
-          tags: [],
         },
       });
     }

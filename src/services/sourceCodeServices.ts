@@ -1,17 +1,14 @@
 import Api from '../utils/ApiConnector';
 
 interface IPayload {
-  data: {
+  data?: {
     foreignKey: string;
     sourceCode: string;
     readme?: string;
     title: any;
     tags?: Array<string>;
   };
-}
-
-interface I_Id {
-  id: string;
+  id?: string;
 }
 
 class SourceCodeService {
@@ -27,12 +24,12 @@ class SourceCodeService {
     return this.codeRef.add({ ...data, timestamp: Api.firestore.FieldValue.serverTimestamp() });
   };
 
-  deleteSourceCode = (payload: I_Id): Promise<any> => {
+  deleteSourceCode = (payload: IPayload): Promise<any> => {
     const { id } = payload;
     return this.codeRef.doc(id).delete();
   };
 
-  fetchSourceCode = (payload: I_Id): Promise<any> => {
+  fetchSourceCode = (payload: IPayload): Promise<any> => {
     const { id } = payload;
     return this.codeRef.doc(id).get();
   };
