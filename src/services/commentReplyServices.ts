@@ -1,5 +1,20 @@
 import Api from '../utils/ApiConnector';
 
+interface IPayload {
+  data?: {
+    commentId: string;
+    author: {
+      name: string;
+      photoURL: string;
+    };
+    codeReference: string;
+    reply: string;
+  };
+  params?: {
+    ID: string;
+  };
+}
+
 class CommentReplyService {
   replyRef: any;
   Api: any;
@@ -8,26 +23,29 @@ class CommentReplyService {
     this.replyRef = Api.firestore.collection('replies');
   }
 
-  createReply = (payload: any): Promise<any> => {
-    const { data } = payload;
+  createReply = (payload: IPayload): Promise<any> => {
+    let { data } = payload;
     return this.replyRef.add({ ...data, timestamp: Api.firestore.FieldValue.serverTimestamp() });
   };
 
-  deleteReply = (payload: any): Promise<any> => {
-    const { id } = payload;
-    return this.replyRef.doc(id).delete();
+  deleteReply = (payload: IPayload): Promise<any> => {
+    let { params } = payload;
+    let _params = params || ({} as any);
+    return this.replyRef.doc(_params.ID).delete();
   };
 
-  fetchReply = (payload: any): Promise<any> => {
-    const { id } = payload;
-    return this.replyRef.doc(id).get();
+  fetchReply = (payload: IPayload): Promise<any> => {
+    let { params } = payload;
+    let _params = params || ({} as any);
+    return this.replyRef.doc(_params.ID).get();
   };
 
   updateReply = (payload: any): Promise<any> => {
-    const { data } = payload;
-    return this.replyRef.doc(data.id).set(data);
+    const { params, data } = payload;
+    let _params = params || ({} as any);
+    return this.replyRef.doc(_params.ID).set(data);
   };
 }
 
-const instance = new CommentReplyService();
-export default instance;
+const commentReplyService = new CommentReplyService();
+export default commentReplyService;

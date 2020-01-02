@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import { Paper, Button, Tabs, Tab, withStyles } from '@material-ui/core';
 
 import { useStyles } from './styles';
-import commentServices from '../../services/commentsServices';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import { withNotificationBanner, Typography } from '../../atoms';
 import { useStyles as commonUseStyles, color, fontsize } from '../../Css';
@@ -76,15 +75,10 @@ const InlineCodeComment: React.FC<IProps> = ({
     if (!user) {
       onOpenSignInModal();
     } else {
-      commentServices.createComment({
-        data: {
-          foreignKey: '',
-          comment,
-          author: {
-            ...user,
-          },
-        },
-      });
+      /**
+       * @todo
+       * save comment in firestore and show loading symbol when saving
+       */
     }
   }
 

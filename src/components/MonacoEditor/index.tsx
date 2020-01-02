@@ -6,7 +6,6 @@ import { useStyles as commonUseStyles, color } from '../../Css';
 import MonacoIntegrator from '../../utils/MonacoIntegrator';
 import MonacoThemes from '../../utils/MonacoThemes';
 import { withApi } from '../../utils/ApiConnector';
-import CodeService from '../../services/sourceCodeServices';
 import { Icon, AnimatedCircularLoader } from '../../atoms';
 import SignInViaGithubModal from '../SignInViaGithubModal';
 import InlineCodeComment from '../InlineCodeComment';
@@ -53,15 +52,10 @@ const MonacoEditor: React.FC<IProps> = ({
         event.preventDefault();
         let me = Api.getCurrentUser();
         if (!!me && me.email) {
-          CodeService.createSourceCode({
-            data: {
-              foreignKey: '',
-              sourceCode,
-              readme: '',
-              title: '',
-              tags: [],
-            },
-          });
+          /**
+           * @tofo
+           * Save code in firestore and show loading symbol when saving code
+           */
         } else {
           handleOpenSignInModal();
         }
@@ -78,7 +72,7 @@ const MonacoEditor: React.FC<IProps> = ({
     });
     editorRef.current.focus();
     setIsEditorReady(true);
-  }, [language, theme, value, Api, sourceCode]);
+  }, [language, theme, value, Api]);
 
   useEffect(() => {
     MonacoIntegrator.init()

@@ -2,13 +2,15 @@ import Api from '../utils/ApiConnector';
 
 interface IPayload {
   data?: {
-    foreignKey: string;
+    ownerId: string;
     sourceCode: string;
     readme?: string;
-    title: any;
+    title?: string;
     tags?: Array<string>;
   };
-  id?: string;
+  params?: {
+    ID: string;
+  };
 }
 
 class SourceCodeService {
@@ -16,7 +18,7 @@ class SourceCodeService {
   Api: any;
 
   constructor() {
-    this.codeRef = Api.firestore.collection('sourceCodes');
+    this.codeRef = Api.firestore.collection('source-codes');
   }
 
   createSourceCode = (payload: IPayload): Promise<any> => {
@@ -25,20 +27,23 @@ class SourceCodeService {
   };
 
   deleteSourceCode = (payload: IPayload): Promise<any> => {
-    const { id } = payload;
-    return this.codeRef.doc(id).delete();
+    let { params } = payload;
+    let _params = params || ({} as any);
+    return this.codeRef.doc(_params.ID).delete();
   };
 
   fetchSourceCode = (payload: IPayload): Promise<any> => {
-    const { id } = payload;
-    return this.codeRef.doc(id).get();
+    let { params } = payload;
+    let _params = params || ({} as any);
+    return this.codeRef.doc(_params.ID).get();
   };
 
-  updateSourceCode = (payload: any): Promise<any> => {
-    const { data } = payload;
-    return this.codeRef.doc(data.id).set(data);
+  updateSourceCode = (payload: IPayload): Promise<any> => {
+    let { params, data } = payload;
+    let _params = params || ({} as any);
+    return this.codeRef.doc(_params.ID).set(data);
   };
 }
 
-const instance = new SourceCodeService();
-export default instance;
+const sourceCodeService = new SourceCodeService();
+export default sourceCodeService;

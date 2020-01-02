@@ -2,12 +2,17 @@ import Api from '../utils/ApiConnector';
 
 interface IPayload {
   data?: {
-    foreignKey: string;
-    author: any;
+    sourceCodeId: string;
+    author: {
+      name: string;
+      photoURL: string;
+    };
     comment: string;
-    codeRef?: string;
+    codeReference?: string;
   };
-  id?: string;
+  params?: {
+    ID: string;
+  };
 }
 
 class CommentService {
@@ -24,20 +29,23 @@ class CommentService {
   };
 
   deleteComment = (payload: IPayload): Promise<any> => {
-    const { id } = payload;
-    return this.commentRef.doc(id).delete();
+    let { params } = payload;
+    let _params = params || ({} as any);
+    return this.commentRef.doc(_params.ID).delete();
   };
 
   fetchComment = (payload: IPayload): Promise<any> => {
-    const { id } = payload;
-    return this.commentRef.doc(id).get();
+    let { params } = payload;
+    let _params = params || ({} as any);
+    return this.commentRef.doc(_params.ID).get();
   };
 
-  updateComment = (payload: any): Promise<any> => {
-    const { data } = payload;
-    return this.commentRef.doc(data.id).set(data);
+  updateComment = (payload: IPayload): Promise<any> => {
+    let { data, params } = payload;
+    let _params = params || ({} as any);
+    return this.commentRef.doc(_params.ID).set(data);
   };
 }
 
-const instance = new CommentService();
-export default instance;
+const commentsServices = new CommentService();
+export default commentsServices;
