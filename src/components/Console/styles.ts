@@ -13,6 +13,7 @@ export const useStyles = makeStyles(theme => ({
   consoleSection: {
     width: '100%',
     height: 'calc(100% - 48px)',
+    position: 'relative',
     overflowY: 'scroll',
     borderTop: `1px solid ${color.darkThemeLightBorder}`,
   },
@@ -60,5 +61,14 @@ export const useStyles = makeStyles(theme => ({
     color: color.white,
     width: '100%',
     height: '100%',
+  },
+  saveReadme: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+  },
+  saveReadmeButton: {
+    margin: theme.spacing(1),
+    fontSize: 12,
   },
 }));

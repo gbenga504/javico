@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, withStyles, LinearProgress } from '@material-ui/core';
 
 import MenuBar from '../../components/MenuBar';
 import MonacoEditor from '../../components/MonacoEditor';
@@ -11,6 +11,9 @@ const useStyles = makeStyles({
   main: {
     width: '100%',
   },
+  relative: {
+    position: 'relative',
+  },
   mainRightSection: {
     flex: 1,
     height: '100%',
@@ -18,7 +21,26 @@ const useStyles = makeStyles({
     minWidth: '50%',
     backgroundColor: color.darkThemeBlack,
   },
+  linearProgress: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 5,
+  },
 });
+
+const ColorLinearProgress = withStyles({
+  colorPrimary: {
+    backgroundColor: '#b2dfdb',
+  },
+  barColorPrimary: {
+    backgroundColor: '#00695c',
+  },
+  root: {
+    height: 2,
+  },
+})(LinearProgress);
 
 const Home: React.FC = () => {
   const [terminalExecutableCode, setTerminalExecutableCode] = useState('');
@@ -26,7 +48,10 @@ const Home: React.FC = () => {
   const commonCss = commonUseStyles();
 
   return (
-    <div className={commonCss.flexRow}>
+    <div className={`${classes.relative} ${commonCss.flexRow}`}>
+      <div className={classes.linearProgress}>
+        <ColorLinearProgress />
+      </div>
       <MenuBar />
       <main className={`${classes.main} ${commonCss.flexRow}`}>
         <MonacoEditor onRunSourceCode={setTerminalExecutableCode} />

@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+import { Fab, Tabs, Tab } from '@material-ui/core';
 
 import { useStyles } from './styles';
 import { useStyles as commonUseStyles } from '../../Css';
 import { Typography, Icon } from '../../atoms';
 import MarDownRenderer from '../MarkDownRenderer';
+import sourceCodeService from '../../services/sourceCodeServices';
 
 const MessageType = {
   ERROR: `error`,
@@ -52,6 +52,13 @@ const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
 
   function handleReadMeTextChange(e: any) {
     setReadMe(e.target.value);
+  }
+
+  function submitReadme() {
+    sourceCodeService.updateSourceCode({
+      id: '',
+      readMe,
+    });
   }
 
   function renderLogBasedMessages(message: string, index: number) {
@@ -114,6 +121,17 @@ const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
           autoFocus={true}
           rows={7}
           placeholder="Add a ReadMe (Helps others understand your code. Markdown is supported)"></textarea>
+        <div className={classes.saveReadme}>
+          <Fab
+            variant="extended"
+            size="small"
+            color="primary"
+            aria-label="save readme"
+            onClick={submitReadme}
+            className={classes.saveReadmeButton}>
+            save
+          </Fab>
+        </div>
       </div>
     );
   }
