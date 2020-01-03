@@ -13,7 +13,7 @@ const config = {
   measurementId: process.env.REACT_MEASUREMENT_ID,
 };
 
-export default class Api {
+class Api {
   auth: any;
   firestore: any;
   provider: any;
@@ -41,3 +41,6 @@ export default class Api {
     return this.auth.signOut();
   };
 }
+
+const instance = new Api();
+export default instance;

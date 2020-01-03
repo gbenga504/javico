@@ -7,7 +7,7 @@ import { NotificationProvider } from './atoms';
 import { theme } from './Css';
 
 const App: React.FC = () => (
-  <ApiContext.Provider value={new Api()}>
+  <ApiContext.Provider value={Api}>
     <MuiThemeProvider theme={theme}>
       <NotificationProvider>
         <Home />
