@@ -6,6 +6,7 @@ import MonacoEditor from '../../components/MonacoEditor';
 import Console from '../../components/Console';
 import Comments from '../../components/Comments';
 import { color, useStyles as commonUseStyles } from '../../Css';
+import IndeterminateLinearProgress from '../../atoms/IndeterminateLinearProgress';
 
 const useStyles = makeStyles({
   main: {
@@ -30,18 +31,6 @@ const useStyles = makeStyles({
   },
 });
 
-const ColorLinearProgress = withStyles({
-  colorPrimary: {
-    backgroundColor: '#b2dfdb',
-  },
-  barColorPrimary: {
-    backgroundColor: '#00695c',
-  },
-  root: {
-    height: 2,
-  },
-})(LinearProgress);
-
 const Home: React.FC = () => {
   const [terminalExecutableCode, setTerminalExecutableCode] = useState('');
   const classes = useStyles();
@@ -50,7 +39,7 @@ const Home: React.FC = () => {
   return (
     <div className={`${classes.relative} ${commonCss.flexRow}`}>
       <div className={classes.linearProgress}>
-        <ColorLinearProgress />
+        <IndeterminateLinearProgress />
       </div>
       <MenuBar />
       <main className={`${classes.main} ${commonCss.flexRow}`}>

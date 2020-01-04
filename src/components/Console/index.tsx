@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Fab, Tabs, Tab } from '@material-ui/core';
+import { Button, Tabs, Tab } from '@material-ui/core';
 
 import { useStyles } from './styles';
 import { useStyles as commonUseStyles } from '../../Css';
@@ -122,15 +122,13 @@ const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
           rows={7}
           placeholder="Add a ReadMe (Helps others understand your code. Markdown is supported)"></textarea>
         <div className={classes.saveReadme}>
-          <Fab
-            variant="extended"
-            size="small"
-            color="primary"
-            aria-label="save readme"
+          <Button
+            variant="contained"
             onClick={submitReadme}
-            className={classes.saveReadmeButton}>
+            className={classes.saveReadmeButton}
+            color="primary">
             save
-          </Fab>
+          </Button>
         </div>
       </div>
     );
