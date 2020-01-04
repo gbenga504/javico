@@ -164,7 +164,7 @@ const MonacoEditor: React.FC<IProps> = ({
     const value = editorRef.current.getModel().getValueInRange(selection);
     if (!!value && value.trim().length > 0) {
       setSelectionRange(selection);
-      setMousePosition(e.event.pos);
+      setMousePosition({ x: e.clientX, y: e.clientY });
       setSelectionValue(value);
     }
   }
