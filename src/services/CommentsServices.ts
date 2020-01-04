@@ -57,6 +57,7 @@ export default class CommentService {
     handleDataChanged: Function,
     handleError: Function,
   ) => {
+    //This static method returns the comments in descending order during initial load then listens to any addition or updates to the colletion or documents in the collection
     const { params } = payload;
     Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments`)

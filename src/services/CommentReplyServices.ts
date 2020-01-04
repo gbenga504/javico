@@ -1,3 +1,6 @@
+/**
+ * @classdesc This service enhances the Api to carry out reply based operations
+ */
 import Api from '../utils/ApiConnector';
 
 interface IPayload {
@@ -58,6 +61,7 @@ export default class CommentReplyService {
     handleDataChanged: Function,
     handleError: Function,
   ) => {
+    //This static method returns the replies in descending order during initial load then listens to any addition or updates to the colletion or documents in the collection
     const { params } = payload;
     Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments/${params.commentID}/replies`)
