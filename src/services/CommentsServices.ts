@@ -2,6 +2,7 @@ import Api from '../utils/ApiConnector';
 
 interface IPayload {
   data?: {
+    sourceCodeId: string;
     author: {
       name: string;
       photoURL: string;
@@ -11,8 +12,9 @@ interface IPayload {
   };
   params: {
     sourceCodeID: string;
-    ID: string;
-    limit: number;
+    ID?: string;
+    limit?: number;
+    after?: any;
   };
 }
 
@@ -21,29 +23,33 @@ export default class CommentService {
     let { data, params } = payload;
     return Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments`)
-      .add({ ...data, timestamp: Api.firestore.FieldValue.serverTimestamp() });
+      .add({ ...data, createdAt: Api.app.firestore.FieldValue.serverTimestamp() });
   };
 
   static deleteComment = (payload: IPayload): Promise<any> => {
     let { params } = payload;
     return Api.firestore
-      .collection(`source-codes/${params.sourceCodeID}/comments/${params.ID}`)
+      .collection(`source-codes/${params.sourceCodeID}/comments`)
+      .doc(params.ID)
       .delete();
   };
 
   static updateComment = (payload: IPayload): Promise<any> => {
     let { data, params } = payload;
     return Api.firestore
-      .collection(`source-codes/${params.sourceCodeID}/comments/${params.ID}`)
-      .set(data);
+      .collection(`source-codes/${params.sourceCodeID}/comments`)
+      .doc(params.ID)
+      .set({ ...data, updatedAt: Api.app.firestore.FieldValue.serverTimestamp() }, { merge: true });
   };
 
-  static getAllComments = (payload: IPayload): Promise<any> => {
+  static fetchMoreComments = (payload: IPayload): Promise<any> => {
     let { params } = payload;
     return Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments`)
-      .get()
-      .limit(params.limit);
+      .orderBy('createdAt', 'desc')
+      .startAfter(params.after)
+      .limit(params.limit)
+      .get();
   };
 
   static onSnapshotChanged = (
@@ -54,6 +60,8 @@ export default class CommentService {
     let { params } = payload;
     Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments`)
+      .orderBy('createdAt', 'desc')
+      .limit(params.limit)
       .onSnapshot(handleDataChanged, handleError);
   };
 }

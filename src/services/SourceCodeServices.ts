@@ -14,11 +14,20 @@ interface IPayload {
 }
 
 export default class SourceCodeService {
-  static createSourceCode = (payload: IPayload): Promise<any> => {
-    const { data } = payload;
+  static saveSourceCode = (payload: IPayload): Promise<any> => {
+    const { data, params } = payload;
+    if (params && params.ID) {
+      return Api.firestore
+        .collection(`source-codes`)
+        .doc(params.ID)
+        .set(
+          { ...data, updatedAt: Api.app.firestore.FieldValue.serverTimestamp() },
+          { merge: true },
+        );
+    }
     return Api.firestore
       .collection('source-codes')
-      .add({ ...data, timestamp: Api.firestore.FieldValue.serverTimestamp() });
+      .add({ ...data, createdAt: Api.app.firestore.FieldValue.serverTimestamp() });
   };
 
   static fetchSourceCode = (payload: IPayload): Promise<any> => {
@@ -28,14 +37,5 @@ export default class SourceCodeService {
       .collection('source-codes')
       .doc(_params.ID)
       .get();
-  };
-
-  static updateSourceCode = (payload: IPayload): Promise<any> => {
-    let { params, data } = payload;
-    let _params = params || ({} as any);
-    return Api.firestore
-      .collection('source-codes')
-      .doc(_params.ID)
-      .set(data);
   };
 }
