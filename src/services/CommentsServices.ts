@@ -20,14 +20,14 @@ interface IPayload {
 
 export default class CommentService {
   static createComment = (payload: IPayload): Promise<any> => {
-    let { data, params } = payload;
+    const { data, params } = payload;
     return Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments`)
       .add({ ...data, createdAt: Api.app.firestore.FieldValue.serverTimestamp() });
   };
 
   static deleteComment = (payload: IPayload): Promise<any> => {
-    let { params } = payload;
+    const { params } = payload;
     return Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments`)
       .doc(params.ID)
@@ -35,7 +35,7 @@ export default class CommentService {
   };
 
   static updateComment = (payload: IPayload): Promise<any> => {
-    let { data, params } = payload;
+    const { data, params } = payload;
     return Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments`)
       .doc(params.ID)
@@ -43,7 +43,7 @@ export default class CommentService {
   };
 
   static fetchMoreComments = (payload: IPayload): Promise<any> => {
-    let { params } = payload;
+    const { params } = payload;
     return Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments`)
       .orderBy('createdAt', 'desc')
@@ -57,7 +57,7 @@ export default class CommentService {
     handleDataChanged: Function,
     handleError: Function,
   ) => {
-    let { params } = payload;
+    const { params } = payload;
     Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments`)
       .orderBy('createdAt', 'desc')

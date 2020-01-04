@@ -21,14 +21,14 @@ interface IPayload {
 
 export default class CommentReplyService {
   static createReply = (payload: IPayload): Promise<any> => {
-    let { params, data } = payload;
+    const { params, data } = payload;
     return Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments/${params.commentID}/replies`)
       .add({ ...data, createdAt: Api.app.firestore.FieldValue.serverTimestamp() });
   };
 
   static deleteReply = (payload: IPayload): Promise<any> => {
-    let { params } = payload;
+    const { params } = payload;
     return Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments/${params.commentID}/replies`)
       .doc(params.ID)
@@ -44,7 +44,7 @@ export default class CommentReplyService {
   };
 
   static fetchMoreReply = (payload: IPayload): Promise<any> => {
-    let { params } = payload;
+    const { params } = payload;
     return Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comment/${params.commentID}/replies`)
       .orderBy('createdAt', 'desc')
@@ -58,7 +58,7 @@ export default class CommentReplyService {
     handleDataChanged: Function,
     handleError: Function,
   ) => {
-    let { params } = payload;
+    const { params } = payload;
     Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments/${params.commentID}/replies`)
       .orderBy('createdAt', 'desc')

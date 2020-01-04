@@ -31,8 +31,8 @@ export default class SourceCodeService {
   };
 
   static fetchSourceCode = (payload: IPayload): Promise<any> => {
-    let { params } = payload;
-    let _params = params || ({} as any);
+    const { params } = payload;
+    const _params = params || ({} as any);
     return Api.firestore
       .collection('source-codes')
       .doc(_params.ID)
