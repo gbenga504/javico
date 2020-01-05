@@ -6,7 +6,6 @@ import { useStyles as commonUseStyles, color } from '../../Css';
 import MonacoIntegrator from '../../utils/MonacoIntegrator';
 import MonacoThemes from '../../utils/MonacoThemes';
 import { withApi } from '../../utils/ApiConnector';
-import CodeService from '../../services/sourceCodeServices';
 import { Icon, AnimatedCircularLoader } from '../../atoms';
 import SignInViaGithubModal from '../SignInViaGithubModal';
 import InlineCodeComment from '../InlineCodeComment';
@@ -47,26 +46,6 @@ const MonacoEditor: React.FC<IProps> = ({
     const model = monacoRef.current.editor.createModel(value, language);
     editorRef.current = monacoRef.current.editor.create(nodeRef.current, { automaticLayout: true });
     editorRef.current.setModel(model);
-    editorRef.current.onMouseUp(highlightText);
-    editorRef.current.onKeyDown(function(event: any) {
-      if ((event.ctrlKey === true || event.metaKey === true) && event.keyCode === 49) {
-        event.preventDefault();
-        let me = Api.getCurrentUser();
-        if (!!me && me.email) {
-          CodeService.createSourceCode({
-            data: {
-              foreignKey: '',
-              sourceCode,
-              readme: '',
-              title: '',
-              tags: [],
-            },
-          });
-        } else {
-          handleOpenSignInModal();
-        }
-      }
-    });
 
     for (let themeName in MonacoThemes) {
       monacoRef.current.editor.defineTheme(themeName, MonacoThemes[themeName]);
@@ -78,7 +57,7 @@ const MonacoEditor: React.FC<IProps> = ({
     });
     editorRef.current.focus();
     setIsEditorReady(true);
-  }, [language, theme, value, Api, sourceCode]);
+  }, [language, theme, value]);
 
   useEffect(() => {
     MonacoIntegrator.init()
@@ -180,12 +159,12 @@ const MonacoEditor: React.FC<IProps> = ({
     editorRef.current.getModel().setValue(sourceCode);
   }
 
-  function highlightText(e: any) {
+  function handleHighlightText(e: any) {
     const selection = editorRef.current.getSelection();
     const value = editorRef.current.getModel().getValueInRange(selection);
     if (!!value && value.trim().length > 0) {
       setSelectionRange(selection);
-      setMousePosition(e.event.pos);
+      setMousePosition({ x: e.clientX, y: e.clientY });
       setSelectionValue(value);
     }
   }
@@ -205,9 +184,24 @@ const MonacoEditor: React.FC<IProps> = ({
     setIsSignInModalVisible(true);
   }
 
-  function handleKeyUp() {
+  function handleHideCommentIcon() {
     if (shouldDisplayCommentIcon === true) {
       setShouldDisplayCommentIcon(false);
+    }
+  }
+
+  function handleSaveSourceCode(event: React.KeyboardEvent) {
+    if ((event.ctrlKey === true || event.metaKey === true) && event.keyCode === 83) {
+      event.preventDefault();
+      let me = Api.getCurrentUser();
+      if (!!me && me.email) {
+        /**
+         * @todo
+         * Save code in firestore and show loading symbol when saving code
+         */
+      } else {
+        handleOpenSignInModal();
+      }
     }
   }
 
@@ -254,7 +248,13 @@ const MonacoEditor: React.FC<IProps> = ({
     <>
       <div className={classes.monacoEditorContainer}>
         {renderLoading()}
-        <div onKeyUp={handleKeyUp} ref={nodeRef} className={classes.monacoEditor} />
+        <div
+          onKeyUp={handleHideCommentIcon}
+          onKeyDown={handleSaveSourceCode}
+          onMouseUp={handleHighlightText}
+          ref={nodeRef}
+          className={classes.monacoEditor}
+        />
         {shouldDisplayCommentBox && (
           <InlineCodeComment
             onHideCommentBox={handleHideCommentBox}

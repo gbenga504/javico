@@ -2,9 +2,8 @@ import React, { useState, useRef } from 'react';
 import { Paper, Button, Tabs, Tab, withStyles } from '@material-ui/core';
 
 import { useStyles } from './styles';
-import commentServices from '../../services/commentsServices';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
-import { withNotificationBanner, Typography } from '../../atoms';
+import { withNotificationBanner, Typography, ButtonWithLoading } from '../../atoms';
 import { useStyles as commonUseStyles, color, fontsize } from '../../Css';
 import MarkdownRenderer from '../MarkDownRenderer';
 
@@ -76,15 +75,10 @@ const InlineCodeComment: React.FC<IProps> = ({
     if (!user) {
       onOpenSignInModal();
     } else {
-      commentServices.createComment({
-        data: {
-          foreignKey: '',
-          comment,
-          author: {
-            ...user,
-          },
-        },
-      });
+      /**
+       * @todo
+       * save comment in firestore and show loading symbol when saving
+       */
     }
   }
 
@@ -129,9 +123,13 @@ const InlineCodeComment: React.FC<IProps> = ({
             <Button className={commonCss.cancelButton} onClick={handleCancelComment}>
               Cancel
             </Button>
-            <Button color="primary" variant="contained" onClick={handleSubmitComment}>
+            <ButtonWithLoading
+              loading={false}
+              color="primary"
+              variant="contained"
+              onClick={handleSubmitComment}>
               Comment
-            </Button>
+            </ButtonWithLoading>
           </div>
         </div>
       </>

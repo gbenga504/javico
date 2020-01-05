@@ -17,11 +17,13 @@ class Api {
   auth: any;
   firestore: any;
   provider: any;
+  app: any;
 
   constructor() {
     app.initializeApp(config);
     this.auth = app.auth();
     this.firestore = app.firestore();
+    this.app = app;
     this.provider = new app.auth.GithubAuthProvider();
   }
 
@@ -42,5 +44,5 @@ class Api {
   };
 }
 
-const instance = new Api();
-export default instance;
+const api = new Api();
+export default api;
