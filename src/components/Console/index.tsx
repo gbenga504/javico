@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+import { Button, Tabs, Tab } from '@material-ui/core';
 
 import { useStyles } from './styles';
 import { useStyles as commonUseStyles } from '../../Css';
@@ -52,6 +51,12 @@ const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
 
   function handleReadMeTextChange(e: any) {
     setReadMe(e.target.value);
+  }
+
+  function submitReadme() {
+    /*
+      submitReadme
+    */
   }
 
   function renderLogBasedMessages(message: string, index: number) {
@@ -114,6 +119,13 @@ const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
           autoFocus={true}
           rows={7}
           placeholder="Add a ReadMe (Helps others understand your code. Markdown is supported)"></textarea>
+        <Button
+          variant="contained"
+          onClick={submitReadme}
+          className={classes.saveReadmeButton}
+          color="primary">
+          save
+        </Button>
       </div>
     );
   }
