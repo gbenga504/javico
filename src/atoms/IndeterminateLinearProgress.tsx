@@ -6,11 +6,13 @@ import { color } from '../Css';
 interface IProps {
   backgroundColor?: string;
   progressColor?: string;
+  isVisible: boolean;
 }
 
 const IndeterminateLinearProgress: React.FC<IProps> = ({
   backgroundColor = color.white,
   progressColor = color.themeBlue,
+  isVisible,
 }) => {
   const ColorLinearProgress = withStyles({
     colorPrimary: {
@@ -23,6 +25,8 @@ const IndeterminateLinearProgress: React.FC<IProps> = ({
       height: 2,
     },
   })(LinearProgress);
+
+  if (!isVisible) return null;
 
   return <ColorLinearProgress />;
 };

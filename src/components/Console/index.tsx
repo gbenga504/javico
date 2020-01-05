@@ -5,7 +5,6 @@ import { useStyles } from './styles';
 import { useStyles as commonUseStyles } from '../../Css';
 import { Typography, Icon } from '../../atoms';
 import MarDownRenderer from '../MarkDownRenderer';
-import sourceCodeService from '../../services/sourceCodeServices';
 
 const MessageType = {
   ERROR: `error`,
@@ -55,10 +54,9 @@ const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
   }
 
   function submitReadme() {
-    sourceCodeService.updateSourceCode({
-      id: '',
-      readMe,
-    });
+    /*
+      submitReadme
+    */
   }
 
   function renderLogBasedMessages(message: string, index: number) {

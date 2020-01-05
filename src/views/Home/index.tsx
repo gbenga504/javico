@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { makeStyles, withStyles, LinearProgress } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 
 import MenuBar from '../../components/MenuBar';
 import MonacoEditor from '../../components/MonacoEditor';
@@ -39,7 +39,7 @@ const Home: React.FC = () => {
   return (
     <div className={`${classes.relative} ${commonCss.flexRow}`}>
       <div className={classes.linearProgress}>
-        <IndeterminateLinearProgress />
+        <IndeterminateLinearProgress isVisible={true} />
       </div>
       <MenuBar />
       <main className={`${classes.main} ${commonCss.flexRow}`}>

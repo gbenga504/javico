@@ -69,6 +69,6 @@ export const useStyles = makeStyles(theme => ({
   },
   saveReadmeButton: {
     margin: theme.spacing(1),
-    fontSize: 12,
+    fontSize: fontsize.xsmall,
   },
 }));
