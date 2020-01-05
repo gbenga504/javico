@@ -6,7 +6,7 @@ import MonacoEditor from '../../components/MonacoEditor';
 import Console from '../../components/Console';
 import Comments from '../../components/Comments';
 import { color, useStyles as commonUseStyles } from '../../Css';
-import IndeterminateLinearProgress from '../../atoms/IndeterminateLinearProgress';
+import { IndeterminateLinearProgress } from '../../atoms';
 
 const useStyles = makeStyles({
   main: {
