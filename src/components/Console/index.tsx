@@ -119,15 +119,13 @@ const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
           autoFocus={true}
           rows={7}
           placeholder="Add a ReadMe (Helps others understand your code. Markdown is supported)"></textarea>
-        <div className={classes.saveReadme}>
-          <Button
-            variant="contained"
-            onClick={submitReadme}
-            className={classes.saveReadmeButton}
-            color="primary">
-            save
-          </Button>
-        </div>
+        <Button
+          variant="contained"
+          onClick={submitReadme}
+          className={classes.saveReadmeButton}
+          color="primary">
+          save
+        </Button>
       </div>
     );
   }

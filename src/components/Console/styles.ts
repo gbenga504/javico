@@ -62,13 +62,11 @@ export const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100%',
   },
-  saveReadme: {
-    position: 'absolute',
-    bottom: 10,
-    right: 10,
-  },
   saveReadmeButton: {
     margin: theme.spacing(1),
     fontSize: fontsize.xsmall,
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
   },
 }));
