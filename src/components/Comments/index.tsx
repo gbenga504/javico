@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useStyles } from './styles';
-import { useStyles as commonUseStyles } from '../../Css';
+import { useStyles as commonUseStyles, padding } from '../../Css';
 import { Typography, Icon } from '../../atoms';
 import { image } from './comments_dummy';
 
@@ -12,14 +12,15 @@ const Comments: React.FC<{ comments: any[] }> = ({ comments }) => {
   function renderComments() {
     return comments.map(el => {
       return (
-        <div className="comment pl-16 pr-16" key={el._id}>
-          <div className="pb-12 pt-12 flex-row">
-            <img className="comment__user-image" src={`${image}`} alt={el.username} />
-            <div className="pl-8">
-              <Typography className="comment__username mb-4" thickness="semi-bold" variant="p">
-                {el.username} <Typography className="comment__time">yesterday at 4.38PM</Typography>
+        <div className={classes.comment} key={el._id}>
+          <div className={commonCss.flexRow} style={padding(12, 'bt')}>
+            <img className={classes.commentUserImage} src={`${image}`} alt={el.username} />
+            <div style={padding(8, 'l')}>
+              <Typography className={classes.commentUsername} thickness="semi-bold" variant="p">
+                {el.username}{' '}
+                <Typography className={classes.commentTime}>yesterday at 4.38PM</Typography>
               </Typography>
-              <Typography className="comment__user-comment" variant="p">
+              <Typography className={classes.commentUserComment} variant="p">
                 {el.comment}
               </Typography>
             </div>

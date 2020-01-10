@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core';
 
-import { color, fontsize } from '../../Css';
+import { color, fontsize, padding, margin } from '../../Css';
 
 export const useStyles = makeStyles(theme => ({
   comments: {
@@ -16,6 +16,7 @@ export const useStyles = makeStyles(theme => ({
   comment: {
     backgroundColor: 'inherit',
     transition: 'all 0.3s',
+    ...padding(16, 'lr'),
   },
   commentUserImage: {
     height: 35,
@@ -25,6 +26,7 @@ export const useStyles = makeStyles(theme => ({
   commentUsername: {
     cursor: 'pointer',
     display: 'inline-block',
+    ...margin(4, 'b'),
   },
   commentTime: {
     fontSize: fontsize.xsmall,

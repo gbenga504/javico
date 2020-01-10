@@ -39,7 +39,7 @@ const Home: React.FC = () => {
   return (
     <div className={`${classes.relative} ${commonCss.flexRow}`}>
       <div className={classes.linearProgress}>
-        <IndeterminateLinearProgress isVisible={true} />
+        <IndeterminateLinearProgress isVisible={false} />
       </div>
       <MenuBar />
       <main className={`${classes.main} ${commonCss.flexRow}`}>
