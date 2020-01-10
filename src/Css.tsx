@@ -157,7 +157,7 @@ export const useStyles = makeStyles({
 });
 
 export function spacingHelper(type: string, units?: number, directions?: string): any {
-  units = units || baseSpacing;
+  units = units !== undefined ? units : baseSpacing;
   directions = directions || 'blrt';
   const rules: any = {};
   if (directions.indexOf('b') > -1) {

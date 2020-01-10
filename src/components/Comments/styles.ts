@@ -4,7 +4,7 @@ import { color, fontsize, padding, margin } from '../../Css';
 
 export const useStyles = makeStyles(theme => ({
   comments: {
-    height: '50vh',
+    height: '100vh',
     backgroundColor: color.deepBlue,
     position: 'relative',
     borderTop: `1px solid ${color.darkThemeLightBorder}`,
