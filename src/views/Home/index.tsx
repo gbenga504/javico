@@ -33,17 +33,25 @@ const useStyles = makeStyles({
 
 const Home: React.FC = () => {
   const [terminalExecutableCode, setTerminalExecutableCode] = useState('');
+  const [isLoading, setisLoading] = useState<boolean>(false);
   const classes = useStyles();
   const commonCss = commonUseStyles();
+
+  function toggleIsLoading(loading = false) {
+    setisLoading(loading);
+  }
 
   return (
     <div className={`${classes.relative} ${commonCss.flexRow}`}>
       <div className={classes.linearProgress}>
-        <IndeterminateLinearProgress isVisible={true} />
+        <IndeterminateLinearProgress isVisible={isLoading} />
       </div>
       <MenuBar />
       <main className={`${classes.main} ${commonCss.flexRow}`}>
-        <MonacoEditor onRunSourceCode={setTerminalExecutableCode} />
+        <MonacoEditor
+          toggleIsLoading={toggleIsLoading}
+          onRunSourceCode={setTerminalExecutableCode}
+        />
         <div className={classes.mainRightSection}>
           <Console sourceCode={terminalExecutableCode} />
           <Comments comments={[]} />

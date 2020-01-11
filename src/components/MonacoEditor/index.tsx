@@ -6,15 +6,20 @@ import { useStyles as commonUseStyles, color } from '../../Css';
 import MonacoIntegrator from '../../utils/MonacoIntegrator';
 import MonacoThemes from '../../utils/MonacoThemes';
 import { withApi } from '../../utils/ApiConnector';
-import { Icon, AnimatedCircularLoader } from '../../atoms';
+import { Icon, AnimatedCircularLoader, withNotificationBanner } from '../../atoms';
 import SignInViaGithubModal from '../SignInViaGithubModal';
 import InlineCodeComment from '../InlineCodeComment';
+import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
+import SourceCodeService from '../../services/SourceCodeServices';
+import { updateSourcecode, addNewSourcecode, getSourceCode } from '../../utils/sourceCodeUtils';
 
 interface IProps {
   value?: string;
   onRunSourceCode?: (value: string) => void;
   theme?: 'light' | 'dark' | 'ace' | 'night-dark';
   language?: string;
+  toggleIsLoading: any;
+  onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
   Api: any;
 }
 
@@ -22,7 +27,9 @@ const MonacoEditor: React.FC<IProps> = ({
   value,
   onRunSourceCode,
   theme = 'vs-dark',
+  toggleIsLoading,
   language = 'javascript',
+  onSetNotificationSettings,
   Api,
 }) => {
   const [shouldDisplayCommentBox, setShouldDisplayCommentBox] = useState<boolean>(false);
@@ -65,12 +72,29 @@ const MonacoEditor: React.FC<IProps> = ({
         monacoRef.current = monaco;
         setIsMonacoReady(true);
       })
-      .catch(error => console.error(`An error ocurred while initializing monaco ${error}`));
+      .catch(error => {
+        console.error(`An error ocurred while initializing monaco ${error}`);
+      });
 
     return () => {
       editorRef.current && editorRef.current.dispose();
       subscriptionRef.current && subscriptionRef.current.dispose();
     };
+  }, []);
+
+  useEffect(() => {
+    const route = window.location.href;
+    const routeArr = route.split('/');
+    if (routeArr[routeArr.length - 1]) {
+      getSourceCode({
+        id: routeArr[routeArr.length - 1],
+        toggleIsLoading,
+        setSourceCode,
+        sourceCode,
+        editorRef,
+        onSetNotificationSettings,
+      });
+    }
   }, []);
 
   useEffect(() => {
@@ -170,10 +194,16 @@ const MonacoEditor: React.FC<IProps> = ({
   }
 
   function handleSaveDeveloperCode() {
-    /**
-     * @todo
-     * Save the developer code here
-     */
+    toggleIsLoading(true);
+    let me = Api.getCurrentUser();
+    const route = window.location.href;
+    const routeArr = route.split('/');
+    const id = routeArr[routeArr.length - 1];
+    if (id) {
+      updateSourcecode({ me, id, sourceCode, toggleIsLoading, onSetNotificationSettings });
+    } else {
+      addNewSourcecode({ me, id, sourceCode, toggleIsLoading, onSetNotificationSettings });
+    }
   }
 
   function handleCloseSignInModal() {
@@ -193,12 +223,10 @@ const MonacoEditor: React.FC<IProps> = ({
   function handleSaveSourceCode(event: React.KeyboardEvent) {
     if ((event.ctrlKey === true || event.metaKey === true) && event.keyCode === 83) {
       event.preventDefault();
+
       let me = Api.getCurrentUser();
       if (!!me && me.email) {
-        /**
-         * @todo
-         * Save code in firestore and show loading symbol when saving code
-         */
+        handleSaveDeveloperCode();
       } else {
         handleOpenSignInModal();
       }
@@ -281,4 +309,4 @@ const MonacoEditor: React.FC<IProps> = ({
   );
 };
 
-export default React.memo(withApi(MonacoEditor));
+export default React.memo(withNotificationBanner(withApi(MonacoEditor)));
