@@ -10,7 +10,6 @@ import { Icon, AnimatedCircularLoader, withNotificationBanner } from '../../atom
 import SignInViaGithubModal from '../SignInViaGithubModal';
 import InlineCodeComment from '../InlineCodeComment';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
-import SourceCodeService from '../../services/SourceCodeServices';
 import { updateSourcecode, addNewSourcecode, getSourceCode } from '../../utils/sourceCodeUtils';
 
 interface IProps {
@@ -19,6 +18,7 @@ interface IProps {
   theme?: 'light' | 'dark' | 'ace' | 'night-dark';
   language?: string;
   toggleIsLoading: any;
+  fetchedSourceCode: string;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
   Api: any;
 }
@@ -29,6 +29,7 @@ const MonacoEditor: React.FC<IProps> = ({
   theme = 'vs-dark',
   toggleIsLoading,
   language = 'javascript',
+  fetchedSourceCode,
   onSetNotificationSettings,
   Api,
 }) => {
@@ -83,19 +84,10 @@ const MonacoEditor: React.FC<IProps> = ({
   }, []);
 
   useEffect(() => {
-    const route = window.location.href;
-    const routeArr = route.split('/');
-    if (routeArr[routeArr.length - 1]) {
-      getSourceCode({
-        id: routeArr[routeArr.length - 1],
-        toggleIsLoading,
-        setSourceCode,
-        sourceCode,
-        editorRef,
-        onSetNotificationSettings,
-      });
+    if (editorRef.current !== null) {
+      editorRef.current.getModel().setValue(fetchedSourceCode);
     }
-  }, []);
+  }, [fetchedSourceCode]);
 
   useEffect(() => {
     Api.onAuthStateChanged(function(user: any) {

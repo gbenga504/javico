@@ -8,7 +8,7 @@ interface IPayload {
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
   id: string;
   editorRef?: any;
-  setSourceCode?: any;
+  setFetchedSourceCode?: any;
 }
 
 function updateUrl(res: any) {
@@ -84,8 +84,7 @@ export const addNewSourcecode = ({
 export const getSourceCode = ({
   id,
   toggleIsLoading,
-  editorRef,
-  setSourceCode,
+  setFetchedSourceCode,
   onSetNotificationSettings,
 }: IPayload) => {
   toggleIsLoading(true);
@@ -95,8 +94,7 @@ export const getSourceCode = ({
     .then(res => {
       const { sourceCode, readme, tags, ownerId, title, createdAt } = res._document.proto.fields;
       toggleIsLoading();
-      setSourceCode(sourceCode.stringValue);
-      editorRef.current.getModel().setValue(sourceCode.stringValue);
+      setFetchedSourceCode({ sourceCode: sourceCode.stringValue, readme: readme.stringValue });
     })
     .catch((error: any) => {
       toggleIsLoading();

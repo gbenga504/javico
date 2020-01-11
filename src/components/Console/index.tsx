@@ -22,10 +22,13 @@ function a11yProps(index: number) {
 type TerminalMessageType = { type: string; message: string | any };
 type TerminalMessagesType = TerminalMessageType[];
 
-const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
+const Console: React.FC<{ sourceCode: string; fetchedReadme: string }> = ({
+  sourceCode,
+  fetchedReadme,
+}) => {
   const [currentTab, setCurrentTab] = useState<number>(0);
   const [terminalMessages, setTerminalMessages] = useState<TerminalMessagesType>([]);
-  const [readMe, setReadMe] = useState<string>('');
+  const [readMe, setReadMe] = useState<string>(fetchedReadme);
   const workerRef = useRef<any>(null);
   const classes = useStyles();
   const commonCss = commonUseStyles();

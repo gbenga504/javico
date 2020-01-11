@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core';
 
 import MenuBar from '../../components/MenuBar';
@@ -6,7 +6,9 @@ import MonacoEditor from '../../components/MonacoEditor';
 import Console from '../../components/Console';
 import Comments from '../../components/Comments';
 import { color, useStyles as commonUseStyles } from '../../Css';
-import { IndeterminateLinearProgress } from '../../atoms';
+import { IndeterminateLinearProgress, withNotificationBanner } from '../../atoms';
+import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
+import { getSourceCode } from '../../utils/sourceCodeUtils';
 
 const useStyles = makeStyles({
   main: {
@@ -31,11 +33,33 @@ const useStyles = makeStyles({
   },
 });
 
-const Home: React.FC = () => {
+interface IProps {
+  onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
+}
+
+const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
   const [terminalExecutableCode, setTerminalExecutableCode] = useState('');
   const [isLoading, setisLoading] = useState<boolean>(false);
+  const [fetchedSourceCode, setFetchedSourceCode] = useState({
+    sourceCode: '',
+    readme: '',
+  });
   const classes = useStyles();
   const commonCss = commonUseStyles();
+
+  useEffect(() => {
+    const route = window.location.href;
+    const routeArr = route.split('/');
+    if (routeArr[routeArr.length - 1]) {
+      getSourceCode({
+        id: routeArr[routeArr.length - 1],
+        toggleIsLoading,
+        setFetchedSourceCode,
+        sourceCode: fetchedSourceCode.sourceCode,
+        onSetNotificationSettings,
+      });
+    }
+  }, []);
 
   function toggleIsLoading(loading = false) {
     setisLoading(loading);
@@ -51,9 +75,10 @@ const Home: React.FC = () => {
         <MonacoEditor
           toggleIsLoading={toggleIsLoading}
           onRunSourceCode={setTerminalExecutableCode}
+          fetchedSourceCode={fetchedSourceCode.sourceCode}
         />
         <div className={classes.mainRightSection}>
-          <Console sourceCode={terminalExecutableCode} />
+          <Console sourceCode={terminalExecutableCode} fetchedReadme={fetchedSourceCode.readme} />
           <Comments comments={[]} />
         </div>
       </main>
@@ -61,4 +86,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default withNotificationBanner(Home);
