@@ -3,35 +3,52 @@ import React from 'react';
 import { useStyles } from './styles';
 import { useStyles as commonUseStyles, padding } from '../../Css';
 import { Typography, Icon } from '../../atoms';
-import { image } from './comments_dummy';
+import { image, comments as _comments } from './comments_dummy';
 
 const Comments: React.FC<{ comments: any[] }> = ({ comments }) => {
   const classes = useStyles();
   const commonCss = commonUseStyles();
 
-  function renderComments() {
-    return comments.map(el => {
-      return (
-        <div className={classes.comment} key={el._id}>
-          <div className={commonCss.flexRow} style={padding(12, 'bt')}>
-            <img className={classes.commentUserImage} src={`${image}`} alt={el.username} />
-            <div style={padding(8, 'l')}>
-              <Typography className={classes.commentUsername} thickness="semi-bold" variant="p">
-                {el.username}{' '}
-                <Typography className={classes.commentTime}>yesterday at 4.38PM</Typography>
-              </Typography>
-              <Typography className={classes.commentUserComment} variant="p">
-                {el.comment}
-              </Typography>
-            </div>
+  function renderDateSeperator() {
+    return (
+      <>
+        <div className={classes.commentDateSeperatorContainer}>
+          <hr className={classes.commentDateSeperatorHr} />
+        </div>
+        <div className={classes.commentStickyDateContainer}>
+          <div>
+            <Typography thickness="semi-bold" className={classes.commentDateSeperatorText}>
+              December 5th, 2019
+            </Typography>
           </div>
         </div>
+      </>
+    );
+  }
+
+  function renderComments() {
+    return _comments.map(comment => {
+      return comment.type !== 'seperator' ? (
+        <div className={`${classes.comment} ${commonCss.flexRow}`} key={comment._id}>
+          <img className={classes.commentUserImage} src={`${image}`} alt={comment.username} />
+          <div className={commonCss.flexColumn} style={padding(8, 'l')}>
+            <Typography className={classes.commentUsername} thickness="semi-bold" variant="span">
+              {comment.username} <Typography className={classes.commentTime}>4.38PM</Typography>
+            </Typography>
+            <Typography className={classes.commentUserComment} variant="span">
+              {comment.comment}
+            </Typography>
+          </div>
+        </div>
+      ) : (
+        renderDateSeperator()
       );
     });
   }
 
   return (
     <section className={classes.comments}>
+      <div className={classes.commentsHeader} />
       <div className={`${commonCss.fullHeightAndWidth} ${classes.commentsBody}`}>
         {process.env.REACT_APP_IS_COMMENT_FEATURE_AVAILABLE === 'true' ? (
           renderComments()

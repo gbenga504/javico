@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core';
 
-import { color, fontsize, padding, margin } from '../../Css';
+import { color, fontsize, padding } from '../../Css';
 
 export const useStyles = makeStyles(theme => ({
   comments: {
@@ -9,14 +9,26 @@ export const useStyles = makeStyles(theme => ({
     position: 'relative',
     borderTop: `1px solid ${color.darkThemeLightBorder}`,
   },
+  commentsHeader: {
+    height: 48,
+    position: 'fixed',
+    background: color.deepBlue,
+    width: '100%',
+  },
   commentsBody: {
     overflow: 'scroll',
+    marginTop: 38,
     paddingBottom: theme.spacing(17),
   },
   comment: {
     backgroundColor: 'inherit',
     transition: 'all 0.3s',
     ...padding(16, 'lr'),
+    ...padding(10, 'bt'),
+    cursor: 'pointer',
+    '&:hover': {
+      background: 'rgba(34,37,41,1)',
+    },
   },
   commentUserImage: {
     height: 35,
@@ -26,10 +38,11 @@ export const useStyles = makeStyles(theme => ({
   commentUsername: {
     cursor: 'pointer',
     display: 'inline-block',
-    ...margin(4, 'b'),
+    margin: theme.spacing(0, 0, 1),
   },
   commentTime: {
     fontSize: fontsize.xsmall,
+    color: `#ABABAD !important`,
   },
   commentUserComment: {
     fontSize: fontsize.small,
@@ -42,7 +55,7 @@ export const useStyles = makeStyles(theme => ({
     backgroundImage: 'linear-gradient(to top,rgba(28, 32, 34) 70%,rgba(28, 32, 34, 0.1) 100%)',
   },
   commentInputFieldContainer: {
-    height: 50,
+    height: 44,
     boxSizing: 'border-box',
     border: `1px solid ${color.darkThemeDarkBorder}`,
     alignItems: 'center',
@@ -71,5 +84,35 @@ export const useStyles = makeStyles(theme => ({
   },
   commentNotLive: {
     color: `${color.darkThemeDarkBorder} !important`,
+  },
+  commentDateSeperatorContainer: {
+    position: 'sticky',
+    top: 0,
+    display: 'flex',
+    paddingTop: 10,
+    alignItems: 'center',
+    background: color.deepBlue,
+  },
+  commentDateSeperatorHr: {
+    border: 0,
+    borderTop: '1px solid rgba(53,55,59,1)',
+    position: 'relative',
+    width: '100%',
+    margin: 0,
+  },
+  commentDateSeperatorText: {
+    fontSize: fontsize.base,
+  },
+  commentStickyDateContainer: {
+    top: 12,
+    position: 'sticky',
+    display: 'flex',
+    justifyContent: 'center',
+    '& div': {
+      marginTop: -12,
+      background: color.deepBlue,
+      ...padding(0, 'tb'),
+      ...padding(10, 'lr'),
+    },
   },
 }));

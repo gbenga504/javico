@@ -3,8 +3,13 @@ export const image =
 
 export const comments = [
   {
+    _id: '8',
+    type: 'seperator',
+    value: 'December 5th, 2019',
+  },
+  {
     _id: '1',
-    username: 'teeolu',
+    username: 'Teeolu',
     comment:
       'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
     replies: [
@@ -24,7 +29,7 @@ export const comments = [
   },
   {
     _id: '2',
-    username: 'kunle',
+    username: 'Kunle',
     comment:
       'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
     replies: [
@@ -44,7 +49,7 @@ export const comments = [
   },
   {
     _id: '3',
-    username: 'pepsi',
+    username: 'Pepsi',
     comment:
       'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
     replies: [
@@ -64,25 +69,408 @@ export const comments = [
   },
   {
     _id: '4',
-    username: 'will',
+    username: 'Will',
     comment:
       'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
   },
   {
-    _id: '5',
-    username: 'fort',
+    _id: '1',
+    username: 'Teeolu',
+    comment:
+      'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+    replies: [
+      {
+        _id: '10',
+        username: 'gad',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+      {
+        _id: '11',
+        username: 'leke',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+    ],
+  },
+  {
+    _id: '2',
+    username: 'Kunle',
+    comment:
+      'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+    replies: [
+      {
+        _id: '10',
+        username: 'gad',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+      {
+        _id: '11',
+        username: 'leke',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+    ],
+  },
+  {
+    _id: '3',
+    username: 'Pepsi',
+    comment:
+      'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+    replies: [
+      {
+        _id: '8',
+        username: 'coolz',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+      {
+        _id: '9',
+        username: 'krukz',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+    ],
+  },
+  {
+    _id: '4',
+    username: 'Will',
     comment:
       'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
   },
   {
-    _id: '6',
-    username: 'tom',
+    _id: '1',
+    username: 'Teeolu',
+    comment:
+      'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+    replies: [
+      {
+        _id: '10',
+        username: 'gad',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+      {
+        _id: '11',
+        username: 'leke',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+    ],
+  },
+  {
+    _id: '2',
+    username: 'Kunle',
+    comment:
+      'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+    replies: [
+      {
+        _id: '10',
+        username: 'gad',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+      {
+        _id: '11',
+        username: 'leke',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+    ],
+  },
+  {
+    _id: '3',
+    username: 'Pepsi',
+    comment:
+      'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+    replies: [
+      {
+        _id: '8',
+        username: 'coolz',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+      {
+        _id: '9',
+        username: 'krukz',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+    ],
+  },
+  {
+    _id: '4',
+    username: 'Will',
     comment:
       'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
   },
   {
-    _id: '7',
-    username: 'timi',
+    _id: '1',
+    username: 'Teeolu',
+    comment:
+      'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+    replies: [
+      {
+        _id: '10',
+        username: 'gad',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+      {
+        _id: '11',
+        username: 'leke',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+    ],
+  },
+  {
+    _id: '2',
+    username: 'Kunle',
+    comment:
+      'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+    replies: [
+      {
+        _id: '10',
+        username: 'gad',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+      {
+        _id: '11',
+        username: 'leke',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+    ],
+  },
+  {
+    _id: '3',
+    username: 'Pepsi',
+    comment:
+      'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+    replies: [
+      {
+        _id: '8',
+        username: 'coolz',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+      {
+        _id: '9',
+        username: 'krukz',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+    ],
+  },
+  {
+    _id: '4',
+    username: 'Will',
+    comment:
+      'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+  },
+  {
+    _id: '8',
+    type: 'seperator',
+    value: 'December 6th, 2019',
+  },
+  {
+    _id: '1',
+    username: 'Teeolu',
+    comment:
+      'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+    replies: [
+      {
+        _id: '10',
+        username: 'gad',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+      {
+        _id: '11',
+        username: 'leke',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+    ],
+  },
+  {
+    _id: '2',
+    username: 'Kunle',
+    comment:
+      'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+    replies: [
+      {
+        _id: '10',
+        username: 'gad',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+      {
+        _id: '11',
+        username: 'leke',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+    ],
+  },
+  {
+    _id: '3',
+    username: 'Pepsi',
+    comment:
+      'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+    replies: [
+      {
+        _id: '8',
+        username: 'coolz',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+      {
+        _id: '9',
+        username: 'krukz',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+    ],
+  },
+  {
+    _id: '4',
+    username: 'Will',
+    comment:
+      'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+  },
+  {
+    _id: '1',
+    username: 'Teeolu',
+    comment:
+      'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+    replies: [
+      {
+        _id: '10',
+        username: 'gad',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+      {
+        _id: '11',
+        username: 'leke',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+    ],
+  },
+  {
+    _id: '2',
+    username: 'Kunle',
+    comment:
+      'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+    replies: [
+      {
+        _id: '10',
+        username: 'gad',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+      {
+        _id: '11',
+        username: 'leke',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+    ],
+  },
+  {
+    _id: '3',
+    username: 'Pepsi',
+    comment:
+      'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+    replies: [
+      {
+        _id: '8',
+        username: 'coolz',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+      {
+        _id: '9',
+        username: 'krukz',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+    ],
+  },
+  {
+    _id: '4',
+    username: 'Will',
+    comment:
+      'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+  },
+  {
+    _id: '1',
+    username: 'Teeolu',
+    comment:
+      'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+    replies: [
+      {
+        _id: '10',
+        username: 'gad',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+      {
+        _id: '11',
+        username: 'leke',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+    ],
+  },
+  {
+    _id: '2',
+    username: 'Kunle',
+    comment:
+      'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+    replies: [
+      {
+        _id: '10',
+        username: 'gad',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+      {
+        _id: '11',
+        username: 'leke',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+    ],
+  },
+  {
+    _id: '3',
+    username: 'Pepsi',
+    comment:
+      'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+    replies: [
+      {
+        _id: '8',
+        username: 'coolz',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+      {
+        _id: '9',
+        username: 'krukz',
+        comment:
+          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
+      },
+    ],
+  },
+  {
+    _id: '4',
+    username: 'Will',
     comment:
       'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
   },
