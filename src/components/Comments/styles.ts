@@ -20,33 +20,6 @@ export const useStyles = makeStyles(theme => ({
     marginTop: 38,
     paddingBottom: theme.spacing(17),
   },
-  comment: {
-    backgroundColor: 'inherit',
-    transition: 'all 0.3s',
-    ...padding(16, 'lr'),
-    ...padding(10, 'bt'),
-    cursor: 'pointer',
-    '&:hover': {
-      background: 'rgba(34,37,41,1)',
-    },
-  },
-  commentUserImage: {
-    height: 35,
-    width: 35,
-    borderRadius: 5,
-  },
-  commentUsername: {
-    cursor: 'pointer',
-    display: 'inline-block',
-    margin: theme.spacing(0, 0, 1),
-  },
-  commentTime: {
-    fontSize: fontsize.xsmall,
-    color: `#ABABAD !important`,
-  },
-  commentUserComment: {
-    fontSize: fontsize.small,
-  },
   commentInput: {
     position: 'absolute',
     bottom: 0,

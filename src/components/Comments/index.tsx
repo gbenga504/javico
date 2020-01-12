@@ -1,9 +1,10 @@
 import React from 'react';
 
 import { useStyles } from './styles';
-import { useStyles as commonUseStyles, padding } from '../../Css';
+import { useStyles as commonUseStyles } from '../../Css';
 import { Typography, Icon } from '../../atoms';
-import { image, comments as _comments } from './comments_dummy';
+import { comments as _comments } from './comments_dummy';
+import Comment from './Comment';
 
 const Comments: React.FC<{ comments: any[] }> = ({ comments }) => {
   const classes = useStyles();
@@ -28,21 +29,7 @@ const Comments: React.FC<{ comments: any[] }> = ({ comments }) => {
 
   function renderComments() {
     return _comments.map(comment => {
-      return comment.type !== 'seperator' ? (
-        <div className={`${classes.comment} ${commonCss.flexRow}`} key={comment._id}>
-          <img className={classes.commentUserImage} src={`${image}`} alt={comment.username} />
-          <div className={commonCss.flexColumn} style={padding(8, 'l')}>
-            <Typography className={classes.commentUsername} thickness="semi-bold" variant="span">
-              {comment.username} <Typography className={classes.commentTime}>4.38PM</Typography>
-            </Typography>
-            <Typography className={classes.commentUserComment} variant="span">
-              {comment.comment}
-            </Typography>
-          </div>
-        </div>
-      ) : (
-        renderDateSeperator()
-      );
+      return comment.type !== 'seperator' ? <Comment comment={comment} /> : renderDateSeperator();
     });
   }
 
