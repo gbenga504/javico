@@ -5,9 +5,10 @@ import { useStyles } from './styles';
 import { useStyles as commonUseStyles } from '../../Css';
 import { Typography, Icon, withNotificationBanner, ButtonWithLoading } from '../../atoms';
 import MarDownRenderer from '../MarkDownRenderer';
-import { updateSourcecode, getIdFromUrl } from '../../utils/sourceCodeUtils';
+import { getIdFromUrl } from '../../utils/Misc';
 import { withApi } from '../../utils/ApiConnector';
 import SignInViaGithubModal from '../SignInViaGithubModal';
+import SourceCodeService from '../../services/SourceCodeServices';
 
 const MessageType = {
   ERROR: `error`,
@@ -83,16 +84,17 @@ const Console: React.FC<{
       return;
     }
     const id = getIdFromUrl();
-    updateSourcecode({
-      data: {
-        readme: readMe,
-      },
-      params: {
-        ID: id,
-      },
-      toggleIsLoading,
-      onSetNotificationSettings,
-    });
+    SourceCodeService.saveSourceCode({
+      data: { readme: readMe },
+      params: { ID: id },
+    })
+      .then((res: any) => {
+        toggleIsLoading();
+      })
+      .catch((error: any) => {
+        toggleIsLoading();
+        onSetNotificationSettings(error.message, 'danger', 'long');
+      });
   }
 
   function renderLogBasedMessages(message: string, index: number) {

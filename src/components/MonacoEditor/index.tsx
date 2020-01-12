@@ -10,7 +10,8 @@ import { Icon, AnimatedCircularLoader, withNotificationBanner } from '../../atom
 import SignInViaGithubModal from '../SignInViaGithubModal';
 import InlineCodeComment from '../InlineCodeComment';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
-import { updateSourcecode, addNewSourcecode, getIdFromUrl } from '../../utils/sourceCodeUtils';
+import { getIdFromUrl, updateUrl } from '../../utils/Misc';
+import SourceCodeService from '../../services/SourceCodeServices';
 
 interface IProps {
   value?: string;
@@ -190,14 +191,35 @@ const MonacoEditor: React.FC<IProps> = ({
     let me = Api.getCurrentUser();
     const id = getIdFromUrl();
     if (id) {
-      updateSourcecode({
-        params: { ID: id },
+      SourceCodeService.saveSourceCode({
         data: { sourceCode },
-        toggleIsLoading,
-        onSetNotificationSettings,
-      });
+        params: { ID: id },
+      })
+        .then((res: any) => {
+          toggleIsLoading();
+        })
+        .catch((error: any) => {
+          toggleIsLoading();
+          onSetNotificationSettings(error.message, 'danger', 'long');
+        });
     } else {
-      addNewSourcecode({ me, id, sourceCode, toggleIsLoading, onSetNotificationSettings });
+      SourceCodeService.saveSourceCode({
+        data: {
+          ownerId: me.uid,
+          sourceCode,
+          readme: '',
+          title: 'test.js',
+          tags: [],
+        },
+      })
+        .then(res => {
+          toggleIsLoading();
+          updateUrl(res);
+        })
+        .catch((error: any) => {
+          toggleIsLoading();
+          onSetNotificationSettings(error.message, 'danger', 'long');
+        });
     }
   }
 

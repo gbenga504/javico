@@ -8,7 +8,8 @@ import Comments from '../../components/Comments';
 import { color, useStyles as commonUseStyles } from '../../Css';
 import { IndeterminateLinearProgress, withNotificationBanner } from '../../atoms';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
-import { getSourceCode } from '../../utils/sourceCodeUtils';
+import SourceCodeService from '../../services/SourceCodeServices';
+import { getIdFromUrl } from '../../utils/Misc';
 
 const useStyles = makeStyles({
   main: {
@@ -48,18 +49,22 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
   const commonCss = commonUseStyles();
 
   useEffect(() => {
-    const route = window.location.href;
-    const routeArr = route.split('/');
-    if (routeArr[routeArr.length - 1]) {
-      getSourceCode({
-        id: routeArr[routeArr.length - 1],
-        toggleIsLoading,
-        setFetchedSourceCode,
-        sourceCode: fetchedSourceCode.sourceCode,
-        onSetNotificationSettings,
-      });
+    if (getIdFromUrl()) {
+      toggleIsLoading(true);
+      SourceCodeService.fetchSourceCode({
+        params: { ID: getIdFromUrl() },
+      })
+        .then(res => {
+          const { sourceCode, readme } = res._document.proto.fields;
+          toggleIsLoading();
+          setFetchedSourceCode({ sourceCode: sourceCode.stringValue, readme: readme.stringValue });
+        })
+        .catch((error: any) => {
+          toggleIsLoading();
+          onSetNotificationSettings(error.message, 'danger', 'long');
+        });
     }
-  }, []);
+  }, [onSetNotificationSettings]);
 
   function toggleIsLoading(loading = false) {
     setisLoading(loading);
