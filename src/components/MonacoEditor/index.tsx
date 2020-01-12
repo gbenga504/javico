@@ -10,12 +10,7 @@ import { Icon, AnimatedCircularLoader, withNotificationBanner } from '../../atom
 import SignInViaGithubModal from '../SignInViaGithubModal';
 import InlineCodeComment from '../InlineCodeComment';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
-import {
-  updateSourcecode,
-  addNewSourcecode,
-  getSourceCode,
-  getIdFromUrl,
-} from '../../utils/sourceCodeUtils';
+import { updateSourcecode, addNewSourcecode, getIdFromUrl } from '../../utils/sourceCodeUtils';
 
 interface IProps {
   value?: string;

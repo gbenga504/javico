@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button, Tabs, Tab } from '@material-ui/core';
+import { Tabs, Tab } from '@material-ui/core';
 
 import { useStyles } from './styles';
 import { useStyles as commonUseStyles } from '../../Css';
@@ -7,6 +7,7 @@ import { Typography, Icon, withNotificationBanner, ButtonWithLoading } from '../
 import MarDownRenderer from '../MarkDownRenderer';
 import { updateSourcecode, getIdFromUrl } from '../../utils/sourceCodeUtils';
 import { withApi } from '../../utils/ApiConnector';
+import SignInViaGithubModal from '../SignInViaGithubModal';
 
 const MessageType = {
   ERROR: `error`,
@@ -32,6 +33,7 @@ const Console: React.FC<{
 }> = ({ sourceCode, fetchedReadme, onSetNotificationSettings, Api }) => {
   const [currentTab, setCurrentTab] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
   const [terminalMessages, setTerminalMessages] = useState<TerminalMessagesType>([]);
   const [readMe, setReadMe] = useState<string>(fetchedReadme);
   const workerRef = useRef<any>(null);
@@ -69,10 +71,15 @@ const Console: React.FC<{
     setIsLoading(loading);
   }
 
+  function handleCloseSignInModal() {
+    setIsSignInModalVisible(false);
+  }
+
   function submitReadme() {
     toggleIsLoading(true);
     let me = Api.getCurrentUser();
     if (!me) {
+      setIsSignInModalVisible(true);
       return;
     }
     const id = getIdFromUrl();
@@ -184,6 +191,11 @@ const Console: React.FC<{
         : currentTab === 2
         ? renderPreview()
         : null}
+      <SignInViaGithubModal
+        visible={isSignInModalVisible}
+        onRequestClose={handleCloseSignInModal}
+        onSignInSuccess={submitReadme}
+      />
     </section>
   );
 };
