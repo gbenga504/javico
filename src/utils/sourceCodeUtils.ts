@@ -11,6 +11,19 @@ interface IPayload {
   setFetchedSourceCode?: any;
 }
 
+interface IUpdateSourceCode {
+  data: any;
+  params: { ID: string };
+  toggleIsLoading: any;
+  onSetNotificationSettings: any;
+}
+
+export const getIdFromUrl = () => {
+  const route = window.location.href;
+  const routeArr = route.split('/');
+  return routeArr[routeArr.length - 1];
+};
+
 function updateUrl(res: any) {
   const location = window.location.href;
   const href = `${location}${res.id}`;
@@ -28,27 +41,17 @@ function updateUrl(res: any) {
 }
 
 export const updateSourcecode = ({
-  me,
-  id,
-  sourceCode,
+  data,
+  params,
   toggleIsLoading,
   onSetNotificationSettings,
-}: IPayload) => {
+}: IUpdateSourceCode) => {
   SourceCodeService.saveSourceCode({
-    data: {
-      ownerId: me.uid,
-      sourceCode,
-      readme: '',
-      title: 'test.js',
-      tags: [],
-    },
-    params: {
-      ID: id,
-    },
+    data,
+    params,
   })
     .then((res: any) => {
       toggleIsLoading();
-      console.log('response ', res);
     })
     .catch((error: any) => {
       toggleIsLoading();

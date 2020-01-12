@@ -3,7 +3,7 @@ import Api from '../utils/ApiConnector';
 interface IPayload {
   data?: {
     ownerId: string;
-    sourceCode: string;
+    sourceCode?: string;
     readme?: string;
     title?: string;
     tags?: Array<string>;
