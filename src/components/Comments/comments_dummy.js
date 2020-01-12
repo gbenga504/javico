@@ -57,20 +57,6 @@ export const comments = [
     username: 'Kunle',
     comment:
       'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
-    replies: [
-      {
-        _id: '10',
-        username: 'gad',
-        comment:
-          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
-      },
-      {
-        _id: '11',
-        username: 'leke',
-        comment:
-          'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
-      },
-    ],
   },
   {
     _id: '3',

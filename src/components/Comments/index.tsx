@@ -29,7 +29,11 @@ const Comments: React.FC<{ comments: any[] }> = ({ comments }) => {
 
   function renderComments() {
     return _comments.map(comment => {
-      return comment.type !== 'seperator' ? <Comment comment={comment} /> : renderDateSeperator();
+      return comment.type !== 'seperator' ? (
+        <Comment key={comment._id} comment={comment} />
+      ) : (
+        renderDateSeperator()
+      );
     });
   }
 

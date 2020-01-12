@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core';
 
 import { useStyles as commonUseStyles, padding, color, fontsize } from '../../Css';
@@ -10,12 +10,12 @@ const useStyles = makeStyles(theme => ({
     marginLeft: 40,
     display: 'flex',
     flexDirection: 'column',
-    margin: theme.spacing(2, 0),
   },
-  commentToggleReplyButtonContainer: {
+  commentReplyActionButtonContainer: {
     display: 'flex',
     alignItems: 'center',
     cursor: 'pointer',
+    marginTop: theme.spacing(2),
     '& ion-icon': {
       color: color.themeBlue,
       fontSize: 16,
@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
     transition: 'all 0.3s',
     cursor: 'pointer',
     '&:hover': {
-      background: 'rgba(34,37,41,1)',
+      background: '#222529',
     },
   },
   commentUserImage: {
@@ -43,6 +43,7 @@ const useStyles = makeStyles(theme => ({
     cursor: 'pointer',
     display: 'inline-block',
     margin: theme.spacing(0, 0, 1),
+    fontSize: fontsize.small,
   },
   commentTime: {
     fontSize: fontsize.xsmall,
@@ -54,16 +55,63 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Comment: React.FC<any> = ({ comment }) => {
+  const [isRepliesVisible, setIsRepliesVisible] = useState<boolean>(false);
   const commonCss = commonUseStyles();
   const classes = useStyles();
 
-  function renderReplies() {
+  function handleToggleRepliesVisibility() {
+    setIsRepliesVisible(prevIsRepliesVisible => !prevIsRepliesVisible);
+  }
+
+  function showMoreRepliesButton() {
+    return null;
+    // <div className={classes.commentReplyActionButtonContainer}>
+    //     <Icon name="ios-return-right" />
+    //     <Typography thickness="semi-bold">Show more replies</Typography>
+    // </div>
+  }
+
+  function renderCommentUI(comment: any, avatarStyle?: any, containerStyle?: any) {
+    return (
+      <div
+        className={`${classes.comment} ${commonCss.flexRow}`}
+        key={comment._id}
+        style={containerStyle}>
+        <img
+          className={classes.commentUserImage}
+          src={`${image}`}
+          alt={comment.username}
+          style={avatarStyle}
+        />
+        <div className={commonCss.flexColumn} style={padding(8, 'l')}>
+          <Typography className={classes.commentUsername} thickness="bold" variant="span">
+            {comment.username} <Typography className={classes.commentTime}>4.38PM</Typography>
+          </Typography>
+          <Typography className={classes.commentUserComment} variant="span">
+            {comment.comment}
+          </Typography>
+        </div>
+      </div>
+    );
+  }
+
+  function renderReplies(replies: any) {
     return (
       <div className={classes.commentRepliesContainer}>
-        <div className={classes.commentToggleReplyButtonContainer}>
+        <div
+          onClick={handleToggleRepliesVisibility}
+          className={classes.commentReplyActionButtonContainer}>
           <Icon name="ios-arrow-down" />
-          <Typography thickness="semi-bold">View 11 replies</Typography>
+          <Typography thickness="semi-bold">
+            {isRepliesVisible === true ? 'Hide' : 'View'} 11 replies
+          </Typography>
         </div>
+        {isRepliesVisible === true &&
+          replies.map((reply: any) => {
+            return renderCommentUI(reply, { width: 24, height: 24 }, { marginTop: 10 });
+          })}
+        {showMoreRepliesButton()}
+        {/* <CircularProgress color="primary" size={20} /> */}
       </div>
     );
   }
@@ -72,18 +120,8 @@ const Comment: React.FC<any> = ({ comment }) => {
     <div
       className={`${commonCss.flexColumn} ${commonCss.relative}`}
       style={{ ...padding(16, 'lr'), ...padding(10, 'bt') }}>
-      <div className={`${classes.comment} ${commonCss.flexRow}`} key={comment._id}>
-        <img className={classes.commentUserImage} src={`${image}`} alt={comment.username} />
-        <div className={commonCss.flexColumn} style={padding(8, 'l')}>
-          <Typography className={classes.commentUsername} thickness="semi-bold" variant="span">
-            {comment.username} <Typography className={classes.commentTime}>4.38PM</Typography>
-          </Typography>
-          <Typography className={classes.commentUserComment} variant="span">
-            {comment.comment}
-          </Typography>
-        </div>
-      </div>
-      {renderReplies()}
+      {renderCommentUI(comment)}
+      {comment.replies && comment.replies.length > 0 && renderReplies(comment.replies)}
     </div>
   );
 };
