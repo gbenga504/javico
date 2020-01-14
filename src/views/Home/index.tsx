@@ -9,7 +9,7 @@ import { color, useStyles as commonUseStyles } from '../../Css';
 import { IndeterminateLinearProgress, withNotificationBanner } from '../../atoms';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import SourceCodeService from '../../services/SourceCodeServices';
-import { getIdFromUrl } from '../../utils/Misc';
+import { getIdFromUrl } from '../../utils/UrlUtils';
 
 const useStyles = makeStyles({
   main: {

@@ -5,7 +5,7 @@ import { useStyles } from './styles';
 import { useStyles as commonUseStyles } from '../../Css';
 import { Typography, Icon, withNotificationBanner, ButtonWithLoading } from '../../atoms';
 import MarDownRenderer from '../MarkDownRenderer';
-import { getIdFromUrl } from '../../utils/Misc';
+import { getIdFromUrl } from '../../utils/UrlUtils';
 import { withApi } from '../../utils/ApiConnector';
 import SignInViaGithubModal from '../SignInViaGithubModal';
 import SourceCodeService from '../../services/SourceCodeServices';
