@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core';
 
 import MenuBar from '../../components/MenuBar';
@@ -6,7 +6,10 @@ import MonacoEditor from '../../components/MonacoEditor';
 import Console from '../../components/Console';
 import Comments from '../../components/Comments';
 import { color, useStyles as commonUseStyles } from '../../Css';
-import { IndeterminateLinearProgress } from '../../atoms';
+import { IndeterminateLinearProgress, withNotificationBanner } from '../../atoms';
+import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
+import SourceCodeService from '../../services/SourceCodeServices';
+import { getIdFromUrl } from '../../utils/UrlUtils';
 
 const useStyles = makeStyles({
   main: {
@@ -31,21 +34,57 @@ const useStyles = makeStyles({
   },
 });
 
-const Home: React.FC = () => {
+interface IProps {
+  onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
+}
+
+const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
   const [terminalExecutableCode, setTerminalExecutableCode] = useState('');
+  const [isLoading, setisLoading] = useState<boolean>(false);
+  const [fetchedSourceCode, setFetchedSourceCode] = useState({
+    sourceCode: '',
+    readme: '',
+  });
   const classes = useStyles();
   const commonCss = commonUseStyles();
+
+  useEffect(() => {
+    if (getIdFromUrl()) {
+      toggleIsLoading(true);
+      SourceCodeService.fetchSourceCode({
+        params: { ID: getIdFromUrl() },
+      })
+        .then(res => {
+          const { sourceCode, readme } = res._document.proto.fields;
+          toggleIsLoading();
+          setFetchedSourceCode({ sourceCode: sourceCode.stringValue, readme: readme.stringValue });
+        })
+        .catch((error: any) => {
+          toggleIsLoading();
+          onSetNotificationSettings(error.message, 'danger', 'long');
+        });
+    }
+    // eslint-disable-next-line
+  }, []);
+
+  function toggleIsLoading(loading = false) {
+    setisLoading(loading);
+  }
 
   return (
     <div className={`${classes.relative} ${commonCss.flexRow}`}>
       <div className={classes.linearProgress}>
-        <IndeterminateLinearProgress isVisible={true} />
+        <IndeterminateLinearProgress isVisible={isLoading} />
       </div>
       <MenuBar />
       <main className={`${classes.main} ${commonCss.flexRow}`}>
-        <MonacoEditor onRunSourceCode={setTerminalExecutableCode} />
+        <MonacoEditor
+          onHandleLoading={toggleIsLoading}
+          onRunSourceCode={setTerminalExecutableCode}
+          fetchedSourceCode={fetchedSourceCode.sourceCode}
+        />
         <div className={classes.mainRightSection}>
-          <Console sourceCode={terminalExecutableCode} />
+          <Console sourceCode={terminalExecutableCode} fetchedReadme={fetchedSourceCode.readme} />
           <Comments comments={[]} />
         </div>
       </main>
@@ -53,4 +92,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default withNotificationBanner(Home);
