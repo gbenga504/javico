@@ -16,7 +16,7 @@ export const useStyles = makeStyles(theme => ({
     width: '100%',
   },
   commentsBody: {
-    overflow: 'scroll',
+    overflowY: 'scroll',
     marginTop: 38,
     paddingBottom: theme.spacing(17),
   },
@@ -91,6 +91,7 @@ export const useStyles = makeStyles(theme => ({
     paddingTop: 10,
     alignItems: 'center',
     background: color.deepBlue,
+    zIndex: 2000,
   },
   commentDateSeperatorHr: {
     border: 0,
@@ -106,6 +107,7 @@ export const useStyles = makeStyles(theme => ({
     top: 12,
     position: 'sticky',
     display: 'flex',
+    zIndex: 3000,
     justifyContent: 'center',
     '& div': {
       marginTop: -12,

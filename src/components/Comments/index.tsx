@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { TextareaAutosize } from '@material-ui/core';
 
 import { useStyles } from './styles';
@@ -13,6 +13,26 @@ const Comments: React.FC<{ comments: any[] }> = ({ comments }) => {
   const classes = useStyles();
   const commonCss = commonUseStyles();
   const commentInputRef = useRef<any>(null);
+  const commentContainerRef = useRef<any>(null);
+
+  useEffect(() => {
+    focusLastComment();
+  }, []);
+
+  function focusLastComment() {
+    /**
+     * @todo
+     * This function should also be called when the send button is clicked
+     * and when this components mounts and the comments has been fetched
+     *
+     * Currently we delay this by 500ms
+     * Not sure if this is necessary but perfectly works if the main thread is still busy constructing the layout when it is called.
+     */
+    setTimeout(
+      () => (commentContainerRef.current.scrollTop = commentContainerRef.current.scrollHeight),
+      500,
+    );
+  }
 
   function handleQuoteComment(comment: string): void {
     setQuotedComment(comment);
@@ -67,7 +87,9 @@ const Comments: React.FC<{ comments: any[] }> = ({ comments }) => {
   return (
     <section className={classes.comments}>
       <div className={classes.commentsHeader} />
-      <div className={`${commonCss.fullHeightAndWidth} ${classes.commentsBody}`}>
+      <div
+        ref={commentContainerRef}
+        className={`${commonCss.fullHeightAndWidth} ${classes.commentsBody}`}>
         {process.env.REACT_APP_IS_COMMENT_FEATURE_AVAILABLE === 'true' ? (
           renderComments()
         ) : (
