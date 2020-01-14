@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
+import { TextareaAutosize } from '@material-ui/core';
 
 import { useStyles } from './styles';
 import { useStyles as commonUseStyles } from '../../Css';
@@ -7,8 +8,26 @@ import { comments as _comments } from './comments_dummy';
 import Comment from './Comment';
 
 const Comments: React.FC<{ comments: any[] }> = ({ comments }) => {
+  const [quotedComment, setQuotedComment] = useState<string>('');
+  const [comment, setComment] = useState<string>('');
   const classes = useStyles();
   const commonCss = commonUseStyles();
+  const commentInputRef = useRef<any>(null);
+
+  function handleQuoteComment(comment: string): void {
+    setQuotedComment(comment);
+    setTimeout(() => commentInputRef.current.focus(), 100);
+  }
+
+  function handleCommentChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
+    setComment(event.target.value);
+  }
+
+  function handleRemoveQuotedComment(event: React.KeyboardEvent) {
+    if (event.keyCode === 8 && !!quotedComment === true && comment.length === 0) {
+      setQuotedComment('');
+    }
+  }
 
   function renderDateSeperator() {
     return (
@@ -30,11 +49,19 @@ const Comments: React.FC<{ comments: any[] }> = ({ comments }) => {
   function renderComments() {
     return _comments.map(comment => {
       return comment.type !== 'seperator' ? (
-        <Comment key={comment._id} comment={comment} />
+        <Comment key={comment._id} comment={comment} onHandleReply={handleQuoteComment} />
       ) : (
         renderDateSeperator()
       );
     });
+  }
+
+  function renderQuotedComment() {
+    return (
+      <div className={classes.commentQuotedCommentContainer}>
+        <p>{quotedComment}</p>
+      </div>
+    );
   }
 
   return (
@@ -54,11 +81,21 @@ const Comments: React.FC<{ comments: any[] }> = ({ comments }) => {
         )}
       </div>
       <div className={classes.commentInput}>
-        <div className={`${classes.commentInputFieldContainer} ${commonCss.flexRow}`}>
-          <input
+        {!!quotedComment === true && renderQuotedComment()}
+        <div
+          className={`${classes.commentInputFieldContainer} ${
+            commonCss.flexRow
+          } ${!!quotedComment === true && 'hide-border'}`}>
+          <TextareaAutosize
+            aria-label="Drop a review"
             className={classes.commentInputField}
-            type="text"
-            placeholder="Drop a review on this code"
+            placeholder={!!quotedComment === true ? 'Drop a reply' : 'Drop a review on this code'}
+            rowsMax={6}
+            rows={1}
+            ref={commentInputRef}
+            value={comment}
+            onChange={handleCommentChange}
+            onKeyDown={handleRemoveQuotedComment}
           />
           <Icon
             className={classes.commentInputSendIcon}

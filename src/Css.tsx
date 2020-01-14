@@ -5,6 +5,7 @@ export const color = {
   black: '#000',
   deepBlue: '#1A1D21',
   themeBlue: '#0076c6',
+  themeBlueLighter: '#d4edfb',
   themeBlueDarker: '#0D47A1',
   darkThemeLightBorder: 'rgba(255, 255, 255, 0.07)',
   darkThemeDarkBorder: 'rgba(255, 255, 255, 0.4)',
