@@ -18,7 +18,7 @@ interface IProps {
   onRunSourceCode?: (value: string) => void;
   theme?: 'light' | 'dark' | 'ace' | 'night-dark';
   language?: string;
-  toggleIsLoading: any;
+  onHandleLoading: any;
   fetchedSourceCode: string;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
   Api: any;
@@ -28,7 +28,7 @@ const MonacoEditor: React.FC<IProps> = ({
   value,
   onRunSourceCode,
   theme = 'vs-dark',
-  toggleIsLoading,
+  onHandleLoading,
   language = 'javascript',
   fetchedSourceCode,
   onSetNotificationSettings,
@@ -187,7 +187,7 @@ const MonacoEditor: React.FC<IProps> = ({
   }
 
   function handleSaveDeveloperCode() {
-    toggleIsLoading(true);
+    onHandleLoading(true);
     let me = Api.getCurrentUser();
     const id = getIdFromUrl();
     if (id) {
@@ -196,10 +196,10 @@ const MonacoEditor: React.FC<IProps> = ({
         params: { ID: id },
       })
         .then((res: any) => {
-          toggleIsLoading();
+          onHandleLoading();
         })
         .catch((error: any) => {
-          toggleIsLoading();
+          onHandleLoading();
           onSetNotificationSettings(error.message, 'danger', 'long');
         });
     } else {
@@ -213,11 +213,11 @@ const MonacoEditor: React.FC<IProps> = ({
         },
       })
         .then(res => {
-          toggleIsLoading();
+          onHandleLoading();
           updateUrl(res);
         })
         .catch((error: any) => {
-          toggleIsLoading();
+          onHandleLoading();
           onSetNotificationSettings(error.message, 'danger', 'long');
         });
     }
