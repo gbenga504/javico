@@ -57,15 +57,14 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
         .then(res => {
           const { sourceCode, readme } = res._document.proto.fields;
           toggleIsLoading();
-          console.log('success message');
           setFetchedSourceCode({ sourceCode: sourceCode.stringValue, readme: readme.stringValue });
         })
         .catch((error: any) => {
           toggleIsLoading();
-          console.log('success error');
           onSetNotificationSettings(error.message, 'danger', 'long');
         });
     }
+    // eslint-disable-next-line
   }, []);
 
   function toggleIsLoading(loading = false) {
