@@ -13,7 +13,7 @@ interface IProps {
 }
 
 const useStyles = makeStyles(theme => ({
-  commentRepliesContainer: {
+  commentBottomContainer: {
     marginLeft: 40,
     display: 'flex',
     flexDirection: 'column',
@@ -114,8 +114,7 @@ const Comment: React.FC<IProps> = ({ comment, onHandleReply }) => {
 
   function renderReplies(replies: any) {
     return (
-      <div className={classes.commentRepliesContainer}>
-        <SyntaxHighlighter containerStyle={{ marginTop: 5 }} sourceCode={`return 5`} />
+      <>
         <div
           onClick={handleToggleRepliesVisibility}
           className={classes.commentReplyActionButtonContainer}>
@@ -130,7 +129,7 @@ const Comment: React.FC<IProps> = ({ comment, onHandleReply }) => {
           })}
         {renderShowMoreRepliesButton()}
         {/* <CircularProgress color="primary" size={20} /> */}
-      </div>
+      </>
     );
   }
 
@@ -158,7 +157,12 @@ const Comment: React.FC<IProps> = ({ comment, onHandleReply }) => {
           </Typography>
         </div>
       </div>
-      {comment.replies && comment.replies.length > 0 && renderReplies(comment.replies)}
+      <div className={classes.commentBottomContainer}>
+        {comment.codeReference && (
+          <SyntaxHighlighter containerStyle={{ marginTop: 5 }} sourceCode={comment.codeReference} />
+        )}
+        {comment.replies && comment.replies.length > 0 && renderReplies(comment.replies)}
+      </div>
       {renderMenuOptions()}
     </div>
   );
