@@ -5,6 +5,7 @@ import { useStyles as commonUseStyles, padding, color, fontsize } from '../../Cs
 import { Typography, Icon } from '../../atoms';
 import { image } from './comments_dummy';
 import Reply from './Reply';
+import SyntaxHighlighter from '../SyntaxHighlighter';
 
 interface IProps {
   comment: any;
@@ -59,7 +60,7 @@ const useStyles = makeStyles(theme => ({
     color: `#ABABAD !important`,
   },
   commentUserComment: {
-    fontSize: fontsize.small,
+    fontSize: fontsize.small + 0.5,
   },
   commentMoreIcon: {
     color: color.white,
@@ -114,6 +115,7 @@ const Comment: React.FC<IProps> = ({ comment, onHandleReply }) => {
   function renderReplies(replies: any) {
     return (
       <div className={classes.commentRepliesContainer}>
+        <SyntaxHighlighter containerStyle={{ marginTop: 5 }} sourceCode={`return 5`} />
         <div
           onClick={handleToggleRepliesVisibility}
           className={classes.commentReplyActionButtonContainer}>
