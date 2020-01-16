@@ -37,6 +37,9 @@ const useStyles = makeStyles({
     top: 10,
     minWidth: 50,
     width: 50,
+    animationName: `$expandSwitchButton`,
+    animationDuration: '2000ms',
+    animationIterationCount: 'infinite',
     ...padding(5, 'lr'),
     ...padding(0, 'tb'),
   },
@@ -59,6 +62,17 @@ const useStyles = makeStyles({
   hideRightSubSection: {
     right: '-100%',
     opacity: 0,
+  },
+  '@keyframes expandSwitchButton': {
+    '0%': {
+      transform: 'scale(1)',
+    },
+    '50%': {
+      transform: 'scale(1.1)',
+    },
+    '100%': {
+      transform: 'scale(1)',
+    },
   },
 });
 
