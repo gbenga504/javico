@@ -161,7 +161,6 @@ const Console: React.FC<{
   }
 
   function renderReadMe() {
-    if (!isAuthorize) return null;
     return (
       <div className={classes.consoleSection}>
         <textarea
