@@ -110,6 +110,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
               ownerId={fetchedSourceCode.ownerId}
               sourceCode={terminalExecutableCode}
               fetchedReadme={fetchedSourceCode.readme}
+              user={user}
             />
           </div>
           <div

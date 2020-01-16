@@ -32,12 +32,14 @@ const Console: React.FC<{
   onSetNotificationSettings: any;
   ownerId: string;
   Api: any;
-}> = ({ sourceCode, ownerId, fetchedReadme, onSetNotificationSettings, Api }) => {
+  user: any;
+}> = ({ sourceCode, ownerId, fetchedReadme, onSetNotificationSettings, Api, user: _user }) => {
   const [currentTab, setCurrentTab] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
   const [terminalMessages, setTerminalMessages] = useState<TerminalMessagesType>([]);
   const [readMe, setReadMe] = useState<string>(fetchedReadme);
+  const [user, setUser] = useState<any>(_user);
   const workerRef = useRef<any>(null);
   const classes = useStyles();
   const commonCss = commonUseStyles();
@@ -53,6 +55,15 @@ const Console: React.FC<{
   }, []);
 
   useEffect(() => {
+    if (_user) {
+      setUser(_user);
+    } else {
+      setUser(null);
+      setCurrentTab(currentTab === 2 ? 1 : currentTab);
+    }
+  }, [_user]);
+
+  useEffect(() => {
     setTerminalMessages([]);
     workerRef.current.postMessage({ sourceCode });
   }, [sourceCode]);
@@ -60,6 +71,8 @@ const Console: React.FC<{
   useEffect(() => {
     setReadMe(fetchedReadme);
   }, [fetchedReadme]);
+
+  const isAuthorize = !!user ? user.uid === ownerId : false;
 
   function handleTabChange(event: React.ChangeEvent<{}>, currentTab: number) {
     setCurrentTab(currentTab);
@@ -148,6 +161,7 @@ const Console: React.FC<{
   }
 
   function renderReadMe() {
+    if (!isAuthorize) return null;
     return (
       <div className={classes.consoleSection}>
         <textarea
@@ -184,8 +198,8 @@ const Console: React.FC<{
     <section className={classes.console}>
       <Tabs value={currentTab} onChange={handleTabChange} aria-label="console tabs">
         <Tab label="TERMINAL" {...a11yProps(0)} />
-        <Tab label="READ ME" {...a11yProps(1)} />
-        <Tab label="PREVIEW" {...a11yProps(2)} />
+        {isAuthorize && <Tab label="READ ME" {...a11yProps(1)} />}
+        <Tab label={isAuthorize ? 'PREVIEW' : 'READ ME'} {...a11yProps(2)} />
       </Tabs>
       {currentTab === 0
         ? renderTerminal()
