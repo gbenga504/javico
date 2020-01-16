@@ -100,6 +100,8 @@ const Comment: React.FC<IProps> = ({ comment, onHandleReply }) => {
         open={Boolean(optionsAnchorEl)}
         onClose={handleCloseOptions}>
         <MenuItem onClick={() => handleReplyComment(comment.comment)}>Reply</MenuItem>
+        <MenuItem>Edit</MenuItem>
+        <MenuItem>Delete</MenuItem>
       </Menu>
     );
   }

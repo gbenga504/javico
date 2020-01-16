@@ -1,5 +1,5 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core';
+import React, { useState } from 'react';
+import { makeStyles, Menu, MenuItem } from '@material-ui/core';
 
 import { useStyles as commonUseStyles, padding, color, fontsize } from '../../Css';
 import { Typography, Icon } from '../../atoms';
@@ -46,6 +46,28 @@ const useStyles = makeStyles(theme => ({
 const Reply: React.FC<any> = ({ reply }) => {
   const classes = useStyles();
   const commonCss = commonUseStyles();
+  const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | HTMLElement>(null);
+
+  function handleShowOptions(event: React.MouseEvent<HTMLButtonElement>) {
+    setOptionsAnchorEl(event.currentTarget);
+  }
+
+  function handleCloseOptions() {
+    setOptionsAnchorEl(null);
+  }
+
+  function renderMenuOptions() {
+    return (
+      <Menu
+        anchorEl={optionsAnchorEl}
+        keepMounted
+        open={Boolean(optionsAnchorEl)}
+        onClose={handleCloseOptions}>
+        <MenuItem>Edit</MenuItem>
+        <MenuItem>Delete</MenuItem>
+      </Menu>
+    );
+  }
 
   return (
     <div className={`${classes.reply} ${commonCss.flexRow}`} key={reply._id}>
@@ -57,12 +79,17 @@ const Reply: React.FC<any> = ({ reply }) => {
           <Typography className={classes.replyUsername} thickness="bold" variant="span">
             {reply.username} <Typography className={classes.replyTime}>4.38PM</Typography>
           </Typography>
-          <Icon name="ios-more" className={`${classes.replyMoreIcon} reply__show-more-button`} />
+          <Icon
+            name="ios-more"
+            className={`${classes.replyMoreIcon} reply__show-more-button`}
+            onClick={handleShowOptions}
+          />
         </div>
         <Typography className={classes.replyUserText} variant="span">
           {reply.comment}
         </Typography>
       </div>
+      {renderMenuOptions()}
     </div>
   );
 };

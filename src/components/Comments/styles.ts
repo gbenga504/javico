@@ -74,7 +74,7 @@ export const useStyles = makeStyles(theme => ({
     background: color.deepBlue,
     '& p': {
       width: '100%',
-      fontSize: fontsize.base,
+      fontSize: fontsize.small,
       borderLeft: `6px solid ${color.themeBlue}`,
       background: color.themeBlueLighter,
       padding: theme.spacing(2),
