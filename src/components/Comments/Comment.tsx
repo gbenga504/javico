@@ -47,6 +47,7 @@ const Comment: React.FC<IProps> = ({ comment, onHandleReply }) => {
   }
 
   function handleOpenConfirmDeleteModal() {
+    handleCloseOptions();
     setIsConfirmDeleteModalVisible(true);
   }
 

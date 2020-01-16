@@ -35,7 +35,7 @@ const EditMessagePanel: React.FC<IProps> = ({
   }, [visible]);
 
   return visible === true ? (
-    <>
+    <div className={`${commonCss.flexColumn} ${commonCss.fullWidth}`}>
       <TextareaAutosize
         aria-label="Drop a review"
         className={classes.inputField}
@@ -64,7 +64,7 @@ const EditMessagePanel: React.FC<IProps> = ({
           Save Changes
         </ButtonWithLoading>
       </div>
-    </>
+    </div>
   ) : null;
 };
 
