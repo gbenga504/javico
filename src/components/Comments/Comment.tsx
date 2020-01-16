@@ -6,6 +6,7 @@ import { Typography, Icon } from '../../atoms';
 import { image } from './comments_dummy';
 import Reply from './Reply';
 import SyntaxHighlighter from '../SyntaxHighlighter';
+import DeleteMessageModal from '../DeleteMessageModal';
 
 interface IProps {
   comment: any;
@@ -72,6 +73,8 @@ const useStyles = makeStyles(theme => ({
 const Comment: React.FC<IProps> = ({ comment, onHandleReply }) => {
   const [isRepliesVisible, setIsRepliesVisible] = useState<boolean>(false);
   const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | HTMLElement>(null);
+  const [isConfirmDeleteModalVisible, setIsConfirmDeleteModalVisible] = useState<boolean>(false);
+  const [isDeleteCommentLoading, setIsDeleteCommentLoading] = useState<boolean>(false);
   const commonCss = commonUseStyles();
   const classes = useStyles();
 
@@ -92,6 +95,18 @@ const Comment: React.FC<IProps> = ({ comment, onHandleReply }) => {
     handleCloseOptions();
   }
 
+  function handleCloseConfirmDeleteModal() {
+    setIsConfirmDeleteModalVisible(false);
+  }
+
+  function handleOpenConfirmDeleteModal() {
+    setIsConfirmDeleteModalVisible(true);
+  }
+
+  function handleDeleteComment() {
+    setIsDeleteCommentLoading(true);
+  }
+
   function renderMenuOptions() {
     return (
       <Menu
@@ -101,7 +116,7 @@ const Comment: React.FC<IProps> = ({ comment, onHandleReply }) => {
         onClose={handleCloseOptions}>
         <MenuItem onClick={() => handleReplyComment(comment.comment)}>Reply</MenuItem>
         <MenuItem>Edit</MenuItem>
-        <MenuItem>Delete</MenuItem>
+        <MenuItem onClick={handleOpenConfirmDeleteModal}>Delete</MenuItem>
       </Menu>
     );
   }
@@ -166,6 +181,12 @@ const Comment: React.FC<IProps> = ({ comment, onHandleReply }) => {
         {comment.replies && comment.replies.length > 0 && renderReplies(comment.replies)}
       </div>
       {renderMenuOptions()}
+      <DeleteMessageModal
+        visible={isConfirmDeleteModalVisible}
+        loading={isDeleteCommentLoading}
+        onRequestClose={handleCloseConfirmDeleteModal}
+        onDeleteMessage={handleDeleteComment}
+      />
     </div>
   );
 };
