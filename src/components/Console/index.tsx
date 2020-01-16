@@ -200,13 +200,9 @@ const Console: React.FC<{
         {isAuthorize && <Tab label="READ ME" {...a11yProps(1)} />}
         <Tab label={isAuthorize ? 'PREVIEW' : 'READ ME'} {...a11yProps(2)} />
       </Tabs>
-      {currentTab === 0
-        ? renderTerminal()
-        : currentTab === 1
-        ? renderReadMe()
-        : currentTab === 2
-        ? renderPreview()
-        : null}
+      {currentTab === 0 && renderTerminal()}
+      {currentTab === 1 && isAuthorize ? renderReadMe() : renderPreview()}
+      {currentTab === 2 && renderPreview()}
       <SignInViaGithubModal
         visible={isSignInModalVisible}
         onRequestClose={handleCloseSignInModal}
