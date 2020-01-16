@@ -20,6 +20,7 @@ interface IProps {
   language?: string;
   onHandleLoading: any;
   fetchedSourceCode: string;
+  ownerId: string;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
   Api: any;
 }
@@ -32,6 +33,7 @@ const MonacoEditor: React.FC<IProps> = ({
   language = 'javascript',
   fetchedSourceCode,
   onSetNotificationSettings,
+  ownerId,
   Api,
 }) => {
   const [shouldDisplayCommentBox, setShouldDisplayCommentBox] = useState<boolean>(false);
@@ -87,18 +89,27 @@ const MonacoEditor: React.FC<IProps> = ({
   useEffect(() => {
     if (editorRef.current !== null) {
       editorRef.current.getModel().setValue(fetchedSourceCode);
+      disableEditor(user ? user.uid !== ownerId : true);
     }
+    // eslint-disable-next-line
   }, [fetchedSourceCode]);
 
   useEffect(() => {
     Api.onAuthStateChanged(function(user: any) {
       if (user) {
         setUser(user);
+        disableEditor(user.uid !== ownerId);
       } else {
         setUser(null);
+        disableEditor(true);
       }
     });
-  }, [Api]);
+  }, [Api, ownerId, user]);
+
+  function disableEditor(disable = false) {
+    if (editorRef.current !== null)
+      editorRef.current.updateOptions({ readOnly: !getIdFromUrl() ? false : disable });
+  }
 
   useEffect(() => {
     isMonacoReady === true && isEditorReady === false && createEditor();

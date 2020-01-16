@@ -11,6 +11,104 @@ import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import SourceCodeService from '../../services/SourceCodeServices';
 import { getIdFromUrl } from '../../utils/UrlUtils';
 
+interface IProps {
+  onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
+}
+
+const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
+  const [terminalExecutableCode, setTerminalExecutableCode] = useState('');
+  const [currentSection, setCurrentSection] = useState('console');
+  const [isLoading, setisLoading] = useState<boolean>(false);
+  const [fetchedSourceCode, setFetchedSourceCode] = useState({
+    sourceCode: '',
+    readme: '',
+    ownerId: '',
+  });
+  const classes = useStyles();
+  const commonCss = commonUseStyles();
+
+  useEffect(() => {
+    if (getIdFromUrl()) {
+      toggleIsLoading(true);
+      SourceCodeService.fetchSourceCode({
+        params: { ID: getIdFromUrl() },
+      })
+        .then(res => {
+          const { sourceCode, readme, ownerId } = res._document.proto.fields;
+          toggleIsLoading();
+          setFetchedSourceCode({
+            sourceCode: sourceCode.stringValue,
+            readme: readme.stringValue,
+            ownerId: ownerId.stringValue,
+          });
+        })
+        .catch((error: any) => {
+          toggleIsLoading();
+          onSetNotificationSettings(error.message, 'danger', 'long');
+        });
+    }
+    // eslint-disable-next-line
+  }, []);
+
+  function handleToggleView() {
+    setCurrentSection(currentSection === 'console' ? 'comments' : 'console');
+  }
+
+  function toggleIsLoading(loading = false) {
+    setisLoading(loading);
+  }
+
+  function renderSwitchView() {
+    return (
+      <Tooltip title="Switch View" placement="left" enterDelay={100}>
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={handleToggleView}
+          classes={{ root: classes.switchButtonRoot, label: classes.switchButtonLabel }}>
+          <Icon name="ios-swap" />
+        </Button>
+      </Tooltip>
+    );
+  }
+
+  return (
+    <div className={`${classes.relative} ${commonCss.flexRow}`}>
+      <div className={classes.linearProgress}>
+        <IndeterminateLinearProgress isVisible={isLoading} />
+      </div>
+      <MenuBar />
+      <main className={`${classes.main} ${commonCss.flexRow}`}>
+        <MonacoEditor
+          onHandleLoading={toggleIsLoading}
+          onRunSourceCode={setTerminalExecutableCode}
+          fetchedSourceCode={fetchedSourceCode.sourceCode}
+          ownerId={fetchedSourceCode.ownerId}
+        />
+        <div className={classes.mainRightSection}>
+          <div
+            className={`${classes.rightSubSection} ${
+              currentSection === 'console'
+                ? classes.showRightSubSection
+                : classes.hideRightSubSection
+            }`}>
+            <Console sourceCode={terminalExecutableCode} fetchedReadme={fetchedSourceCode.readme} />
+          </div>
+          <div
+            className={`${classes.rightSubSection} ${
+              currentSection === 'comments'
+                ? classes.showRightSubSection
+                : classes.hideRightSubSection
+            }`}>
+            <Comments comments={[]} />
+          </div>
+          {renderSwitchView()}
+        </div>
+      </main>
+    </div>
+  );
+};
+
 const useStyles = makeStyles({
   main: {
     width: '100%',
@@ -64,97 +162,5 @@ const useStyles = makeStyles({
     opacity: 0,
   },
 });
-
-interface IProps {
-  onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
-}
-
-const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
-  const [terminalExecutableCode, setTerminalExecutableCode] = useState('');
-  const [currentSection, setCurrentSection] = useState('console');
-  const [isLoading, setisLoading] = useState<boolean>(false);
-  const [fetchedSourceCode, setFetchedSourceCode] = useState({
-    sourceCode: '',
-    readme: '',
-  });
-  const classes = useStyles();
-  const commonCss = commonUseStyles();
-
-  useEffect(() => {
-    if (getIdFromUrl()) {
-      toggleIsLoading(true);
-      SourceCodeService.fetchSourceCode({
-        params: { ID: getIdFromUrl() },
-      })
-        .then(res => {
-          const { sourceCode, readme } = res._document.proto.fields;
-          toggleIsLoading();
-          setFetchedSourceCode({ sourceCode: sourceCode.stringValue, readme: readme.stringValue });
-        })
-        .catch((error: any) => {
-          toggleIsLoading();
-          onSetNotificationSettings(error.message, 'danger', 'long');
-        });
-    }
-    // eslint-disable-next-line
-  }, []);
-
-  function handleToggleView() {
-    setCurrentSection(currentSection === 'console' ? 'comments' : 'console');
-  }
-
-  function toggleIsLoading(loading = false) {
-    setisLoading(loading);
-  }
-
-  function renderSwitchView() {
-    return (
-      <Tooltip title="Switch View" placement="left" enterDelay={100}>
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={handleToggleView}
-          classes={{ root: classes.switchButtonRoot, label: classes.switchButtonLabel }}>
-          <Icon name="ios-swap" />
-        </Button>
-      </Tooltip>
-    );
-  }
-
-  return (
-    <div className={`${classes.relative} ${commonCss.flexRow}`}>
-      <div className={classes.linearProgress}>
-        <IndeterminateLinearProgress isVisible={isLoading} />
-      </div>
-      <MenuBar />
-      <main className={`${classes.main} ${commonCss.flexRow}`}>
-        <MonacoEditor
-          onHandleLoading={toggleIsLoading}
-          onRunSourceCode={setTerminalExecutableCode}
-          fetchedSourceCode={fetchedSourceCode.sourceCode}
-        />
-        <div className={classes.mainRightSection}>
-          <div
-            className={`${classes.rightSubSection} ${
-              currentSection === 'console'
-                ? classes.showRightSubSection
-                : classes.hideRightSubSection
-            }`}>
-            <Console sourceCode={terminalExecutableCode} fetchedReadme={fetchedSourceCode.readme} />
-          </div>
-          <div
-            className={`${classes.rightSubSection} ${
-              currentSection === 'comments'
-                ? classes.showRightSubSection
-                : classes.hideRightSubSection
-            }`}>
-            <Comments comments={[]} />
-          </div>
-          {renderSwitchView()}
-        </div>
-      </main>
-    </div>
-  );
-};
 
 export default withNotificationBanner(Home);
