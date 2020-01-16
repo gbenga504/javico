@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button, Tabs, Tab } from '@material-ui/core';
+import { Tabs, Tab } from '@material-ui/core';
 
 import { useStyles } from './styles';
 import { useStyles as commonUseStyles } from '../../Css';
-import { Typography, Icon } from '../../atoms';
+import { Typography, Icon, withNotificationBanner, ButtonWithLoading } from '../../atoms';
 import MarDownRenderer from '../MarkDownRenderer';
+import { getIdFromUrl } from '../../utils/UrlUtils';
+import { withApi } from '../../utils/ApiConnector';
+import SignInViaGithubModal from '../SignInViaGithubModal';
+import SourceCodeService from '../../services/SourceCodeServices';
 
 const MessageType = {
   ERROR: `error`,
@@ -22,10 +26,17 @@ function a11yProps(index: number) {
 type TerminalMessageType = { type: string; message: string | any };
 type TerminalMessagesType = TerminalMessageType[];
 
-const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
+const Console: React.FC<{
+  sourceCode: string;
+  fetchedReadme: string;
+  onSetNotificationSettings: any;
+  Api: any;
+}> = ({ sourceCode, fetchedReadme, onSetNotificationSettings, Api }) => {
   const [currentTab, setCurrentTab] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
   const [terminalMessages, setTerminalMessages] = useState<TerminalMessagesType>([]);
-  const [readMe, setReadMe] = useState<string>('');
+  const [readMe, setReadMe] = useState<string>(fetchedReadme);
   const workerRef = useRef<any>(null);
   const classes = useStyles();
   const commonCss = commonUseStyles();
@@ -45,6 +56,10 @@ const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
     workerRef.current.postMessage({ sourceCode });
   }, [sourceCode]);
 
+  useEffect(() => {
+    setReadMe(fetchedReadme);
+  }, [fetchedReadme]);
+
   function handleTabChange(event: React.ChangeEvent<{}>, currentTab: number) {
     setCurrentTab(currentTab);
   }
@@ -53,10 +68,33 @@ const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
     setReadMe(e.target.value);
   }
 
+  function toggleIsLoading(loading = false) {
+    setIsLoading(loading);
+  }
+
+  function handleCloseSignInModal() {
+    setIsSignInModalVisible(false);
+  }
+
   function submitReadme() {
-    /*
-      submitReadme
-    */
+    toggleIsLoading(true);
+    let me = Api.getCurrentUser();
+    if (!me) {
+      setIsSignInModalVisible(true);
+      return;
+    }
+    const id = getIdFromUrl();
+    SourceCodeService.saveSourceCode({
+      data: { readme: readMe },
+      params: { ID: id },
+    })
+      .then((res: any) => {
+        toggleIsLoading();
+      })
+      .catch((error: any) => {
+        toggleIsLoading();
+        onSetNotificationSettings(error.message, 'danger', 'long');
+      });
   }
 
   function renderLogBasedMessages(message: string, index: number) {
@@ -119,13 +157,14 @@ const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
           autoFocus={true}
           rows={7}
           placeholder="Add a ReadMe (Helps others understand your code. Markdown is supported)"></textarea>
-        <Button
+        <ButtonWithLoading
           variant="contained"
           onClick={submitReadme}
+          loading={isLoading}
           className={classes.saveReadmeButton}
           color="primary">
           save
-        </Button>
+        </ButtonWithLoading>
       </div>
     );
   }
@@ -154,8 +193,13 @@ const Console: React.FC<{ sourceCode: string }> = ({ sourceCode }) => {
         : currentTab === 2
         ? renderPreview()
         : null}
+      <SignInViaGithubModal
+        visible={isSignInModalVisible}
+        onRequestClose={handleCloseSignInModal}
+        onSignInSuccess={submitReadme}
+      />
     </section>
   );
 };
 
-export default Console;
+export default withNotificationBanner(withApi(Console));
