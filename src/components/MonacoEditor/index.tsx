@@ -106,11 +106,6 @@ const MonacoEditor: React.FC<IProps> = ({
     }
   }, [_user, ownerId]);
 
-  function disableEditor(disable = false) {
-    if (editorRef.current !== null)
-      editorRef.current.updateOptions({ readOnly: !getIdFromUrl() ? false : disable });
-  }
-
   useEffect(() => {
     isMonacoReady === true && isEditorReady === false && createEditor();
   }, [isMonacoReady, isEditorReady, createEditor]);
@@ -146,6 +141,11 @@ const MonacoEditor: React.FC<IProps> = ({
 
   function handleSourceCodeExecution() {
     onRunSourceCode && onRunSourceCode(sourceCode);
+  }
+
+  function disableEditor(disable = false) {
+    if (editorRef.current !== null)
+      editorRef.current.updateOptions({ readOnly: !getIdFromUrl() ? false : disable });
   }
 
   function colorHighlight() {
@@ -202,6 +202,11 @@ const MonacoEditor: React.FC<IProps> = ({
     let me = Api.getCurrentUser();
     const id = getIdFromUrl();
     if (id) {
+      if (sourceCode === fetchedSourceCode) {
+        onHandleLoading();
+        onSetNotificationSettings('Your code is up to date', 'info', 'long');
+        return;
+      }
       SourceCodeService.saveSourceCode({
         data: { sourceCode },
         params: { ID: id },

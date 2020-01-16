@@ -61,6 +61,7 @@ const Console: React.FC<{
       setUser(null);
       setCurrentTab(currentTab === 2 ? 1 : currentTab);
     }
+    // eslint-disable-next-line
   }, [_user]);
 
   useEffect(() => {
