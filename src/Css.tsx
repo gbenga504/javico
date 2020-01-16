@@ -3,8 +3,9 @@ import { createMuiTheme, makeStyles } from '@material-ui/core';
 export const color = {
   white: '#fff',
   black: '#000',
-  deepBlue: 'rgb(28, 32, 34)',
+  deepBlue: '#1A1D21',
   themeBlue: '#0076c6',
+  themeBlueLighter: '#d4edfb',
   themeBlueDarker: '#0D47A1',
   darkThemeLightBorder: 'rgba(255, 255, 255, 0.07)',
   darkThemeDarkBorder: 'rgba(255, 255, 255, 0.4)',
@@ -157,7 +158,7 @@ export const useStyles = makeStyles({
 });
 
 export function spacingHelper(type: string, units?: number, directions?: string): any {
-  units = units || baseSpacing;
+  units = units !== undefined ? units : baseSpacing;
   directions = directions || 'blrt';
   const rules: any = {};
   if (directions.indexOf('b') > -1) {

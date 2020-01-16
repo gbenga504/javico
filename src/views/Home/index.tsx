@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core';
+import { Tooltip, makeStyles, Button } from '@material-ui/core';
 
 import MenuBar from '../../components/MenuBar';
 import MonacoEditor from '../../components/MonacoEditor';
 import Console from '../../components/Console';
 import Comments from '../../components/Comments';
-import { color, useStyles as commonUseStyles } from '../../Css';
-import { IndeterminateLinearProgress, withNotificationBanner } from '../../atoms';
+import { color, useStyles as commonUseStyles, padding } from '../../Css';
+import { IndeterminateLinearProgress, Icon, withNotificationBanner } from '../../atoms';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import SourceCodeService from '../../services/SourceCodeServices';
 import { getIdFromUrl } from '../../utils/UrlUtils';
@@ -24,6 +24,7 @@ const useStyles = makeStyles({
     borderLeft: `1px solid ${color.darkThemeLightBorder}`,
     minWidth: '50%',
     backgroundColor: color.darkThemeBlack,
+    position: 'relative',
   },
   linearProgress: {
     position: 'absolute',
@@ -31,6 +32,36 @@ const useStyles = makeStyles({
     left: 0,
     right: 0,
     zIndex: 5,
+  },
+  switchButtonRoot: {
+    position: 'absolute',
+    zIndex: 1000,
+    right: 10,
+    top: 10,
+    minWidth: 50,
+    width: 50,
+    ...padding(5, 'lr'),
+    ...padding(0, 'tb'),
+  },
+  switchButtonLabel: {
+    display: 'flex',
+    flexDirection: 'column',
+    '& ion-icon': {
+      fontSize: 25,
+    },
+  },
+  rightSubSection: {
+    position: 'absolute',
+    width: '100%',
+    transition: 'all 0.6s',
+  },
+  showRightSubSection: {
+    right: '0%',
+    opacity: 1,
+  },
+  hideRightSubSection: {
+    right: '-100%',
+    opacity: 0,
   },
 });
 
@@ -40,6 +71,7 @@ interface IProps {
 
 const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
   const [terminalExecutableCode, setTerminalExecutableCode] = useState('');
+  const [currentSection, setCurrentSection] = useState('console');
   const [isLoading, setisLoading] = useState<boolean>(false);
   const [fetchedSourceCode, setFetchedSourceCode] = useState({
     sourceCode: '',
@@ -67,8 +99,26 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
     // eslint-disable-next-line
   }, []);
 
+  function handleToggleView() {
+    setCurrentSection(currentSection === 'console' ? 'comments' : 'console');
+  }
+
   function toggleIsLoading(loading = false) {
     setisLoading(loading);
+  }
+
+  function renderSwitchView() {
+    return (
+      <Tooltip title="Switch View" placement="left" enterDelay={100}>
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={handleToggleView}
+          classes={{ root: classes.switchButtonRoot, label: classes.switchButtonLabel }}>
+          <Icon name="ios-swap" />
+        </Button>
+      </Tooltip>
+    );
   }
 
   return (
@@ -84,8 +134,23 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
           fetchedSourceCode={fetchedSourceCode.sourceCode}
         />
         <div className={classes.mainRightSection}>
-          <Console sourceCode={terminalExecutableCode} fetchedReadme={fetchedSourceCode.readme} />
-          <Comments comments={[]} />
+          <div
+            className={`${classes.rightSubSection} ${
+              currentSection === 'console'
+                ? classes.showRightSubSection
+                : classes.hideRightSubSection
+            }`}>
+            <Console sourceCode={terminalExecutableCode} fetchedReadme={fetchedSourceCode.readme} />
+          </div>
+          <div
+            className={`${classes.rightSubSection} ${
+              currentSection === 'comments'
+                ? classes.showRightSubSection
+                : classes.hideRightSubSection
+            }`}>
+            <Comments comments={[]} />
+          </div>
+          {renderSwitchView()}
         </div>
       </main>
     </div>

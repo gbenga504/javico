@@ -4,7 +4,7 @@ import { color, fontsize } from '../../Css';
 
 export const useStyles = makeStyles(theme => ({
   console: {
-    height: '50vh',
+    height: '100vh',
     backgroundColor: color.darkThemeBlack,
   },
   consoleTab: {
