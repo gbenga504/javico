@@ -30,8 +30,9 @@ const Console: React.FC<{
   sourceCode: string;
   fetchedReadme: string;
   onSetNotificationSettings: any;
+  ownerId: string;
   Api: any;
-}> = ({ sourceCode, fetchedReadme, onSetNotificationSettings, Api }) => {
+}> = ({ sourceCode, ownerId, fetchedReadme, onSetNotificationSettings, Api }) => {
   const [currentTab, setCurrentTab] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);

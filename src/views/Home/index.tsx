@@ -7,17 +7,20 @@ import Console from '../../components/Console';
 import Comments from '../../components/Comments';
 import { color, useStyles as commonUseStyles, padding } from '../../Css';
 import { IndeterminateLinearProgress, Icon, withNotificationBanner } from '../../atoms';
+import { withApi } from '../../utils/ApiConnector';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import SourceCodeService from '../../services/SourceCodeServices';
 import { getIdFromUrl } from '../../utils/UrlUtils';
 
 interface IProps {
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
+  Api: any;
 }
 
-const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
+const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
   const [terminalExecutableCode, setTerminalExecutableCode] = useState('');
   const [currentSection, setCurrentSection] = useState('console');
+  const [user, setUser] = useState<any>(null);
   const [isLoading, setisLoading] = useState<boolean>(false);
   const [fetchedSourceCode, setFetchedSourceCode] = useState({
     sourceCode: '',
@@ -26,6 +29,16 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
   });
   const classes = useStyles();
   const commonCss = commonUseStyles();
+
+  useEffect(() => {
+    Api.onAuthStateChanged(function(user: any) {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+  }, [Api]);
 
   useEffect(() => {
     if (getIdFromUrl()) {
@@ -84,6 +97,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
           onRunSourceCode={setTerminalExecutableCode}
           fetchedSourceCode={fetchedSourceCode.sourceCode}
           ownerId={fetchedSourceCode.ownerId}
+          user={user}
         />
         <div className={classes.mainRightSection}>
           <div
@@ -92,7 +106,11 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
                 ? classes.showRightSubSection
                 : classes.hideRightSubSection
             }`}>
-            <Console sourceCode={terminalExecutableCode} fetchedReadme={fetchedSourceCode.readme} />
+            <Console
+              ownerId={fetchedSourceCode.ownerId}
+              sourceCode={terminalExecutableCode}
+              fetchedReadme={fetchedSourceCode.readme}
+            />
           </div>
           <div
             className={`${classes.rightSubSection} ${
@@ -163,4 +181,4 @@ const useStyles = makeStyles({
   },
 });
 
-export default withNotificationBanner(Home);
+export default withNotificationBanner(withApi(Home));

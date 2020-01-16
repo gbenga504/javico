@@ -23,6 +23,7 @@ interface IProps {
   ownerId: string;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
   Api: any;
+  user: any;
 }
 
 const MonacoEditor: React.FC<IProps> = ({
@@ -33,6 +34,7 @@ const MonacoEditor: React.FC<IProps> = ({
   language = 'javascript',
   fetchedSourceCode,
   onSetNotificationSettings,
+  user: _user,
   ownerId,
   Api,
 }) => {
@@ -43,7 +45,7 @@ const MonacoEditor: React.FC<IProps> = ({
   const [isEditorReady, setIsEditorReady] = useState<boolean>(false);
   const [selectionRange, setSelectionRange] = useState<any>(null);
   const [selectionValue, setSelectionValue] = useState<any>(null);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<any>(_user);
   const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
   const [sourceCode, setSourceCode] = useState('');
   const monacoRef = useRef<any>(null);
@@ -95,16 +97,14 @@ const MonacoEditor: React.FC<IProps> = ({
   }, [fetchedSourceCode]);
 
   useEffect(() => {
-    Api.onAuthStateChanged(function(user: any) {
-      if (user) {
-        setUser(user);
-        disableEditor(user.uid !== ownerId);
-      } else {
-        setUser(null);
-        disableEditor(true);
-      }
-    });
-  }, [Api, ownerId, user]);
+    if (_user) {
+      setUser(_user);
+      disableEditor(_user.uid !== ownerId);
+    } else {
+      setUser(null);
+      disableEditor(true);
+    }
+  }, [_user, ownerId]);
 
   function disableEditor(disable = false) {
     if (editorRef.current !== null)
