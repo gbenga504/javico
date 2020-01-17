@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Tooltip, makeStyles, Button } from '@material-ui/core';
 
 import MenuBar from '../../components/MenuBar';
 import MonacoEditor from '../../components/MonacoEditor';
 import Console from '../../components/Console';
-import Comments from '../../components/Comments';
 import { color, useStyles as commonUseStyles, padding } from '../../Css';
 import { IndeterminateLinearProgress, Icon, withNotificationBanner } from '../../atoms';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import SourceCodeService from '../../services/SourceCodeServices';
 import { getIdFromUrl } from '../../utils/UrlUtils';
+
+const Comments = lazy(() => import('../../components/Comments'));
 
 const useStyles = makeStyles({
   main: {
@@ -162,7 +163,9 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
                 ? classes.showRightSubSection
                 : classes.hideRightSubSection
             }`}>
-            <Comments comments={[]} />
+            <Suspense fallback={null}>
+              <Comments comments={[]} />
+            </Suspense>
           </div>
           {renderSwitchView()}
         </div>
