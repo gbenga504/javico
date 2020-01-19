@@ -148,7 +148,7 @@ const Comment: React.FC<IProps> = ({ comment, onHandleReply }) => {
           <EditMessagePanel
             visible={isEditMessagePanelVisible}
             loading={isEditingComment}
-            handleValueChange={handleCommentChange}
+            onHandleValueChange={handleCommentChange}
             value={editableComment}
             onRequestClose={handleCloseEditMessagePanel}
             onEditMessage={handleEditMessage}
