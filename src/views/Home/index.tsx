@@ -102,9 +102,9 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
         params: { ID: getIdFromUrl() },
       })
         .then(res => {
-          const { sourceCode, readme } = res._document.proto.fields;
+          const { sourceCode, readme } = res.data();
           toggleIsLoading();
-          setFetchedSourceCode({ sourceCode: sourceCode.stringValue, readme: readme.stringValue });
+          setFetchedSourceCode({ sourceCode, readme });
         })
         .catch((error: any) => {
           toggleIsLoading();
@@ -164,7 +164,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
                 : classes.hideRightSubSection
             }`}>
             <Suspense fallback={null}>
-              <Comments comments={[]} />
+              <Comments visible={currentSection === 'comments'} />
             </Suspense>
           </div>
           {renderSwitchView()}

@@ -1,29 +1,58 @@
-import React, { useState } from 'react';
-import { makeStyles, Menu, MenuItem } from '@material-ui/core';
+import React, { useState, useEffect } from 'react';
+import { makeStyles, Menu, MenuItem, CircularProgress } from '@material-ui/core';
 
 import { useStyles as commonUseStyles, padding, color, fontsize } from '../../Css';
 import { Typography, Icon } from '../../atoms';
-import { image } from './comments_dummy';
 import Reply from './Reply';
 import SyntaxHighlighter from '../SyntaxHighlighter';
 import DeleteMessageModal from '../DeleteMessageModal';
 import EditMessagePanel from '../EditMessagePanel';
+import { parseTime } from '../../utils/TimeUtils';
+import { IReply } from '../../services/CommentReplyServices';
 
 interface IProps {
-  comment: any;
+  text: any;
+  codeReference?: string;
+  id: string;
+  authorName: string;
+  authorPhotoURL: string;
+  createdAt: string;
+  numReplies: number;
   onHandleReply: (comment: string) => void;
 }
 
-const Comment: React.FC<IProps> = ({ comment, onHandleReply }) => {
+const Comment: React.FC<IProps> = ({
+  text,
+  codeReference,
+  id,
+  authorName,
+  authorPhotoURL,
+  numReplies,
+  createdAt,
+  onHandleReply,
+}) => {
   const [isRepliesVisible, setIsRepliesVisible] = useState<boolean>(false);
   const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | HTMLElement>(null);
   const [isConfirmDeleteModalVisible, setIsConfirmDeleteModalVisible] = useState<boolean>(false);
   const [isDeleteCommentLoading, setIsDeleteCommentLoading] = useState<boolean>(false);
-  const [editableComment, setEditableComment] = useState<string>(comment.comment);
+  const [editableComment, setEditableComment] = useState<string>(text);
   const [isEditMessagePanelVisible, setIsEditMessagePanelVisible] = useState<boolean>(false);
   const [isEditingComment, setIsEditingComment] = useState<boolean>(false);
+  const [replies, setReplies] = useState<Array<IReply>>([]);
+  const [isRepliesLoading, setIsRepliesLoading] = useState<boolean>(false);
   const commonCss = commonUseStyles();
   const classes = useStyles();
+
+  useEffect(() => {
+    if (isRepliesVisible === true && replies && replies.length === 0) {
+      /**
+       * @todo
+       * Fetch the initial replies and setIsRepliesLoading and setReplies
+       */
+      setIsRepliesLoading(true);
+      setReplies([]);
+    }
+  }, [isRepliesVisible, replies]);
 
   function handleToggleRepliesVisibility() {
     setIsRepliesVisible(prevIsRepliesVisible => !prevIsRepliesVisible);
@@ -37,8 +66,8 @@ const Comment: React.FC<IProps> = ({ comment, onHandleReply }) => {
     setOptionsAnchorEl(null);
   }
 
-  function handleReplyComment(comment: string) {
-    onHandleReply(comment);
+  function handleReplyComment(text: string) {
+    onHandleReply(text);
     handleCloseOptions();
   }
 
@@ -72,6 +101,14 @@ const Comment: React.FC<IProps> = ({ comment, onHandleReply }) => {
     setIsEditingComment(true);
   }
 
+  function handleLoadMoreReplies() {
+    /**
+     * @todo
+     * Load more replies
+     * setReplies and setIsRepliesLoading function
+     */
+  }
+
   function renderMenuOptions() {
     return (
       <Menu
@@ -79,7 +116,7 @@ const Comment: React.FC<IProps> = ({ comment, onHandleReply }) => {
         keepMounted
         open={Boolean(optionsAnchorEl)}
         onClose={handleCloseOptions}>
-        <MenuItem onClick={() => handleReplyComment(comment.comment)}>Reply</MenuItem>
+        <MenuItem onClick={() => handleReplyComment(text)}>Reply</MenuItem>
         <MenuItem onClick={handleOpenEditMessagePanel}>Edit</MenuItem>
         <MenuItem onClick={handleOpenConfirmDeleteModal}>Delete</MenuItem>
       </Menu>
@@ -87,14 +124,15 @@ const Comment: React.FC<IProps> = ({ comment, onHandleReply }) => {
   }
 
   function renderShowMoreRepliesButton() {
-    return null;
-    // <div className={classes.commentReplyActionButtonContainer}>
-    //     <Icon name="ios-return-right" />
-    //     <Typography thickness="semi-bold">Show more replies</Typography>
-    // </div>
+    return (
+      <div onClick={handleLoadMoreReplies} className={classes.commentReplyActionButtonContainer}>
+        <Icon name="ios-return-right" />
+        <Typography thickness="semi-bold">Show more replies</Typography>
+      </div>
+    );
   }
 
-  function renderReplies(replies: any) {
+  function renderReplies() {
     return (
       <>
         <div
@@ -102,15 +140,24 @@ const Comment: React.FC<IProps> = ({ comment, onHandleReply }) => {
           className={classes.commentReplyActionButtonContainer}>
           <Icon name={isRepliesVisible === true ? 'ios-arrow-up' : 'ios-arrow-down'} />
           <Typography thickness="semi-bold">
-            {isRepliesVisible === true ? 'Hide' : 'View'} 11 replies
+            {isRepliesVisible === true ? 'Hide' : 'View'} {numReplies} replies
           </Typography>
         </div>
         {isRepliesVisible === true &&
-          replies.map((reply: any) => {
-            return <Reply key={reply._id} reply={reply} />;
+          replies.map((reply: IReply) => {
+            return (
+              <Reply
+                key={reply.id}
+                id={reply.id}
+                authorName={reply.author.name}
+                authorPhotoURL={reply.author.photoURL}
+                text={reply.text}
+                createdAt={reply.createdAt}
+              />
+            );
           })}
-        {renderShowMoreRepliesButton()}
-        {/* <CircularProgress color="primary" size={20} /> */}
+        {replies.length < numReplies && isRepliesLoading === false && renderShowMoreRepliesButton()}
+        {isRepliesLoading === true && <CircularProgress color="primary" size={20} />}
       </>
     );
   }
@@ -122,7 +169,8 @@ const Comment: React.FC<IProps> = ({ comment, onHandleReply }) => {
           className={commonCss.flexRow}
           style={{ justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography className={classes.commentUsername} thickness="bold" variant="span">
-            {comment.username} <Typography className={classes.commentTime}>4.38PM</Typography>
+            {authorName}{' '}
+            <Typography className={classes.commentTime}>{parseTime(createdAt)}</Typography>
           </Typography>
           <Icon
             name="ios-more"
@@ -131,7 +179,7 @@ const Comment: React.FC<IProps> = ({ comment, onHandleReply }) => {
           />
         </div>
         <Typography className={classes.commentUserComment} variant="span">
-          {comment.comment}
+          {text}
         </Typography>
       </>
     );
@@ -141,8 +189,8 @@ const Comment: React.FC<IProps> = ({ comment, onHandleReply }) => {
     <div
       className={`${commonCss.flexColumn} ${commonCss.relative}`}
       style={{ ...padding(16, 'lr'), ...padding(10, 'bt') }}>
-      <div className={`${classes.comment} ${commonCss.flexRow}`} key={comment._id}>
-        <img className={classes.commentUserImage} src={`${image}`} alt={comment.username} />
+      <div className={`${classes.comment} ${commonCss.flexRow}`} key={id}>
+        <img className={classes.commentUserImage} src={authorPhotoURL} alt={authorName} />
         <div className={`${commonCss.flexColumn} ${commonCss.fullWidth}`} style={padding(8, 'l')}>
           {isEditMessagePanelVisible === false && renderComment()}
           <EditMessagePanel
@@ -156,10 +204,10 @@ const Comment: React.FC<IProps> = ({ comment, onHandleReply }) => {
         </div>
       </div>
       <div className={classes.commentBottomContainer}>
-        {comment.codeReference && (
-          <SyntaxHighlighter containerStyle={{ marginTop: 5 }} sourceCode={comment.codeReference} />
+        {codeReference && (
+          <SyntaxHighlighter containerStyle={{ marginTop: 5 }} sourceCode={codeReference} />
         )}
-        {comment.replies && comment.replies.length > 0 && renderReplies(comment.replies)}
+        {numReplies && numReplies > 0 && renderReplies()}
       </div>
       {renderMenuOptions()}
       <DeleteMessageModal

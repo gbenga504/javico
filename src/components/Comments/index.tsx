@@ -1,23 +1,38 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { TextareaAutosize } from '@material-ui/core';
+import { TextareaAutosize, CircularProgress } from '@material-ui/core';
 
 import { useStyles } from './styles';
 import { useStyles as commonUseStyles } from '../../Css';
 import { Typography, Icon } from '../../atoms';
-import { comments as _comments } from './comments_dummy';
 import Comment from './Comment';
+import { IComment } from '../../services/CommentsServices';
 
-const Comments: React.FC<{ comments: any[] }> = ({ comments }) => {
+const Comments: React.FC<{ visible: boolean }> = ({ visible }) => {
   const [quotedComment, setQuotedComment] = useState<string>('');
-  const [comment, setComment] = useState<string>('');
+  const [newComment, setNewComment] = useState<string>('');
+  const [isLoadingComments, setIsLoadingComments] = useState<boolean>(false);
+  const [comments, setComments] = useState<Array<IComment>>([]);
   const classes = useStyles();
   const commonCss = commonUseStyles();
   const commentInputRef = useRef<any>(null);
   const commentContainerRef = useRef<any>(null);
 
   useEffect(() => {
-    focusLastComment();
-  }, []);
+    if (visible === true) {
+      if (comments.length === 0 && isLoadingComments === false) {
+        /**
+         * Initialize the load process using the API
+         * and set comment loading state to false after success or error
+         * also focus last comment after successful load
+         */
+        setIsLoadingComments(true);
+        focusLastComment();
+        setComments([]);
+      }
+      focusCommentInput();
+    }
+    // eslint-disable-next-line
+  }, [visible]);
 
   function focusLastComment() {
     /**
@@ -34,31 +49,37 @@ const Comments: React.FC<{ comments: any[] }> = ({ comments }) => {
     );
   }
 
-  function handleQuoteComment(comment: string): void {
-    setQuotedComment(comment);
+  function focusCommentInput() {
     setTimeout(() => commentInputRef.current.focus(), 100);
   }
 
+  function handleQuoteComment(comment: string): void {
+    setQuotedComment(comment);
+    focusCommentInput();
+  }
+
   function handleCommentChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
-    setComment(event.target.value);
+    setNewComment(event.target.value);
   }
 
   function handleRemoveQuotedComment(event: React.KeyboardEvent) {
-    if (event.keyCode === 8 && !!quotedComment === true && comment.length === 0) {
+    if (event.keyCode === 8 && !!quotedComment === true && newComment.length === 0) {
       setQuotedComment('');
     }
   }
 
-  function renderDateSeperator() {
+  function handleSendComment() {}
+
+  function renderDateSeperator(date: string, id: string) {
     return (
       <>
-        <div className={classes.commentDateSeperatorContainer}>
+        <div className={classes.commentDateSeperatorContainer} key={id}>
           <hr className={classes.commentDateSeperatorHr} />
         </div>
-        <div className={classes.commentStickyDateContainer}>
+        <div className={classes.commentStickyDateContainer} key={`${Number(id) + 1}`}>
           <div>
             <Typography thickness="semi-bold" className={classes.commentDateSeperatorText}>
-              December 5th, 2019
+              {date}
             </Typography>
           </div>
         </div>
@@ -67,11 +88,21 @@ const Comments: React.FC<{ comments: any[] }> = ({ comments }) => {
   }
 
   function renderComments() {
-    return _comments.map(comment => {
+    return comments.map(comment => {
       return comment.type !== 'seperator' ? (
-        <Comment key={comment._id} comment={comment} onHandleReply={handleQuoteComment} />
+        <Comment
+          key={comment.id}
+          text={comment.text}
+          codeReference={comment.codeReference}
+          id={comment.id}
+          authorName={comment.author.name}
+          authorPhotoURL={comment.author.photoURL}
+          numReplies={comment.numReplies}
+          createdAt={comment.createdAt}
+          onHandleReply={handleQuoteComment}
+        />
       ) : (
-        renderDateSeperator()
+        renderDateSeperator(comment.text, comment.id)
       );
     });
   }
@@ -90,17 +121,15 @@ const Comments: React.FC<{ comments: any[] }> = ({ comments }) => {
       <div
         ref={commentContainerRef}
         className={`${commonCss.fullHeightAndWidth} ${classes.commentsBody}`}>
-        {process.env.REACT_APP_IS_COMMENT_FEATURE_AVAILABLE === 'true' ? (
-          renderComments()
-        ) : (
+        {isLoadingComments === true ? (
           <div
             className={`${commonCss.flexRow} ${commonCss.center} ${commonCss.fullHeightAndWidth}`}
             style={{ cursor: 'not-allowed' }}>
-            <Typography variant="div" thickness="bold" className={classes.commentNotLive}>
-              COMMENTS NOT LIVE
-            </Typography>
+            <CircularProgress color="primary" size={30} />
           </div>
-        )}
+        ) : comments.length > 0 ? (
+          renderComments()
+        ) : null}
       </div>
       <div className={classes.commentInput}>
         {!!quotedComment === true && renderQuotedComment()}
@@ -115,12 +144,13 @@ const Comments: React.FC<{ comments: any[] }> = ({ comments }) => {
             rowsMax={6}
             rows={1}
             ref={commentInputRef}
-            value={comment}
+            value={newComment}
             onChange={handleCommentChange}
             onKeyDown={handleRemoveQuotedComment}
           />
           <Icon
             className={classes.commentInputSendIcon}
+            onClick={handleSendComment}
             name="send"
             style={{
               cursor:
