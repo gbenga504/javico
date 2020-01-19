@@ -99,7 +99,7 @@ const Reply: React.FC<any> = ({ reply }) => {
       <EditMessagePanel
         visible={isEditMessagePanelVisible}
         loading={isEditingReply}
-        handleValueChange={handleReplyChange}
+        onHandleValueChange={handleReplyChange}
         value={editableReply}
         onRequestClose={handleCloseEditMessagePanel}
         onEditMessage={handleEditMessage}

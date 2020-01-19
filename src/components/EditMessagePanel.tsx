@@ -6,7 +6,7 @@ import { ButtonWithLoading, Icon } from '../atoms';
 
 interface IProps {
   visible: boolean;
-  handleValueChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onHandleValueChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   value: string;
   onEditMessage: () => void;
   onRequestClose: () => void;
@@ -15,7 +15,7 @@ interface IProps {
 
 const EditMessagePanel: React.FC<IProps> = ({
   visible,
-  handleValueChange,
+  onHandleValueChange,
   value,
   onEditMessage,
   onRequestClose,
@@ -45,7 +45,7 @@ const EditMessagePanel: React.FC<IProps> = ({
         autoFocus
         ref={messageInputRef}
         value={value}
-        onChange={handleValueChange}
+        onChange={onHandleValueChange}
       />
       <div className={commonCss.flexRow} style={{ ...margin(4, 't') }}>
         <Button
