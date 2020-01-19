@@ -76,8 +76,8 @@ export const theme = createMuiTheme({
     },
     MuiMenuItem: {
       root: {
-        fontFamily: fonts.semiBold,
-        fontSize: fontsize.base,
+        fontFamily: fonts.regular,
+        fontSize: fontsize.small,
       },
     },
     MuiFab: {

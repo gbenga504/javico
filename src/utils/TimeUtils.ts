@@ -1,0 +1,23 @@
+function getNthDate(date: number): string {
+  switch (date) {
+    case 1:
+      return `${date}st`;
+    case 2:
+      return `${date}nd`;
+    case 3:
+      return `${date}rd`;
+    default:
+      return `${date}th`;
+  }
+}
+
+export function parseTime(time: Date): string {
+  let date = new Date(time);
+  return date.toLocaleString('default', { hour: 'numeric', minute: 'numeric', hour12: true });
+}
+
+export function getReadableDate(time: Date): string {
+  let date = new Date(time);
+  const month = date.toLocaleString('default', { month: 'long' });
+  return `${month} ${getNthDate(date.getDate())}, ${date.getFullYear()}`;
+}

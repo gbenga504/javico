@@ -55,6 +55,7 @@ export const comments = [
   {
     _id: '2',
     username: 'Kunle',
+    codeReference: 'return 5',
     comment:
       'Nicely written code. you can improv on it tho, for better readablity. And also learn to put your functions in one place rather than scattering it.',
   },
