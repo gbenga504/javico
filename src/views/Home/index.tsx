@@ -40,6 +40,10 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
     });
   }, [Api]);
 
+  function setSourcecodeOwner(data: any) {
+    setFetchedSourceCode({ ...fetchedSourceCode, ...data });
+  }
+
   useEffect(() => {
     if (getIdFromUrl()) {
       toggleIsLoading(true);
@@ -97,6 +101,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
           onRunSourceCode={setTerminalExecutableCode}
           fetchedSourceCode={fetchedSourceCode.sourceCode}
           ownerId={fetchedSourceCode.ownerId}
+          onSetSourcecodeOwner={setSourcecodeOwner}
           user={user}
         />
         <div className={classes.mainRightSection}>

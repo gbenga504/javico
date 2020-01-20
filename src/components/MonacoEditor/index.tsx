@@ -20,6 +20,7 @@ interface IProps {
   language?: string;
   onHandleLoading: any;
   fetchedSourceCode: string;
+  onSetSourcecodeOwner: any;
   ownerId: string;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
   Api: any;
@@ -34,6 +35,7 @@ const MonacoEditor: React.FC<IProps> = ({
   language = 'javascript',
   fetchedSourceCode,
   onSetNotificationSettings,
+  onSetSourcecodeOwner,
   user: _user,
   ownerId,
   Api,
@@ -230,6 +232,10 @@ const MonacoEditor: React.FC<IProps> = ({
       })
         .then(res => {
           onHandleLoading();
+          onSetSourcecodeOwner({
+            sourceCode,
+            ownerId: me.uid,
+          });
           updateUrl(res);
         })
         .catch((error: any) => {

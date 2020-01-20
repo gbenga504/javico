@@ -33,13 +33,12 @@ const Console: React.FC<{
   ownerId: string;
   Api: any;
   user: any;
-}> = ({ sourceCode, ownerId, fetchedReadme, onSetNotificationSettings, Api, user: _user }) => {
+}> = ({ sourceCode, ownerId, fetchedReadme, onSetNotificationSettings, Api, user }) => {
   const [currentTab, setCurrentTab] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
   const [terminalMessages, setTerminalMessages] = useState<TerminalMessagesType>([]);
   const [readMe, setReadMe] = useState<string>(fetchedReadme);
-  const [user, setUser] = useState<any>(_user);
   const workerRef = useRef<any>(null);
   const classes = useStyles();
   const commonCss = commonUseStyles();
@@ -53,16 +52,6 @@ const Console: React.FC<{
       ]);
     });
   }, []);
-
-  useEffect(() => {
-    if (_user) {
-      setUser(_user);
-    } else {
-      setUser(null);
-      setCurrentTab(currentTab === 2 ? 1 : currentTab);
-    }
-    // eslint-disable-next-line
-  }, [_user]);
 
   useEffect(() => {
     setTerminalMessages([]);
