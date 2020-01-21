@@ -51,12 +51,12 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
         params: { ID: getIdFromUrl() },
       })
         .then(res => {
-          const { sourceCode, readme, ownerId } = res._document.proto.fields;
+          const { sourceCode, readme, ownerId } = res.data();
           toggleIsLoading();
           setFetchedSourceCode({
-            sourceCode: sourceCode.stringValue,
-            readme: readme.stringValue,
-            ownerId: ownerId.stringValue,
+            sourceCode,
+            readme,
+            ownerId,
           });
         })
         .catch((error: any) => {
