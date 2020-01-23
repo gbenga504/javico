@@ -9,7 +9,7 @@ const useStyles = makeStyles(theme => ({
   container: {
     position: 'absolute',
     bottom: -100,
-    left: 10,
+    right: 10,
     padding: 15,
     maxWidth: 350,
     minHeight: 50,
