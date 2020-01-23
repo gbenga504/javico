@@ -106,10 +106,20 @@ const Comments: React.FC<{ visible: boolean }> = ({ visible }) => {
     );
   }
 
+  function renderContentLoaders() {
+    return comments.length > 0 ? (
+      <ContentLoader />
+    ) : (
+      Array.apply(null, Array(11)).map((value: any, index: number) => (
+        <ContentLoader key={value || index} />
+      ))
+    );
+  }
+
   function renderComments() {
     return (
       <>
-        {isLoadingComments === true && <ContentLoader />}
+        {isLoadingComments === true && renderContentLoaders()}
         {comments.map(comment => {
           return comment.type !== 'seperator' ? (
             <Comment

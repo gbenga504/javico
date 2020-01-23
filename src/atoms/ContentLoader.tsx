@@ -15,6 +15,10 @@ const ContentLoader: React.FC<IProps> = (props: IProps) => {
   const classes = useStyles(composedProps);
   const commonCss = commonUseStyles();
 
+  function getRandomizedLength() {
+    return Math.floor(Math.random() * 10 + 10);
+  }
+
   return (
     <div
       className={`${commonCss.flexColumn} ${commonCss.fullWidth}`}
@@ -23,13 +27,25 @@ const ContentLoader: React.FC<IProps> = (props: IProps) => {
         <div className={classes.image}></div>
         <div className={`${commonCss.flexColumn} ${commonCss.fullWidth}`} style={padding(8, 'l')}>
           <div className={`${commonCss.flexRow} ${commonCss.fullWidth}`}>
-            <div className={classes.text} style={{ width: '14%', marginRight: '1%' }} />
-            <div className={classes.text} style={{ width: '17%', marginLeft: '1%' }} />
+            <div
+              className={classes.text}
+              style={{ width: `${getRandomizedLength()}%`, marginRight: '1%' }}
+            />
+            <div
+              className={classes.text}
+              style={{ width: `${getRandomizedLength()}%`, marginLeft: '1%' }}
+            />
           </div>
           <div className={classes.text} />
           <div className={`${commonCss.flexRow} ${commonCss.fullWidth}`}>
-            <div className={classes.text} style={{ width: '18%', marginRight: '1%' }} />
-            <div className={classes.text} style={{ width: '20%', marginLeft: '2%' }} />
+            <div
+              className={classes.text}
+              style={{ width: `${getRandomizedLength()}%`, marginRight: '1%' }}
+            />
+            <div
+              className={classes.text}
+              style={{ width: `${getRandomizedLength()}%`, marginLeft: '2%' }}
+            />
           </div>
         </div>
       </div>
@@ -70,10 +86,10 @@ const useStyles = makeStyles({
     animationIterationCount: 'infinite',
     animationName: '$placeHolderShimmer',
     animationTimingFunction: 'linear',
-    backgroundSize: '800px 200px',
+    backgroundSize: '1200px 200px',
     background: `linear-gradient(to right, #313438 8%, #41454a 18%, #313438 33%)`,
     height: 40,
-    width: '90%',
+    width: '95%',
     marginTop: 5,
     borderRadius: 4,
   },
