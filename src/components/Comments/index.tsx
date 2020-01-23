@@ -6,11 +6,13 @@ import { useStyles as commonUseStyles } from '../../Css';
 import { Typography, Icon } from '../../atoms';
 import Comment from './Comment';
 import { IComment } from '../../services/CommentsServices';
+import ContentLoader from '../../atoms/ContentLoader';
 
 const Comments: React.FC<{ visible: boolean }> = ({ visible }) => {
   const [quotedComment, setQuotedComment] = useState<string>('');
   const [newComment, setNewComment] = useState<string>('');
   const [isLoadingComments, setIsLoadingComments] = useState<boolean>(false);
+  const [isLoadingMoreComments, setIsLoadingMoreComments] = useState<boolean>(false);
   const [comments, setComments] = useState<Array<IComment>>([]);
   const classes = useStyles();
   const commonCss = commonUseStyles();
@@ -33,6 +35,24 @@ const Comments: React.FC<{ visible: boolean }> = ({ visible }) => {
     }
     // eslint-disable-next-line
   }, [visible]);
+
+  useEffect(() => {
+    function handleScroll() {
+      if (commentContainerRef.current.scrollTop <= 40 && isLoadingMoreComments !== true) {
+        /**
+         * load more comments
+         * and set isLoadingMoreComments = true
+         */
+        setIsLoadingMoreComments(true);
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+    // eslint-disable-next-line
+  }, []);
 
   function focusLastComment() {
     /**
@@ -88,23 +108,28 @@ const Comments: React.FC<{ visible: boolean }> = ({ visible }) => {
   }
 
   function renderComments() {
-    return comments.map(comment => {
-      return comment.type !== 'seperator' ? (
-        <Comment
-          key={comment.id}
-          text={comment.text}
-          codeReference={comment.codeReference}
-          id={comment.id}
-          authorName={comment.author.name}
-          authorPhotoURL={comment.author.photoURL}
-          numReplies={comment.numReplies}
-          createdAt={comment.createdAt}
-          onHandleReply={handleQuoteComment}
-        />
-      ) : (
-        renderDateSeperator(comment.text, comment.id)
-      );
-    });
+    return (
+      <>
+        {isLoadingMoreComments === true && <ContentLoader />}
+        {comments.map(comment => {
+          return comment.type !== 'seperator' ? (
+            <Comment
+              key={comment.id}
+              text={comment.text}
+              codeReference={comment.codeReference}
+              id={comment.id}
+              authorName={comment.author.name}
+              authorPhotoURL={comment.author.photoURL}
+              numReplies={comment.numReplies}
+              createdAt={comment.createdAt}
+              onHandleReply={handleQuoteComment}
+            />
+          ) : (
+            renderDateSeperator(comment.text, comment.id)
+          );
+        })}
+      </>
+    );
   }
 
   function renderQuotedComment() {
