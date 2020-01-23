@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { TextareaAutosize, CircularProgress } from '@material-ui/core';
+import { TextareaAutosize } from '@material-ui/core';
 
 import { useStyles } from './styles';
 import { useStyles as commonUseStyles } from '../../Css';
@@ -12,7 +12,6 @@ const Comments: React.FC<{ visible: boolean }> = ({ visible }) => {
   const [quotedComment, setQuotedComment] = useState<string>('');
   const [newComment, setNewComment] = useState<string>('');
   const [isLoadingComments, setIsLoadingComments] = useState<boolean>(false);
-  const [isLoadingMoreComments, setIsLoadingMoreComments] = useState<boolean>(false);
   const [comments, setComments] = useState<Array<IComment>>([]);
   const classes = useStyles();
   const commonCss = commonUseStyles();
@@ -38,12 +37,12 @@ const Comments: React.FC<{ visible: boolean }> = ({ visible }) => {
 
   useEffect(() => {
     function handleScroll() {
-      if (commentContainerRef.current.scrollTop <= 40 && isLoadingMoreComments !== true) {
+      if (commentContainerRef.current.scrollTop <= 40 && isLoadingComments !== true) {
         /**
          * load more comments
          * and set isLoadingMoreComments = true
          */
-        setIsLoadingMoreComments(true);
+        setIsLoadingComments(true);
       }
     }
 
@@ -110,7 +109,7 @@ const Comments: React.FC<{ visible: boolean }> = ({ visible }) => {
   function renderComments() {
     return (
       <>
-        {isLoadingMoreComments === true && <ContentLoader />}
+        {isLoadingComments === true && <ContentLoader />}
         {comments.map(comment => {
           return comment.type !== 'seperator' ? (
             <Comment
@@ -146,15 +145,7 @@ const Comments: React.FC<{ visible: boolean }> = ({ visible }) => {
       <div
         ref={commentContainerRef}
         className={`${commonCss.fullHeightAndWidth} ${classes.commentsBody}`}>
-        {isLoadingComments === true ? (
-          <div
-            className={`${commonCss.flexRow} ${commonCss.center} ${commonCss.fullHeightAndWidth}`}
-            style={{ cursor: 'not-allowed' }}>
-            <CircularProgress color="primary" size={30} />
-          </div>
-        ) : comments.length > 0 ? (
-          renderComments()
-        ) : null}
+        {renderComments()}
       </div>
       <div className={classes.commentInput}>
         {!!quotedComment === true && renderQuotedComment()}
