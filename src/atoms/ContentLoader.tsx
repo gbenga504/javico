@@ -89,7 +89,7 @@ const useStyles = makeStyles({
     backgroundSize: '1200px 200px',
     background: `linear-gradient(to right, #313438 8%, #41454a 18%, #313438 33%)`,
     height: 40,
-    width: '95%',
+    width: '100%',
     marginTop: 5,
     borderRadius: 4,
   },
