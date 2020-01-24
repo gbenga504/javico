@@ -10,8 +10,7 @@ interface IPayload {
       name: string;
       photoURL: string;
     };
-    codeReference?: string;
-    reply: string;
+    text: string;
   };
   params: {
     ID?: string;
@@ -22,12 +21,44 @@ interface IPayload {
   };
 }
 
+export interface IReply {
+  commentId: string;
+  author: {
+    name: string;
+    photoURL: string;
+  };
+  text: string;
+  id: string;
+  createdAt: string;
+}
+
 export default class CommentReplyService {
   static createReply = (payload: IPayload): Promise<any> => {
     const { params, data } = payload;
-    return Api.firestore
+    const repliesRef = Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments/${params.commentID}/replies`)
-      .add({ ...data, createdAt: Api.app.firestore.FieldValue.serverTimestamp() });
+      .doc();
+    const commentRef = Api.firestore
+      .collection(`source-codes`)
+      .doc(params.sourceCodeID)
+      .collection('comments')
+      .doc(params.commentID);
+
+    return Api.firestore.runTransaction((transaction: any) => {
+      return transaction.get(commentRef).then((res: any) => {
+        if (!res.exists) {
+          throw 'Document does not exist!';
+        }
+        const numReplies = res.data().numReplies;
+        transaction.update(commentRef, {
+          numReplies: numReplies ? numReplies + 1 : 1,
+        });
+        transaction.set(repliesRef, {
+          ...data,
+          createdAt: Api.app.firestore.FieldValue.serverTimestamp(),
+        });
+      });
+    });
   };
 
   static deleteReply = (payload: IPayload): Promise<any> => {

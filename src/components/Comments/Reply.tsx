@@ -3,17 +3,25 @@ import { makeStyles, Menu, MenuItem } from '@material-ui/core';
 
 import { useStyles as commonUseStyles, padding, color, fontsize } from '../../Css';
 import { Typography, Icon } from '../../atoms';
-import { image } from './comments_dummy';
 import DeleteMessageModal from '../DeleteMessageModal';
 import EditMessagePanel from '../EditMessagePanel';
+import { parseTime } from '../../utils/TimeUtils';
 
-const Reply: React.FC<any> = ({ reply }) => {
+interface IProps {
+  id: string;
+  authorName: string;
+  authorPhotoURL: string;
+  text: string;
+  createdAt: string;
+}
+
+const Reply: React.FC<IProps> = ({ id, authorName, authorPhotoURL, text, createdAt }) => {
   const classes = useStyles();
   const commonCss = commonUseStyles();
   const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | HTMLElement>(null);
   const [isConfirmDeleteModalVisible, setIsConfirmDeleteModalVisible] = useState<boolean>(false);
   const [isDeleteReplyLoading, setIsDeleteReplyLoading] = useState<boolean>(false);
-  const [editableReply, setEditableReply] = useState<string>(reply.comment);
+  const [editableReply, setEditableReply] = useState<string>(text);
   const [isEditMessagePanelVisible, setIsEditMessagePanelVisible] = useState<boolean>(false);
   const [isEditingReply, setIsEditingReply] = useState<boolean>(false);
 
@@ -71,13 +79,14 @@ const Reply: React.FC<any> = ({ reply }) => {
   function renderReply() {
     return (
       <>
-        <img className={classes.replyUserImage} src={`${image}`} alt={reply.username} />
+        <img className={classes.replyUserImage} src={authorPhotoURL} alt={authorName} />
         <div className={commonCss.flexColumn} style={padding(8, 'l')}>
           <div
             className={commonCss.flexRow}
             style={{ justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography className={classes.replyUsername} thickness="bold" variant="span">
-              {reply.username} <Typography className={classes.replyTime}>4.38PM</Typography>
+              {authorName}{' '}
+              <Typography className={classes.replyTime}>{parseTime(createdAt)}</Typography>
             </Typography>
             <Icon
               name="ios-more"
@@ -86,7 +95,7 @@ const Reply: React.FC<any> = ({ reply }) => {
             />
           </div>
           <Typography className={classes.replyUserText} variant="span">
-            {reply.comment}
+            {text}
           </Typography>
         </div>
       </>
@@ -94,7 +103,7 @@ const Reply: React.FC<any> = ({ reply }) => {
   }
 
   return (
-    <div className={`${classes.reply} ${commonCss.flexRow}`} key={reply._id}>
+    <div className={`${classes.reply} ${commonCss.flexRow}`}>
       {isEditMessagePanelVisible === false && renderReply()}
       <EditMessagePanel
         visible={isEditMessagePanelVisible}
