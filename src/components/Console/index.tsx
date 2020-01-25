@@ -42,6 +42,7 @@ const Console: React.FC<{
   const workerRef = useRef<any>(null);
   const classes = useStyles();
   const commonCss = commonUseStyles();
+  const isAuthorize = !!user ? user.uid === ownerId : false;
 
   useEffect(() => {
     workerRef.current = new Worker(`${window.location.origin}/CodeEvaluatorWorker.js`);
@@ -61,8 +62,6 @@ const Console: React.FC<{
   useEffect(() => {
     setReadMe(fetchedReadme);
   }, [fetchedReadme]);
-
-  const isAuthorize = !!user ? user.uid === ownerId : false;
 
   function handleTabChange(event: React.ChangeEvent<{}>, currentTab: number) {
     setCurrentTab(currentTab);
