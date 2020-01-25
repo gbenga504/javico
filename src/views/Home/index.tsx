@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Tooltip, makeStyles, Button } from '@material-ui/core';
 
 import MenuBar from '../../components/MenuBar';
 import MonacoEditor from '../../components/MonacoEditor';
 import Console from '../../components/Console';
-import Comments from '../../components/Comments';
 import { color, useStyles as commonUseStyles, padding } from '../../Css';
 import { IndeterminateLinearProgress, Icon, withNotificationBanner } from '../../atoms';
 import { withApi } from '../../utils/ApiConnector';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import SourceCodeService from '../../services/SourceCodeServices';
 import { getIdFromUrl } from '../../utils/UrlUtils';
+
+const Comments = lazy(() => import('../../components/Comments'));
 
 interface IProps {
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
@@ -124,7 +125,9 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
                 ? classes.showRightSubSection
                 : classes.hideRightSubSection
             }`}>
-            <Comments comments={[]} />
+            <Suspense fallback={null}>
+              <Comments visible={currentSection === 'comments'} />
+            </Suspense>
           </div>
           {renderSwitchView()}
         </div>
@@ -162,6 +165,9 @@ const useStyles = makeStyles({
     top: 10,
     minWidth: 50,
     width: 50,
+    animationName: `$expandSwitchButton`,
+    animationDuration: '2000ms',
+    animationIterationCount: 'infinite',
     ...padding(5, 'lr'),
     ...padding(0, 'tb'),
   },
@@ -184,6 +190,17 @@ const useStyles = makeStyles({
   hideRightSubSection: {
     right: '-100%',
     opacity: 0,
+  },
+  '@keyframes expandSwitchButton': {
+    '0%': {
+      transform: 'scale(1)',
+    },
+    '50%': {
+      transform: 'scale(1.1)',
+    },
+    '100%': {
+      transform: 'scale(1)',
+    },
   },
 });
 
