@@ -11,74 +11,6 @@ import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import SourceCodeService from '../../services/SourceCodeServices';
 import { getIdFromUrl } from '../../utils/UrlUtils';
 
-const useStyles = makeStyles({
-  main: {
-    width: '100%',
-  },
-  relative: {
-    position: 'relative',
-  },
-  mainRightSection: {
-    flex: 1,
-    height: '100%',
-    borderLeft: `1px solid ${color.darkThemeLightBorder}`,
-    minWidth: '50%',
-    backgroundColor: color.darkThemeBlack,
-    position: 'relative',
-  },
-  linearProgress: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 5,
-  },
-  switchButtonRoot: {
-    position: 'absolute',
-    zIndex: 1000,
-    right: 10,
-    top: 10,
-    minWidth: 50,
-    width: 50,
-    animationName: `$expandSwitchButton`,
-    animationDuration: '2000ms',
-    animationIterationCount: 'infinite',
-    ...padding(5, 'lr'),
-    ...padding(0, 'tb'),
-  },
-  switchButtonLabel: {
-    display: 'flex',
-    flexDirection: 'column',
-    '& ion-icon': {
-      fontSize: 25,
-    },
-  },
-  rightSubSection: {
-    position: 'absolute',
-    width: '100%',
-    transition: 'all 0.6s',
-  },
-  showRightSubSection: {
-    right: '0%',
-    opacity: 1,
-  },
-  hideRightSubSection: {
-    right: '-100%',
-    opacity: 0,
-  },
-  '@keyframes expandSwitchButton': {
-    '0%': {
-      transform: 'scale(1)',
-    },
-    '50%': {
-      transform: 'scale(1.1)',
-    },
-    '100%': {
-      transform: 'scale(1)',
-    },
-  },
-});
-
 interface IProps {
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
 }
@@ -170,5 +102,73 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
     </div>
   );
 };
+
+const useStyles = makeStyles({
+  main: {
+    width: '100%',
+  },
+  relative: {
+    position: 'relative',
+  },
+  mainRightSection: {
+    flex: 1,
+    height: '100%',
+    borderLeft: `1px solid ${color.darkThemeLightBorder}`,
+    minWidth: '50%',
+    backgroundColor: color.darkThemeBlack,
+    position: 'relative',
+  },
+  linearProgress: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 5,
+  },
+  switchButtonRoot: {
+    position: 'absolute',
+    zIndex: 1000,
+    right: 10,
+    top: 10,
+    minWidth: 50,
+    width: 50,
+    animationName: `$expandSwitchButton`,
+    animationDuration: '2000ms',
+    animationIterationCount: 'infinite',
+    ...padding(5, 'lr'),
+    ...padding(0, 'tb'),
+  },
+  switchButtonLabel: {
+    display: 'flex',
+    flexDirection: 'column',
+    '& ion-icon': {
+      fontSize: 25,
+    },
+  },
+  rightSubSection: {
+    position: 'absolute',
+    width: '100%',
+    transition: 'all 0.6s',
+  },
+  showRightSubSection: {
+    right: '0%',
+    opacity: 1,
+  },
+  hideRightSubSection: {
+    right: '-100%',
+    opacity: 0,
+  },
+  '@keyframes expandSwitchButton': {
+    '0%': {
+      transform: 'scale(1)',
+    },
+    '50%': {
+      transform: 'scale(1.1)',
+    },
+    '100%': {
+      transform: 'scale(1)',
+    },
+  },
+});
 
 export default withNotificationBanner(Home);
