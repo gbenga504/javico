@@ -41,10 +41,6 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
     });
   }, [Api]);
 
-  function setSourcecodeOwner(data: any) {
-    setFetchedSourceCode({ ...fetchedSourceCode, ...data });
-  }
-
   useEffect(() => {
     if (getIdFromUrl()) {
       toggleIsLoading(true);
@@ -67,6 +63,10 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
     }
     // eslint-disable-next-line
   }, []);
+
+  function setSourcecodeOwner(data: any) {
+    setFetchedSourceCode({ ...fetchedSourceCode, ...data });
+  }
 
   function handleToggleView() {
     setCurrentSection(currentSection === 'console' ? 'comments' : 'console');
