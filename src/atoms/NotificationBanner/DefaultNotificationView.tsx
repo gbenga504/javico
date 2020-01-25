@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
     right: 10,
     padding: 15,
     maxWidth: 350,
-    minHeight: 80,
+    minHeight: 50,
     zIndex: 1000,
     background: color.darkThemeBlack,
     display: 'flex',
@@ -75,7 +75,7 @@ const DefaultNotificationView: React.FC<INotificationBannerProps> = ({
         return { background: color.success };
       case 'info':
       default:
-        return { background: color.darkThemeBlack };
+        return { background: color.themeBlue };
     }
   }
 
@@ -94,7 +94,7 @@ const DefaultNotificationView: React.FC<INotificationBannerProps> = ({
         root: `${classes.container} ${isBannerHidden === false && classes.containerShow}`,
       }}>
       <div className={classes.leftContainer}>
-        {renderIcon('ios-alert', { color: style === 'info' ? color.themeBlue : color.white })}
+        {renderIcon('ios-alert', { color: style === 'info' ? color.white : color.white })}
         <Typography className={classes.text}>{text}</Typography>
       </div>
       <span>{renderIcon('ios-close', null, handleCloseBanner)}</span>

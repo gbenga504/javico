@@ -6,11 +6,135 @@ import MonacoEditor from '../../components/MonacoEditor';
 import Console from '../../components/Console';
 import { color, useStyles as commonUseStyles, padding } from '../../Css';
 import { IndeterminateLinearProgress, Icon, withNotificationBanner } from '../../atoms';
+import { withApi } from '../../utils/ApiConnector';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import SourceCodeService from '../../services/SourceCodeServices';
 import { getIdFromUrl } from '../../utils/UrlUtils';
 
 const Comments = lazy(() => import('../../components/Comments'));
+
+interface IProps {
+  onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
+  Api: any;
+}
+
+const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
+  const [terminalExecutableCode, setTerminalExecutableCode] = useState('');
+  const [currentSection, setCurrentSection] = useState('console');
+  const [user, setUser] = useState<any>(null);
+  const [isLoading, setisLoading] = useState<boolean>(false);
+  const [fetchedSourceCode, setFetchedSourceCode] = useState({
+    sourceCode: '',
+    readme: '',
+    ownerId: '',
+  });
+  const classes = useStyles();
+  const commonCss = commonUseStyles();
+
+  useEffect(() => {
+    Api.onAuthStateChanged(function(user: any) {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+  }, [Api]);
+
+  function setSourcecodeOwner(data: any) {
+    setFetchedSourceCode({ ...fetchedSourceCode, ...data });
+  }
+
+  useEffect(() => {
+    if (getIdFromUrl()) {
+      toggleIsLoading(true);
+      SourceCodeService.fetchSourceCode({
+        params: { ID: getIdFromUrl() },
+      })
+        .then(res => {
+          const { sourceCode, readme, ownerId } = res.data();
+          toggleIsLoading();
+          setFetchedSourceCode({
+            sourceCode,
+            readme,
+            ownerId,
+          });
+        })
+        .catch((error: any) => {
+          toggleIsLoading();
+          onSetNotificationSettings(error.message, 'danger', 'long');
+        });
+    }
+    // eslint-disable-next-line
+  }, []);
+
+  function handleToggleView() {
+    setCurrentSection(currentSection === 'console' ? 'comments' : 'console');
+  }
+
+  function toggleIsLoading(loading = false) {
+    setisLoading(loading);
+  }
+
+  function renderSwitchView() {
+    return (
+      <Tooltip title="Switch View" placement="left" enterDelay={100}>
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={handleToggleView}
+          classes={{ root: classes.switchButtonRoot, label: classes.switchButtonLabel }}>
+          <Icon name="ios-swap" />
+        </Button>
+      </Tooltip>
+    );
+  }
+
+  return (
+    <div className={`${classes.relative} ${commonCss.flexRow}`}>
+      <div className={classes.linearProgress}>
+        <IndeterminateLinearProgress isVisible={isLoading} />
+      </div>
+      <MenuBar />
+      <main className={`${classes.main} ${commonCss.flexRow}`}>
+        <MonacoEditor
+          onHandleLoading={toggleIsLoading}
+          onRunSourceCode={setTerminalExecutableCode}
+          fetchedSourceCode={fetchedSourceCode.sourceCode}
+          ownerId={fetchedSourceCode.ownerId}
+          onSetSourcecodeOwner={setSourcecodeOwner}
+          user={user}
+        />
+        <div className={classes.mainRightSection}>
+          <div
+            className={`${classes.rightSubSection} ${
+              currentSection === 'console'
+                ? classes.showRightSubSection
+                : classes.hideRightSubSection
+            }`}>
+            <Console
+              ownerId={fetchedSourceCode.ownerId}
+              sourceCode={terminalExecutableCode}
+              fetchedReadme={fetchedSourceCode.readme}
+              user={user}
+            />
+          </div>
+          <div
+            className={`${classes.rightSubSection} ${
+              currentSection === 'comments'
+                ? classes.showRightSubSection
+                : classes.hideRightSubSection
+            }`}>
+            <Suspense fallback={null}>
+              <Comments visible={currentSection === 'comments'} />
+            </Suspense>
+          </div>
+          {renderSwitchView()}
+        </div>
+      </main>
+    </div>
+  );
+};
 
 const useStyles = makeStyles({
   main: {
@@ -80,98 +204,4 @@ const useStyles = makeStyles({
   },
 });
 
-interface IProps {
-  onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
-}
-
-const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
-  const [terminalExecutableCode, setTerminalExecutableCode] = useState('');
-  const [currentSection, setCurrentSection] = useState('console');
-  const [isLoading, setisLoading] = useState<boolean>(false);
-  const [fetchedSourceCode, setFetchedSourceCode] = useState({
-    sourceCode: '',
-    readme: '',
-  });
-  const classes = useStyles();
-  const commonCss = commonUseStyles();
-
-  useEffect(() => {
-    if (getIdFromUrl()) {
-      toggleIsLoading(true);
-      SourceCodeService.fetchSourceCode({
-        params: { ID: getIdFromUrl() },
-      })
-        .then(res => {
-          const { sourceCode, readme } = res.data();
-          toggleIsLoading();
-          setFetchedSourceCode({ sourceCode, readme });
-        })
-        .catch((error: any) => {
-          toggleIsLoading();
-          onSetNotificationSettings(error.message, 'danger', 'long');
-        });
-    }
-    // eslint-disable-next-line
-  }, []);
-
-  function handleToggleView() {
-    setCurrentSection(currentSection === 'console' ? 'comments' : 'console');
-  }
-
-  function toggleIsLoading(loading = false) {
-    setisLoading(loading);
-  }
-
-  function renderSwitchView() {
-    return (
-      <Tooltip title="Switch View" placement="left" enterDelay={100}>
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={handleToggleView}
-          classes={{ root: classes.switchButtonRoot, label: classes.switchButtonLabel }}>
-          <Icon name="ios-swap" />
-        </Button>
-      </Tooltip>
-    );
-  }
-
-  return (
-    <div className={`${classes.relative} ${commonCss.flexRow}`}>
-      <div className={classes.linearProgress}>
-        <IndeterminateLinearProgress isVisible={isLoading} />
-      </div>
-      <MenuBar />
-      <main className={`${classes.main} ${commonCss.flexRow}`}>
-        <MonacoEditor
-          onHandleLoading={toggleIsLoading}
-          onRunSourceCode={setTerminalExecutableCode}
-          fetchedSourceCode={fetchedSourceCode.sourceCode}
-        />
-        <div className={classes.mainRightSection}>
-          <div
-            className={`${classes.rightSubSection} ${
-              currentSection === 'console'
-                ? classes.showRightSubSection
-                : classes.hideRightSubSection
-            }`}>
-            <Console sourceCode={terminalExecutableCode} fetchedReadme={fetchedSourceCode.readme} />
-          </div>
-          <div
-            className={`${classes.rightSubSection} ${
-              currentSection === 'comments'
-                ? classes.showRightSubSection
-                : classes.hideRightSubSection
-            }`}>
-            <Suspense fallback={null}>
-              <Comments visible={currentSection === 'comments'} />
-            </Suspense>
-          </div>
-          {renderSwitchView()}
-        </div>
-      </main>
-    </div>
-  );
-};
-
-export default withNotificationBanner(Home);
+export default withNotificationBanner(withApi(Home));
