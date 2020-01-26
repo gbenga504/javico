@@ -82,7 +82,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
         <meta property="og:url" content={`${getSourcecodeUrl()}`} />
         <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
-      {/* http://localhost:3000/YraJCKqVp3RxUHlac7FC */}
+
       <div className={`${classes.relative} ${commonCss.flexRow}`}>
         <div className={classes.linearProgress}>
           <IndeterminateLinearProgress isVisible={isLoading} />
