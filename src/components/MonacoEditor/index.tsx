@@ -20,8 +20,11 @@ interface IProps {
   language?: string;
   onHandleLoading: any;
   fetchedSourceCode: string;
+  onSetSourcecodeOwner: any;
+  ownerId: string;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
   Api: any;
+  user: any;
 }
 
 const MonacoEditor: React.FC<IProps> = ({
@@ -32,6 +35,9 @@ const MonacoEditor: React.FC<IProps> = ({
   language = 'javascript',
   fetchedSourceCode,
   onSetNotificationSettings,
+  onSetSourcecodeOwner,
+  user: _user,
+  ownerId,
   Api,
 }) => {
   const [shouldDisplayCommentBox, setShouldDisplayCommentBox] = useState<boolean>(false);
@@ -41,7 +47,7 @@ const MonacoEditor: React.FC<IProps> = ({
   const [isEditorReady, setIsEditorReady] = useState<boolean>(false);
   const [selectionRange, setSelectionRange] = useState<any>(null);
   const [selectionValue, setSelectionValue] = useState<any>(null);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<any>(_user);
   const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
   const [sourceCode, setSourceCode] = useState('');
   const monacoRef = useRef<any>(null);
@@ -87,18 +93,20 @@ const MonacoEditor: React.FC<IProps> = ({
   useEffect(() => {
     if (editorRef.current !== null) {
       editorRef.current.getModel().setValue(fetchedSourceCode);
+      disableEditor(user ? user.uid !== ownerId : true);
     }
+    // eslint-disable-next-line
   }, [fetchedSourceCode]);
 
   useEffect(() => {
-    Api.onAuthStateChanged(function(user: any) {
-      if (user) {
-        setUser(user);
-      } else {
-        setUser(null);
-      }
-    });
-  }, [Api]);
+    if (_user) {
+      setUser(_user);
+      disableEditor(_user.uid !== ownerId);
+    } else {
+      setUser(null);
+      disableEditor(true);
+    }
+  }, [_user, ownerId]);
 
   useEffect(() => {
     isMonacoReady === true && isEditorReady === false && createEditor();
@@ -135,6 +143,11 @@ const MonacoEditor: React.FC<IProps> = ({
 
   function handleSourceCodeExecution() {
     onRunSourceCode && onRunSourceCode(sourceCode);
+  }
+
+  function disableEditor(disable = false) {
+    if (editorRef.current !== null)
+      editorRef.current.updateOptions({ readOnly: !getIdFromUrl() ? false : disable });
   }
 
   function colorHighlight() {
@@ -191,6 +204,11 @@ const MonacoEditor: React.FC<IProps> = ({
     let me = Api.getCurrentUser();
     const id = getIdFromUrl();
     if (id) {
+      if (sourceCode === fetchedSourceCode) {
+        onHandleLoading();
+        onSetNotificationSettings('Your code is up to date', 'info', 'long');
+        return;
+      }
       SourceCodeService.saveSourceCode({
         data: { sourceCode },
         params: { ID: id },
@@ -214,6 +232,10 @@ const MonacoEditor: React.FC<IProps> = ({
       })
         .then(res => {
           onHandleLoading();
+          onSetSourcecodeOwner({
+            sourceCode,
+            ownerId: me.uid,
+          });
           updateUrl(res);
         })
         .catch((error: any) => {

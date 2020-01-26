@@ -1,31 +1,50 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Tooltip, makeStyles, Button } from '@material-ui/core';
 
 import MenuBar from '../../components/MenuBar';
 import MonacoEditor from '../../components/MonacoEditor';
 import Console from '../../components/Console';
-import Comments from '../../components/Comments';
 import { color, useStyles as commonUseStyles, padding } from '../../Css';
 import { IndeterminateLinearProgress, Icon, withNotificationBanner } from '../../atoms';
+import { withApi } from '../../utils/ApiConnector';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import SourceCodeService from '../../services/SourceCodeServices';
 import { getIdFromUrl, getSourcecodeUrl } from '../../utils/UrlUtils';
 import Helmet from 'react-helmet';
 
+const Comments = lazy(() => import('../../components/Comments'));
+
 interface IProps {
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
+  Api: any;
 }
 
-const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
+const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
   const [terminalExecutableCode, setTerminalExecutableCode] = useState('');
   const [currentSection, setCurrentSection] = useState('console');
+  const [user, setUser] = useState<any>(null);
   const [isLoading, setisLoading] = useState<boolean>(false);
   const [fetchedSourceCode, setFetchedSourceCode] = useState({
     sourceCode: '',
     readme: '',
+    ownerId: '',
   });
   const classes = useStyles();
   const commonCss = commonUseStyles();
+
+  useEffect(() => {
+    Api.onAuthStateChanged(function(user: any) {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+  }, [Api]);
+
+  function setSourcecodeOwner(data: any) {
+    setFetchedSourceCode({ ...fetchedSourceCode, ...data });
+  }
 
   useEffect(() => {
     if (getIdFromUrl()) {
@@ -34,9 +53,13 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
         params: { ID: getIdFromUrl() },
       })
         .then(res => {
-          const { sourceCode, readme } = res._document.proto.fields;
+          const { sourceCode, readme, ownerId } = res.data();
           toggleIsLoading();
-          setFetchedSourceCode({ sourceCode: sourceCode.stringValue, readme: readme.stringValue });
+          setFetchedSourceCode({
+            sourceCode,
+            readme,
+            ownerId,
+          });
         })
         .catch((error: any) => {
           toggleIsLoading();
@@ -73,7 +96,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
       <Helmet>
         <title>My Title</title>
         <meta name="description" content="Helmet application" />
-        <meta property="og:title" content="Example Page" />
+        <meta property="og:title" content="Review my sourcecode" />
         <meta
           property="og:image"
           content="https://cdn3.vectorstock.com/i/1000x1000/27/97/github-logo-icon-vector-25322797.jpg"
@@ -93,6 +116,9 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
             onHandleLoading={toggleIsLoading}
             onRunSourceCode={setTerminalExecutableCode}
             fetchedSourceCode={fetchedSourceCode.sourceCode}
+            ownerId={fetchedSourceCode.ownerId}
+            onSetSourcecodeOwner={setSourcecodeOwner}
+            user={user}
           />
           <div className={classes.mainRightSection}>
             <div
@@ -102,8 +128,10 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
                   : classes.hideRightSubSection
               }`}>
               <Console
+                ownerId={fetchedSourceCode.ownerId}
                 sourceCode={terminalExecutableCode}
                 fetchedReadme={fetchedSourceCode.readme}
+                user={user}
               />
             </div>
             <div
@@ -112,7 +140,9 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
                   ? classes.showRightSubSection
                   : classes.hideRightSubSection
               }`}>
-              <Comments comments={[]} />
+              <Suspense fallback={null}>
+                <Comments visible={currentSection === 'comments'} />
+              </Suspense>
             </div>
             {renderSwitchView()}
           </div>
@@ -190,4 +220,4 @@ const useStyles = makeStyles({
   },
 });
 
-export default withNotificationBanner(Home);
+export default withNotificationBanner(withApi(Home));
