@@ -10,6 +10,7 @@ import { IndeterminateLinearProgress, Icon, withNotificationBanner } from '../..
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import SourceCodeService from '../../services/SourceCodeServices';
 import { getIdFromUrl } from '../../utils/UrlUtils';
+import Helmet from 'react-helmet';
 
 interface IProps {
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
@@ -68,38 +69,56 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
   }
 
   return (
-    <div className={`${classes.relative} ${commonCss.flexRow}`}>
-      <div className={classes.linearProgress}>
-        <IndeterminateLinearProgress isVisible={isLoading} />
-      </div>
-      <MenuBar />
-      <main className={`${classes.main} ${commonCss.flexRow}`}>
-        <MonacoEditor
-          onHandleLoading={toggleIsLoading}
-          onRunSourceCode={setTerminalExecutableCode}
-          fetchedSourceCode={fetchedSourceCode.sourceCode}
+    <>
+      <Helmet>
+        <title>My Title</title>
+        <meta name="description" content="Helmet application" />
+        <meta property="og:title" content="Example Page" />
+        <meta
+          property="og:image"
+          content="https://cdn3.vectorstock.com/i/1000x1000/27/97/github-logo-icon-vector-25322797.jpg"
         />
-        <div className={classes.mainRightSection}>
-          <div
-            className={`${classes.rightSubSection} ${
-              currentSection === 'console'
-                ? classes.showRightSubSection
-                : classes.hideRightSubSection
-            }`}>
-            <Console sourceCode={terminalExecutableCode} fetchedReadme={fetchedSourceCode.readme} />
-          </div>
-          <div
-            className={`${classes.rightSubSection} ${
-              currentSection === 'comments'
-                ? classes.showRightSubSection
-                : classes.hideRightSubSection
-            }`}>
-            <Comments comments={[]} />
-          </div>
-          {renderSwitchView()}
+        <meta property="og:description" content="This is just an example page." />
+        <meta property="og:url" content="http://localhost:3000/YraJCKqVp3RxUHlac7FC" />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Helmet>
+
+      <div className={`${classes.relative} ${commonCss.flexRow}`}>
+        <div className={classes.linearProgress}>
+          <IndeterminateLinearProgress isVisible={isLoading} />
         </div>
-      </main>
-    </div>
+        <MenuBar />
+        <main className={`${classes.main} ${commonCss.flexRow}`}>
+          <MonacoEditor
+            onHandleLoading={toggleIsLoading}
+            onRunSourceCode={setTerminalExecutableCode}
+            fetchedSourceCode={fetchedSourceCode.sourceCode}
+          />
+          <div className={classes.mainRightSection}>
+            <div
+              className={`${classes.rightSubSection} ${
+                currentSection === 'console'
+                  ? classes.showRightSubSection
+                  : classes.hideRightSubSection
+              }`}>
+              <Console
+                sourceCode={terminalExecutableCode}
+                fetchedReadme={fetchedSourceCode.readme}
+              />
+            </div>
+            <div
+              className={`${classes.rightSubSection} ${
+                currentSection === 'comments'
+                  ? classes.showRightSubSection
+                  : classes.hideRightSubSection
+              }`}>
+              <Comments comments={[]} />
+            </div>
+            {renderSwitchView()}
+          </div>
+        </main>
+      </div>
+    </>
   );
 };
 

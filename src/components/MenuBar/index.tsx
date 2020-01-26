@@ -44,11 +44,13 @@ const iconList = (fullScreenMode: boolean) => [
 const shareOptionsList = [
   { name: 'twitter', color: color.themeBlue, iconName: 'logo-twitter' },
   { name: 'copy', color: '#0c85b2', iconName: 'ios-copy' },
+  { name: 'twitter', color: color.themeBlue, iconName: 'logo-twitter' },
+  { name: 'copy', color: '#0c85b2', iconName: 'ios-copy' },
 ];
 
 const MenuBar: React.FC<IProps> = ({ Api, onSetNotificationSettings }) => {
   const [fullScreenMode, setFullScreenMode] = useState<boolean>(!!fullScreenEnabled);
-  const [showShareOptions, setShowShareOptions] = useState<boolean>(false);
+  const [showShareOptions, setShowShareOptions] = useState<boolean | null>(null);
   const [menuElement, setMenuElement] = React.useState<null | HTMLElement>(null);
   const [currentUser, setCurrentUser] = React.useState<any>(null);
   const classes = useStyles();
@@ -161,7 +163,7 @@ const MenuBar: React.FC<IProps> = ({ Api, onSetNotificationSettings }) => {
               key={el.icon}
               className={`${commonCss.flexRow} ${commonCss.center} ${classes.menubarIcon}`}
               onClick={() => triggerAction(el.action)}>
-              <Tooltip title={el.text} placement="bottom" enterDelay={100}>
+              <Tooltip title={el.text} leaveDelay={300} placement="bottom" enterDelay={100}>
                 <span className={commonCss.flexRow}>
                   <Icon name={el.icon} />
                 </span>
@@ -176,7 +178,6 @@ const MenuBar: React.FC<IProps> = ({ Api, onSetNotificationSettings }) => {
                     iconName={el.iconName}
                     color={el.color}
                     showShareOptions={showShareOptions}
-                    onHandleShowShareOptions={handleShowShareOptions}
                   />
                 );
               })}

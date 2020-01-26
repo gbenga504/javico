@@ -1,39 +1,31 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import { TwitterShareButton } from 'react-share';
 
 import { useStyles } from './styles';
 import { Icon } from '../../atoms';
 
 const ShareIcon: React.FC<{
-  showShareOptions: boolean;
+  showShareOptions: boolean | null;
   iconName: string;
-  onHandleShowShareOptions: any;
   color: string;
   index: any;
-}> = ({ showShareOptions, onHandleShowShareOptions, iconName, index, color }) => {
-  const shareIconRef = useRef<any>(null);
-
-  useEffect(() => {
-    shareIconRef.current.addEventListener('focusout', onHandleShowShareOptions);
-
-    return () => {
-      shareIconRef.current.removeEventListener('focusout', onHandleShowShareOptions);
-    };
-    // eslint-disable-next-line
-  }, []);
-
+}> = ({ showShareOptions, iconName, index, color }) => {
   const classes = useStyles();
   const DEVELOPER_CODE_URL = 'https://www.google.com'; //@todo This needs to be changed to the actual developer code
 
   return (
     <div
-      ref={ref => (shareIconRef.current = ref)}
-      className={`${!!showShareOptions ? classes.showShareOptions : classes.hideShareOptions} ${
-        classes.shareCodeOptions
-      }`}
-      style={{ top: index * 45, animationDelay: `${index * 50}ms` }}>
+      className={`${
+        showShareOptions === null
+          ? classes.hideShareicons
+          : !!showShareOptions
+          ? classes.showShareOptions
+          : classes.hideShareOptions
+      } ${classes.shareCodeOptions}`}
+      style={{ top: index * 45, animationDelay: `${index * 150}ms` }}>
       <TwitterShareButton url={DEVELOPER_CODE_URL}>
         <button
+          id="shareIcon"
           className={classes.copyIcon}
           style={{
             color,
@@ -46,4 +38,4 @@ const ShareIcon: React.FC<{
   );
 };
 
-export default ShareIcon;
+export default React.memo(ShareIcon);

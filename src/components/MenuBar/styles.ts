@@ -50,18 +50,19 @@ export const useStyles = makeStyles(theme => ({
     zIndex: 10,
   },
   showShareOptions: {
-    left: 50,
-    animationName: `$showShareOptions`,
-    animationDuration: '1000ms',
-    animationTimingFunction: 'cubic-bezier(.57,.43,.57,1.98)',
-  },
-  hideShareOptions: {
-    left: -50,
-    opacity: 0,
     visibility: 'hidden',
+    animationName: `$showShareOptions`,
+    animationDuration: '500ms',
+    animationTimingFunction: 'cubic-bezier(.57,.43,.57,2.98)',
+    animationFillMode: 'forwards',
+  },
+  hideShareicons: { display: 'none', visibilty: 'hidden' },
+  hideShareOptions: {
+    left: 50,
     animationName: `$hideShareOptions`,
-    animationDuration: '1000ms',
+    animationDuration: '1500ms',
     animationTimingFunction: 'cubic-bezier(.25,-0.95,.54,.94)',
+    animationFillMode: 'forwards',
   },
   copyIcon: {
     height: 35,
@@ -72,6 +73,7 @@ export const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     justifyContent: 'center',
     border: '1px solid transparent',
+    outline: 'transparent',
     boxShadow: 'none',
     transition: 'all .3s',
     '&:hover': {
@@ -81,42 +83,40 @@ export const useStyles = makeStyles(theme => ({
     },
     '&:active': {
       boxShadow: 'none',
+      transform: 'scale(1.1)',
     },
   },
   '@keyframes showShareOptions': {
     '0%': {
-      opacity: 0,
-      left: -50,
-      visibility: 'hidden',
-    },
-    '50%': {
-      left: 0,
-      visibility: 'hidden',
-    },
-    '75%': {
       opacity: 0,
       left: 25,
     },
     '100%': {
       opacity: 1,
       left: 50,
+      visibility: 'visible',
+      display: 'block',
     },
   },
   '@keyframes hideShareOptions': {
     '0%': {
       opacity: 1,
-      left: 50,
+      visibility: 'visible',
     },
     '25%': {
+      left: 25,
       opacity: 0,
+      visibility: 'hidden',
+      display: 'none',
     },
     '50%': {
       left: 0,
-      opacity: 0,
     },
     '100%': {
+      left: 0,
       opacity: 0,
-      left: -50,
+      visibility: 'hidden',
+      display: 'none',
     },
   },
 }));
