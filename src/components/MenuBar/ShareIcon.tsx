@@ -3,6 +3,7 @@ import { TwitterShareButton } from 'react-share';
 
 import { useStyles } from './styles';
 import { Icon } from '../../atoms';
+import { getSourcecodeUrl } from '../../utils/UrlUtils';
 
 const ShareIcon: React.FC<{
   showShareOptions: boolean | null;
@@ -11,7 +12,7 @@ const ShareIcon: React.FC<{
   index: any;
 }> = ({ showShareOptions, iconName, index, color }) => {
   const classes = useStyles();
-  const DEVELOPER_CODE_URL = 'https://www.google.com'; //@todo This needs to be changed to the actual developer code
+  const DEVELOPER_CODE_URL = getSourcecodeUrl();
 
   return (
     <div

@@ -9,7 +9,7 @@ import { color, useStyles as commonUseStyles, padding } from '../../Css';
 import { IndeterminateLinearProgress, Icon, withNotificationBanner } from '../../atoms';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import SourceCodeService from '../../services/SourceCodeServices';
-import { getIdFromUrl } from '../../utils/UrlUtils';
+import { getIdFromUrl, getSourcecodeUrl } from '../../utils/UrlUtils';
 import Helmet from 'react-helmet';
 
 interface IProps {
@@ -79,10 +79,10 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
           content="https://cdn3.vectorstock.com/i/1000x1000/27/97/github-logo-icon-vector-25322797.jpg"
         />
         <meta property="og:description" content="This is just an example page." />
-        <meta property="og:url" content="http://localhost:3000/YraJCKqVp3RxUHlac7FC" />
+        <meta property="og:url" content={`${getSourcecodeUrl()}`} />
         <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
-
+      {/* http://localhost:3000/YraJCKqVp3RxUHlac7FC */}
       <div className={`${classes.relative} ${commonCss.flexRow}`}>
         <div className={classes.linearProgress}>
           <IndeterminateLinearProgress isVisible={isLoading} />

@@ -7,6 +7,7 @@ import { Icon, withNotificationBanner } from '../../atoms';
 import { withApi } from '../../utils/ApiConnector';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import ShareIcon from './ShareIcon';
+import { getIdFromUrl } from '../../utils/UrlUtils';
 
 interface IProps {
   Api: any;
@@ -43,9 +44,7 @@ const iconList = (fullScreenMode: boolean) => [
 
 const shareOptionsList = [
   { name: 'twitter', color: color.themeBlue, iconName: 'logo-twitter' },
-  { name: 'copy', color: '#0c85b2', iconName: 'ios-copy' },
-  { name: 'twitter', color: color.themeBlue, iconName: 'logo-twitter' },
-  { name: 'copy', color: '#0c85b2', iconName: 'ios-copy' },
+  { name: 'copy', color: '#a7a7a7', iconName: 'ios-copy' },
 ];
 
 const MenuBar: React.FC<IProps> = ({ Api, onSetNotificationSettings }) => {
@@ -157,7 +156,9 @@ const MenuBar: React.FC<IProps> = ({ Api, onSetNotificationSettings }) => {
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
       {iconList(fullScreenMode).map(el => {
-        return el.text === 'Sign in' && !!currentUser === true ? null : (
+        if (el.text === 'Share code' && !getIdFromUrl()) return null;
+        if (el.text === 'Sign in' && !!currentUser === true) return null;
+        return (
           <div style={{ position: 'relative' }}>
             <div
               key={el.icon}
