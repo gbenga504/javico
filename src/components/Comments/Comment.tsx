@@ -92,6 +92,14 @@ const Comment: React.FC<IProps> = ({
 
   function handleDeleteComment() {
     setIsDeleteCommentLoading(true);
+    CommentService.deleteComment({ params: { sourceCodeID: sourceCodeId, ID: id } })
+      .then(res => {
+        setIsDeleteCommentLoading(false);
+        setIsConfirmDeleteModalVisible(false);
+      })
+      .catch(error => {
+        onSetNotificationSettings(error, 'danger', 'long');
+      });
   }
 
   function handleCommentChange(event: React.ChangeEvent<HTMLTextAreaElement>) {

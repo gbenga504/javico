@@ -9,10 +9,11 @@ export default class CommentUtils {
   static __COMMENT_STORE = {} as ICommentStore;
   static previousDate: number | null = null;
 
-  static parseComments(comments: Array<any>) {
+  static parseComments(comments: any) {
     let temp: any = [];
+    let didStoreUpdate: boolean = false;
 
-    comments.forEach(comment => {
+    comments.forEach((comment: any) => {
       temp.unshift({ id: comment.id, ...comment.data(), metadata: { ...comment.metadata } });
     });
 
@@ -30,6 +31,7 @@ export default class CommentUtils {
           CommentUtils.previousDate = currentDate;
         }
         CommentUtils.__COMMENT_STORE[comment.id] = { ...comment, createdAt: seconds };
+        didStoreUpdate = true;
       } else if (
         comment.id in CommentUtils.__COMMENT_STORE === true &&
         CommentUtils.__COMMENT_STORE[comment.id].text !== comment.text
@@ -39,8 +41,17 @@ export default class CommentUtils {
           text: comment.text,
           updatedAt: comment.updatedAt || new Date().getTime(),
         };
+        didStoreUpdate = true;
       }
     });
+
+    if (didStoreUpdate === false) {
+      comments.docChanges().forEach(function(change: any) {
+        if (change.type === 'removed') {
+          delete CommentUtils.__COMMENT_STORE[change.doc.id];
+        }
+      });
+    }
 
     return Object.values(CommentUtils.__COMMENT_STORE);
   }
