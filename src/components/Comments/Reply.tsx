@@ -12,7 +12,7 @@ interface IProps {
   authorName: string;
   authorPhotoURL: string;
   text: string;
-  createdAt: string;
+  createdAt: number;
 }
 
 const Reply: React.FC<IProps> = ({ id, authorName, authorPhotoURL, text, createdAt }) => {
@@ -151,6 +151,7 @@ const useStyles = makeStyles(theme => ({
   replyTime: {
     fontSize: fontsize.xsmall,
     color: `#ABABAD !important`,
+    marginLeft: 5,
   },
   replyUserText: {
     fontSize: fontsize.small,

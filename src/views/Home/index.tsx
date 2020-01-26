@@ -27,6 +27,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
     sourceCode: '',
     readme: '',
     ownerId: '',
+    sourceCodeId: '',
   });
   const classes = useStyles();
   const commonCss = commonUseStyles();
@@ -54,6 +55,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
             sourceCode,
             readme,
             ownerId,
+            sourceCodeId: res.id,
           });
         })
         .catch((error: any) => {
@@ -126,7 +128,10 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
                 : classes.hideRightSubSection
             }`}>
             <Suspense fallback={null}>
-              <Comments visible={currentSection === 'comments'} />
+              <Comments
+                visible={currentSection === 'comments'}
+                sourceCodeId={fetchedSourceCode.sourceCodeId}
+              />
             </Suspense>
           </div>
           {renderSwitchView()}

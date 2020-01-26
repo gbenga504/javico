@@ -29,7 +29,7 @@ export interface IReply {
   };
   text: string;
   id: string;
-  createdAt: string;
+  createdAt: number;
 }
 
 export default class CommentReplyService {

@@ -235,6 +235,7 @@ const MonacoEditor: React.FC<IProps> = ({
           onSetSourcecodeOwner({
             sourceCode,
             ownerId: me.uid,
+            sourceCodeId: res.id,
           });
           updateUrl(res);
         })

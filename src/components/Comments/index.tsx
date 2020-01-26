@@ -3,16 +3,26 @@ import { TextareaAutosize } from '@material-ui/core';
 
 import { useStyles } from './styles';
 import { useStyles as commonUseStyles } from '../../Css';
-import { Typography, Icon } from '../../atoms';
+import { Typography, Icon, withNotificationBanner } from '../../atoms';
 import Comment from './Comment';
-import { IComment } from '../../services/CommentsServices';
+import CommentService, { IComment, ICommentDateSeperator } from '../../services/CommentsServices';
 import ContentLoader from '../../atoms/ContentLoader';
+import { withApi } from '../../utils/ApiConnector';
+import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
+import CommentUtils from '../../utils/CommentUtils';
 
-const Comments: React.FC<{ visible: boolean }> = ({ visible }) => {
+interface IProps {
+  Api: any;
+  visible: boolean;
+  onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
+  sourceCodeId: string;
+}
+
+const Comments: React.FC<IProps> = ({ visible, onSetNotificationSettings, Api, sourceCodeId }) => {
   const [quotedComment, setQuotedComment] = useState<string>('');
   const [newComment, setNewComment] = useState<string>('');
   const [isLoadingComments, setIsLoadingComments] = useState<boolean>(false);
-  const [comments, setComments] = useState<Array<IComment>>([]);
+  const [comments, setComments] = useState<Array<IComment | ICommentDateSeperator>>([]);
   const classes = useStyles();
   const commonCss = commonUseStyles();
   const commentInputRef = useRef<any>(null);
@@ -20,15 +30,25 @@ const Comments: React.FC<{ visible: boolean }> = ({ visible }) => {
 
   useEffect(() => {
     if (visible === true) {
-      if (comments.length === 0 && isLoadingComments === false) {
+      if (comments.length === 0 && isLoadingComments === false && !!sourceCodeId === true) {
         /**
          * Initialize the load process using the API
          * and set comment loading state to false after success or error
          * also focus last comment after successful load
          */
         setIsLoadingComments(true);
-        focusLastComment();
-        setComments([]);
+        CommentService.onSnapshotChanged(
+          { params: { sourceCodeID: sourceCodeId, limit: 15 } },
+          function(querySnapshot: Array<any>) {
+            const comments = CommentUtils.parseComments(querySnapshot);
+            setIsLoadingComments(false);
+            setComments(prevComments => [...prevComments, ...comments]);
+            focusLastComment();
+          },
+          function(error: any) {
+            onSetNotificationSettings(error, 'danger', 'long');
+          },
+        );
       }
       focusCommentInput();
     }
@@ -37,7 +57,11 @@ const Comments: React.FC<{ visible: boolean }> = ({ visible }) => {
 
   useEffect(() => {
     function handleScroll() {
-      if (commentContainerRef.current.scrollTop <= 40 && isLoadingComments !== true) {
+      if (
+        commentContainerRef.current.scrollTop <= 40 &&
+        isLoadingComments !== true &&
+        visible === true
+      ) {
         /**
          * load more comments
          * and set isLoadingMoreComments = true
@@ -82,27 +106,63 @@ const Comments: React.FC<{ visible: boolean }> = ({ visible }) => {
   }
 
   function handleRemoveQuotedComment(event: React.KeyboardEvent) {
+    //Remove quoted comment when user presses the delete button
     if (event.keyCode === 8 && !!quotedComment === true && newComment.length === 0) {
       setQuotedComment('');
     }
+
+    //Send comment when user presses enter and the shift key is not pressed
+    if (event.keyCode === 13 && event.shiftKey === false) {
+      event.preventDefault();
+      handleSendComment();
+    }
   }
 
-  function handleSendComment() {}
+  function handleSendComment() {
+    if (newComment.trim().length > 0) {
+      const user = Api.getCurrentUser();
+
+      if (!!user === false) {
+        onSetNotificationSettings('Please login to add a review', 'danger', 'long');
+      } else if (!!sourceCodeId === false) {
+        onSetNotificationSettings(
+          'Cannot make comment on an unsaved source code',
+          'danger',
+          'long',
+        );
+      } else {
+        CommentService.createComment({
+          data: {
+            sourceCodeId,
+            author: {
+              name: user.displayName,
+              photoURL: user.photoURL,
+            },
+            text: newComment,
+          },
+          params: {
+            sourceCodeID: sourceCodeId,
+          },
+        }).catch(err => onSetNotificationSettings(err, 'danger', 'long'));
+        setNewComment('');
+      }
+    }
+  }
 
   function renderDateSeperator(date: string, id: string) {
     return (
-      <>
-        <div className={classes.commentDateSeperatorContainer} key={id}>
+      <React.Fragment key={id}>
+        <div className={classes.commentDateSeperatorContainer}>
           <hr className={classes.commentDateSeperatorHr} />
         </div>
-        <div className={classes.commentStickyDateContainer} key={`${Number(id) + 1}`}>
+        <div className={classes.commentStickyDateContainer}>
           <div>
             <Typography thickness="semi-bold" className={classes.commentDateSeperatorText}>
               {date}
             </Typography>
           </div>
         </div>
-      </>
+      </React.Fragment>
     );
   }
 
@@ -191,4 +251,4 @@ const Comments: React.FC<{ visible: boolean }> = ({ visible }) => {
   );
 };
 
-export default Comments;
+export default withNotificationBanner(withApi(React.memo(Comments)));

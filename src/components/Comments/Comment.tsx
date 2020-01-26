@@ -16,7 +16,7 @@ interface IProps {
   id: string;
   authorName: string;
   authorPhotoURL: string;
-  createdAt: string;
+  createdAt: number;
   numReplies: number;
   onHandleReply: (comment: string) => void;
 }
@@ -207,7 +207,7 @@ const Comment: React.FC<IProps> = ({
         {codeReference && (
           <SyntaxHighlighter containerStyle={{ marginTop: 5 }} sourceCode={codeReference} />
         )}
-        {numReplies && numReplies > 0 && renderReplies()}
+        {!!numReplies === true && numReplies > 0 && renderReplies()}
       </div>
       {renderMenuOptions()}
       <DeleteMessageModal
@@ -266,6 +266,7 @@ const useStyles = makeStyles(theme => ({
   commentTime: {
     fontSize: fontsize.xsmall,
     color: `#ABABAD !important`,
+    marginLeft: 5,
   },
   commentUserComment: {
     fontSize: fontsize.small + 0.5,

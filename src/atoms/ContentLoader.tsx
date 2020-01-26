@@ -111,4 +111,4 @@ const useStyles = makeStyles({
   },
 });
 
-export default ContentLoader;
+export default React.memo(ContentLoader);

@@ -28,8 +28,14 @@ export interface IComment {
   codeReference?: string;
   type: 'comment' | 'seperator';
   id: string;
-  createdAt: string;
+  createdAt: number;
   numReplies: number;
+}
+
+export interface ICommentDateSeperator {
+  id: string;
+  type: 'seperator';
+  text: string;
 }
 
 export default class CommentService {
