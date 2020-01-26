@@ -16,9 +16,16 @@ interface IProps {
   visible: boolean;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
   sourceCodeId: string;
+  user: any;
 }
 
-const Comments: React.FC<IProps> = ({ visible, onSetNotificationSettings, Api, sourceCodeId }) => {
+const Comments: React.FC<IProps> = ({
+  visible,
+  onSetNotificationSettings,
+  Api,
+  sourceCodeId,
+  user,
+}) => {
   const [quotedComment, setQuotedComment] = useState<string>('');
   const [newComment, setNewComment] = useState<string>('');
   const [isLoadingComments, setIsLoadingComments] = useState<boolean>(false);
@@ -42,7 +49,7 @@ const Comments: React.FC<IProps> = ({ visible, onSetNotificationSettings, Api, s
           function(querySnapshot: Array<any>) {
             const comments = CommentUtils.parseComments(querySnapshot);
             setIsLoadingComments(false);
-            setComments(prevComments => [...prevComments, ...comments]);
+            setComments(comments);
             focusLastComment();
           },
           function(error: any) {
@@ -135,6 +142,7 @@ const Comments: React.FC<IProps> = ({ visible, onSetNotificationSettings, Api, s
           data: {
             sourceCodeId,
             author: {
+              id: user.uid,
               name: user.displayName,
               photoURL: user.photoURL,
             },
@@ -189,9 +197,12 @@ const Comments: React.FC<IProps> = ({ visible, onSetNotificationSettings, Api, s
               id={comment.id}
               authorName={comment.author.name}
               authorPhotoURL={comment.author.photoURL}
+              userId={user.uid}
+              authorId={comment.author.id}
               numReplies={comment.numReplies}
               createdAt={comment.createdAt}
               onHandleReply={handleQuoteComment}
+              sourceCodeId={sourceCodeId}
             />
           ) : (
             renderDateSeperator(comment.text, comment.id)

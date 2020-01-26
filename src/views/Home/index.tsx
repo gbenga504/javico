@@ -131,6 +131,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
               <Comments
                 visible={currentSection === 'comments'}
                 sourceCodeId={fetchedSourceCode.sourceCodeId}
+                user={user}
               />
             </Suspense>
           </div>

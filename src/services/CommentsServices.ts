@@ -2,8 +2,9 @@ import Api from '../utils/ApiConnector';
 
 interface IPayload {
   data?: {
-    sourceCodeId: string;
-    author: {
+    sourceCodeId?: string;
+    author?: {
+      id: string;
       name: string;
       photoURL: string;
     };
@@ -21,6 +22,7 @@ interface IPayload {
 export interface IComment {
   sourceCodeId: string;
   author: {
+    id: string;
     name: string;
     photoURL: string;
   };
@@ -30,6 +32,7 @@ export interface IComment {
   id: string;
   createdAt: number;
   numReplies: number;
+  updatedAt?: string;
 }
 
 export interface ICommentDateSeperator {

@@ -7,6 +7,7 @@ interface IPayload {
   data?: {
     commentId: string;
     author: {
+      id: string;
       name: string;
       photoURL: string;
     };

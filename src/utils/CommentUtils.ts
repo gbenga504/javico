@@ -2,7 +2,7 @@ import { getReadableDate } from './TimeUtils';
 import { IComment, ICommentDateSeperator } from '../services/CommentsServices';
 
 interface ICommentStore {
-  [key: string]: { pendingWrites: boolean };
+  [key: string]: IComment | ICommentDateSeperator;
 }
 
 export default class CommentUtils {
@@ -10,7 +10,6 @@ export default class CommentUtils {
   static previousDate: number | null = null;
 
   static parseComments(comments: Array<any>) {
-    let acc: Array<IComment | ICommentDateSeperator> = [];
     let temp: any = [];
 
     comments.forEach(comment => {
@@ -23,24 +22,26 @@ export default class CommentUtils {
           (comment.createdAt && comment.createdAt.seconds * 1000) || new Date().getTime();
         let currentDate = new Date(seconds).getDate();
         if (currentDate !== CommentUtils.previousDate) {
-          acc.push({
+          CommentUtils.__COMMENT_STORE[`${seconds}`] = {
             id: `${seconds}`,
             type: 'seperator',
             text: getReadableDate(seconds),
-          });
+          };
           CommentUtils.previousDate = currentDate;
         }
-        acc.push({ ...comment, createdAt: seconds, id: comment.id });
+        CommentUtils.__COMMENT_STORE[comment.id] = { ...comment, createdAt: seconds };
+      } else if (
+        comment.id in CommentUtils.__COMMENT_STORE === true &&
+        CommentUtils.__COMMENT_STORE[comment.id].text !== comment.text
+      ) {
         CommentUtils.__COMMENT_STORE[comment.id] = {
-          pendingWrites: comment.metadata.hasPendingWrites,
-        };
-      } else {
-        CommentUtils.__COMMENT_STORE[comment.id] = {
-          pendingWrites: comment.metadata.hasPendingWrites,
+          ...CommentUtils.__COMMENT_STORE[comment.id],
+          text: comment.text,
+          updatedAt: comment.updatedAt || new Date().getTime(),
         };
       }
     });
 
-    return acc;
+    return Object.values(CommentUtils.__COMMENT_STORE);
   }
 }
