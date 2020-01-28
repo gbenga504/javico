@@ -44,7 +44,7 @@ const iconList = (fullScreenMode: boolean) => [
 
 const shareOptionsList = [
   { name: 'twitter', color: color.themeBlue, text: 'Share to twitter', iconName: 'logo-twitter' },
-  { name: 'copy', color: '#a7a7a7', text: 'Copy sourcecode link', iconName: 'ios-copy' },
+  { name: 'copy', color: '#757575', text: 'Copy sourcecode link', iconName: 'ios-copy' },
 ];
 
 const MenuBar: React.FC<IProps> = ({ Api, onSetNotificationSettings }) => {
