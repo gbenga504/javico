@@ -4,6 +4,8 @@ export const getIdFromUrl = () => {
   return routeArr[routeArr.length - 1];
 };
 
+export const getSourcecodeUrl = () => window.location.href;
+
 export const updateUrl = (res: any) => {
   const location = window.location.href;
   const href = `${location}${res.id}`;

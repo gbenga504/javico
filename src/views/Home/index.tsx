@@ -9,7 +9,8 @@ import { IndeterminateLinearProgress, Icon, withNotificationBanner } from '../..
 import { withApi } from '../../utils/ApiConnector';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import SourceCodeService from '../../services/SourceCodeServices';
-import { getIdFromUrl } from '../../utils/UrlUtils';
+import { getIdFromUrl, getSourcecodeUrl } from '../../utils/UrlUtils';
+import Helmet from 'react-helmet';
 
 const Comments = lazy(() => import('../../components/Comments'));
 
@@ -91,48 +92,63 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
   }
 
   return (
-    <div className={`${classes.relative} ${commonCss.flexRow}`}>
-      <div className={classes.linearProgress}>
-        <IndeterminateLinearProgress isVisible={isLoading} />
-      </div>
-      <MenuBar />
-      <main className={`${classes.main} ${commonCss.flexRow}`}>
-        <MonacoEditor
-          onHandleLoading={toggleIsLoading}
-          onRunSourceCode={setTerminalExecutableCode}
-          fetchedSourceCode={fetchedSourceCode.sourceCode}
-          ownerId={fetchedSourceCode.ownerId}
-          onSetSourcecodeOwner={setSourcecodeOwner}
-          user={user}
+    <>
+      <Helmet>
+        <title>My Title</title>
+        <meta name="description" content="Helmet application" />
+        <meta property="og:title" content="Review my sourcecode" />
+        <meta
+          property="og:image"
+          content="https://cdn3.vectorstock.com/i/1000x1000/27/97/github-logo-icon-vector-25322797.jpg"
         />
-        <div className={classes.mainRightSection}>
-          <div
-            className={`${classes.rightSubSection} ${
-              currentSection === 'console'
-                ? classes.showRightSubSection
-                : classes.hideRightSubSection
-            }`}>
-            <Console
-              ownerId={fetchedSourceCode.ownerId}
-              sourceCode={terminalExecutableCode}
-              fetchedReadme={fetchedSourceCode.readme}
-              user={user}
-            />
-          </div>
-          <div
-            className={`${classes.rightSubSection} ${
-              currentSection === 'comments'
-                ? classes.showRightSubSection
-                : classes.hideRightSubSection
-            }`}>
-            <Suspense fallback={null}>
-              <Comments visible={currentSection === 'comments'} />
-            </Suspense>
-          </div>
-          {renderSwitchView()}
+        <meta property="og:description" content="This is just an example page." />
+        <meta property="og:url" content={`${getSourcecodeUrl()}`} />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Helmet>
+
+      <div className={`${classes.relative} ${commonCss.flexRow}`}>
+        <div className={classes.linearProgress}>
+          <IndeterminateLinearProgress isVisible={isLoading} />
         </div>
-      </main>
-    </div>
+        <MenuBar />
+        <main className={`${classes.main} ${commonCss.flexRow}`}>
+          <MonacoEditor
+            onHandleLoading={toggleIsLoading}
+            onRunSourceCode={setTerminalExecutableCode}
+            fetchedSourceCode={fetchedSourceCode.sourceCode}
+            ownerId={fetchedSourceCode.ownerId}
+            onSetSourcecodeOwner={setSourcecodeOwner}
+            user={user}
+          />
+          <div className={classes.mainRightSection}>
+            <div
+              className={`${classes.rightSubSection} ${
+                currentSection === 'console'
+                  ? classes.showRightSubSection
+                  : classes.hideRightSubSection
+              }`}>
+              <Console
+                ownerId={fetchedSourceCode.ownerId}
+                sourceCode={terminalExecutableCode}
+                fetchedReadme={fetchedSourceCode.readme}
+                user={user}
+              />
+            </div>
+            <div
+              className={`${classes.rightSubSection} ${
+                currentSection === 'comments'
+                  ? classes.showRightSubSection
+                  : classes.hideRightSubSection
+              }`}>
+              <Suspense fallback={null}>
+                <Comments visible={currentSection === 'comments'} />
+              </Suspense>
+            </div>
+            {renderSwitchView()}
+          </div>
+        </main>
+      </div>
+    </>
   );
 };
 
