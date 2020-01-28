@@ -63,9 +63,11 @@ const Comments: React.FC<IProps> = ({
   }, [visible]);
 
   useEffect(() => {
+    let tempCommentContainerRef: any = commentContainerRef.current;
+
     function handleScroll() {
       if (
-        commentContainerRef.current.scrollTop <= 40 &&
+        tempCommentContainerRef.scrollTop <= 40 &&
         isLoadingComments !== true &&
         visible === true
       ) {
@@ -73,16 +75,18 @@ const Comments: React.FC<IProps> = ({
          * load more comments
          * and set isLoadingMoreComments = true
          */
+        CommentService.fetchMoreComments({
+          params: { sourceCodeID: sourceCodeId, after: comments },
+        });
         setIsLoadingComments(true);
       }
     }
 
-    window.addEventListener('scroll', handleScroll);
+    tempCommentContainerRef.addEventListener('scroll', handleScroll);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      tempCommentContainerRef.removeEventListener('scroll', handleScroll);
     };
-    // eslint-disable-next-line
-  }, []);
+  }, [visible, comments, isLoadingComments, sourceCodeId]);
 
   function focusLastComment() {
     /**

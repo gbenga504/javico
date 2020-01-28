@@ -18,7 +18,7 @@ export const useStyles = makeStyles(theme => ({
   commentsBody: {
     overflowY: 'scroll',
     marginTop: 38,
-    paddingBottom: theme.spacing(17),
+    paddingBottom: theme.spacing(25),
   },
   commentInput: {
     position: 'absolute',
