@@ -7,6 +7,7 @@ import { useStyles as commonUseStyles } from '../../Css';
 import { Icon, withNotificationBanner } from '../../atoms';
 import { withApi } from '../../utils/ApiConnector';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
+import ProfilePopover from '../ProfilePopover';
 
 interface IProps {
   Api: any;
@@ -45,6 +46,7 @@ const MenuBar: React.FC<IProps> = ({ Api, onSetNotificationSettings }) => {
   const [fullScreenMode, setFullScreenMode] = useState<boolean>(!!fullScreenEnabled);
   const [menuElement, setMenuElement] = React.useState<null | HTMLElement>(null);
   const [currentUser, setCurrentUser] = React.useState<any>(null);
+  const [profileAnchorEl, setProfileAnchorEl] = React.useState<any>(null);
   const classes = useStyles();
   const commonCss = commonUseStyles();
   const DEVELOPER_CODE_URL = 'https://www.google.com'; //@todo This needs to be changed to the actual developer code
@@ -125,14 +127,28 @@ const MenuBar: React.FC<IProps> = ({ Api, onSetNotificationSettings }) => {
     }
   }
 
+  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setProfileAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setProfileAnchorEl(null);
+  };
+
   return (
     <section className={`${classes.menubarContainer} ${commonCss.flexColumn}`}>
       {!!currentUser === true && (
-        <Button onClick={handleOpenMenu}>
+        <div
+          aria-owns={Boolean(profileAnchorEl) ? 'mouse-over-popover' : undefined}
+          aria-haspopup="true"
+          onMouseEnter={handlePopoverOpen}
+          // onMouseLeave={handlePopoverClose}
+          // onClick={handleOpenMenu}
+        >
           <div className={`${classes.menubarTitle} ${commonCss.flexColumn}`}>
             <img src={currentUser.photoURL} alt="Current User" className={classes.menubarUser} />
           </div>
-        </Button>
+        </div>
       )}
       <Menu
         id="current-user-menu"
@@ -166,6 +182,7 @@ const MenuBar: React.FC<IProps> = ({ Api, onSetNotificationSettings }) => {
           </div>
         );
       })}
+      <ProfilePopover anchorEl={profileAnchorEl} onHandlePopoverClose={handlePopoverClose} />
     </section>
   );
 };
