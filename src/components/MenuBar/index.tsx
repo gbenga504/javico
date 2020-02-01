@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Tooltip, Menu, MenuItem, Button } from '@material-ui/core';
-import { TwitterShareButton } from 'react-share';
 
 import { useStyles } from './styles';
-import { useStyles as commonUseStyles } from '../../Css';
+import { useStyles as commonUseStyles, color } from '../../Css';
 import { Icon, withNotificationBanner } from '../../atoms';
 import { withApi } from '../../utils/ApiConnector';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
+import ShareIcon from './ShareIcon';
+import { getIdFromUrl } from '../../utils/UrlUtils';
 
 interface IProps {
   Api: any;
@@ -36,18 +37,23 @@ const iconList = (fullScreenMode: boolean) => [
     action: 'toggleFullScreen',
     icon: fullScreenMode === false ? 'ios-expand' : 'ios-contract',
   },
-  { text: 'Share code', action: 'shareCodeViaTwitter', icon: 'ios-share-alt' },
+  { text: 'Share code', action: 'toggleCodeOptions', icon: 'ios-share-alt' },
   { text: 'Sign in', action: 'signInWithGithub', icon: 'logo-github' },
   { text: 'Light theme', action: '', icon: 'ios-bulb' },
 ];
 
+const shareOptionsList = [
+  { name: 'twitter', color: color.themeBlue, text: 'Share to twitter', iconName: 'logo-twitter' },
+  { name: 'copy', color: '#757575', text: 'Copy sourcecode link', iconName: 'ios-copy' },
+];
+
 const MenuBar: React.FC<IProps> = ({ Api, onSetNotificationSettings }) => {
   const [fullScreenMode, setFullScreenMode] = useState<boolean>(!!fullScreenEnabled);
+  const [showShareOptions, setShowShareOptions] = useState<boolean | null>(null);
   const [menuElement, setMenuElement] = React.useState<null | HTMLElement>(null);
   const [currentUser, setCurrentUser] = React.useState<any>(null);
   const classes = useStyles();
   const commonCss = commonUseStyles();
-  const DEVELOPER_CODE_URL = 'https://www.google.com'; //@todo This needs to be changed to the actual developer code
 
   useEffect(() => {
     window.addEventListener('resize', function() {
@@ -112,6 +118,10 @@ const MenuBar: React.FC<IProps> = ({ Api, onSetNotificationSettings }) => {
       });
   }
 
+  function handleShowShareOptions() {
+    setShowShareOptions(!showShareOptions);
+  }
+
   function triggerAction(action: string) {
     switch (action) {
       case 'toggleFullScreen':
@@ -119,6 +129,9 @@ const MenuBar: React.FC<IProps> = ({ Api, onSetNotificationSettings }) => {
         break;
       case 'signInWithGithub':
         handleSignInWithGithub();
+        break;
+      case 'toggleCodeOptions':
+        handleShowShareOptions();
         break;
       default:
         break;
@@ -143,26 +156,35 @@ const MenuBar: React.FC<IProps> = ({ Api, onSetNotificationSettings }) => {
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
       {iconList(fullScreenMode).map(el => {
-        return el.text === 'Sign in' && !!currentUser === true ? null : (
-          <div
-            key={el.icon}
-            className={`${commonCss.flexRow} ${commonCss.center} ${classes.menubarIcon}`}
-            onClick={() => triggerAction(el.action)}>
-            {el.action === 'shareCodeViaTwitter' ? (
-              <TwitterShareButton url={DEVELOPER_CODE_URL}>
-                <Tooltip title={el.text} placement="bottom" enterDelay={100}>
-                  <span className={commonCss.flexRow}>
-                    <Icon name={el.icon} />
-                  </span>
-                </Tooltip>
-              </TwitterShareButton>
-            ) : (
-              <Tooltip title={el.text} placement="bottom" enterDelay={100}>
+        if (el.text === 'Share code' && !getIdFromUrl()) return null;
+        if (el.text === 'Sign in' && !!currentUser === true) return null;
+        return (
+          <div style={{ position: 'relative' }}>
+            <div
+              key={el.icon}
+              className={`${commonCss.flexRow} ${commonCss.center} ${classes.menubarIcon}`}
+              onClick={() => triggerAction(el.action)}>
+              <Tooltip title={el.text} leaveDelay={300} placement="bottom" enterDelay={100}>
                 <span className={commonCss.flexRow}>
                   <Icon name={el.icon} />
                 </span>
               </Tooltip>
-            )}
+            </div>
+            {el.action === 'toggleCodeOptions' &&
+              shareOptionsList.map((el, i) => {
+                return (
+                  <ShareIcon
+                    key={i}
+                    index={i}
+                    iconName={el.iconName}
+                    color={el.color}
+                    text={el.text}
+                    showShareOptions={showShareOptions}
+                    onSetNotificationSettings={onSetNotificationSettings}
+                    onHandleShowShareOptions={handleShowShareOptions}
+                  />
+                );
+              })}
           </div>
         );
       })}
