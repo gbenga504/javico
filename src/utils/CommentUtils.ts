@@ -53,7 +53,8 @@ export default class CommentUtils {
       });
     }
 
-    let next = Object.values(CommentUtils.__COMMENT_STORE)[0].clientTimestamp;
+    let firstComment = Object.values(CommentUtils.__COMMENT_STORE)[0];
+    let next = (firstComment && firstComment.clientTimestamp) || null;
     CommentUtils.next = temp.length === 0 || CommentUtils.next === null ? null : next;
     return { comments: Object.values(CommentUtils.__COMMENT_STORE), next: CommentUtils.next };
   }
