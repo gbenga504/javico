@@ -10,6 +10,7 @@ interface IPayload {
     };
     text: string;
     codeReference?: string;
+    clientTimestamp?: string;
   };
   params: {
     sourceCodeID: string;
@@ -33,12 +34,7 @@ export interface IComment {
   createdAt: number;
   numReplies: number;
   updatedAt?: string;
-}
-
-export interface ICommentDateSeperator {
-  id: string;
-  type: 'seperator';
-  text: string;
+  clientTimestamp: number;
 }
 
 export default class CommentService {
@@ -46,7 +42,12 @@ export default class CommentService {
     const { data, params } = payload;
     return Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments`)
-      .add({ ...data, numReplies: 0, createdAt: Api.app.firestore.FieldValue.serverTimestamp() });
+      .add({
+        ...data,
+        numReplies: 0,
+        createdAt: Api.app.firestore.FieldValue.serverTimestamp(),
+        clientTimestamp: Date.now(),
+      });
   };
 
   static deleteComment = (payload: IPayload): Promise<any> => {
@@ -69,9 +70,9 @@ export default class CommentService {
     const { params } = payload;
     return Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments`)
-      .orderBy('createdAt', 'desc')
+      .orderBy('clientTimestamp', 'desc')
       .startAfter(params.after)
-      .limit(params.limit)
+      .limit(params.limit || 15)
       .get();
   };
 
@@ -84,8 +85,8 @@ export default class CommentService {
     const { params } = payload;
     Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments`)
-      .orderBy('createdAt', 'desc')
-      .limit(params.limit)
+      .orderBy('clientTimestamp', 'desc')
+      .limit(params.limit || 15)
       .onSnapshot(handleDataChanged, handleError);
   };
 }

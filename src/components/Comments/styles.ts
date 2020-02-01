@@ -25,6 +25,7 @@ export const useStyles = makeStyles(theme => ({
     bottom: 0,
     right: 0,
     left: 0,
+    zIndex: 4000,
     backgroundImage: 'linear-gradient(to top,rgba(28, 32, 34) 70%,rgba(28, 32, 34, 0.1) 100%)',
   },
   commentInputFieldContainer: {

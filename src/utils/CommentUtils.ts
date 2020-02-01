@@ -1,16 +1,19 @@
-import { getReadableDate } from './TimeUtils';
-import { IComment, ICommentDateSeperator } from '../services/CommentsServices';
+import { IComment } from '../services/CommentsServices';
 
 interface ICommentStore {
-  [key: string]: IComment | ICommentDateSeperator;
+  [key: string]: IComment;
 }
 
 export default class CommentUtils {
   static __COMMENT_STORE = {} as ICommentStore;
-  static previousDate: number | null = null;
+  static next = undefined as null | undefined | number;
 
-  static parseComments(comments: any) {
+  static parseComments(
+    comments: any,
+    action?: 'fetchMore' | null,
+  ): { comments: IComment[]; next: null | number } {
     let temp: any = [];
+    let tempStore: any = {};
     let didStoreUpdate: boolean = false;
 
     comments.forEach((comment: any) => {
@@ -21,22 +24,13 @@ export default class CommentUtils {
       if (comment.id in CommentUtils.__COMMENT_STORE === false) {
         let seconds =
           (comment.createdAt && comment.createdAt.seconds * 1000) || new Date().getTime();
-        let currentDate = new Date(seconds).getDate();
-        if (currentDate !== CommentUtils.previousDate) {
-          CommentUtils.__COMMENT_STORE[`${seconds}`] = {
-            id: `${seconds}`,
-            type: 'seperator',
-            text: getReadableDate(seconds),
-          };
-          CommentUtils.previousDate = currentDate;
-        }
-        CommentUtils.__COMMENT_STORE[comment.id] = { ...comment, createdAt: seconds };
+        tempStore[comment.id] = { ...comment, createdAt: seconds };
         didStoreUpdate = true;
       } else if (
         comment.id in CommentUtils.__COMMENT_STORE === true &&
         CommentUtils.__COMMENT_STORE[comment.id].text !== comment.text
       ) {
-        CommentUtils.__COMMENT_STORE[comment.id] = {
+        tempStore[comment.id] = {
           ...CommentUtils.__COMMENT_STORE[comment.id],
           text: comment.text,
           updatedAt: comment.updatedAt || new Date().getTime(),
@@ -44,6 +38,12 @@ export default class CommentUtils {
         didStoreUpdate = true;
       }
     });
+
+    if (action === 'fetchMore') {
+      CommentUtils.__COMMENT_STORE = { ...tempStore, ...CommentUtils.__COMMENT_STORE };
+    } else {
+      CommentUtils.__COMMENT_STORE = { ...CommentUtils.__COMMENT_STORE, ...tempStore };
+    }
 
     if (didStoreUpdate === false) {
       comments.docChanges().forEach(function(change: any) {
@@ -53,6 +53,8 @@ export default class CommentUtils {
       });
     }
 
-    return Object.values(CommentUtils.__COMMENT_STORE);
+    let next = Object.values(CommentUtils.__COMMENT_STORE)[0].clientTimestamp;
+    CommentUtils.next = temp.length === 0 || CommentUtils.next === null ? null : next;
+    return { comments: Object.values(CommentUtils.__COMMENT_STORE), next: CommentUtils.next };
   }
 }

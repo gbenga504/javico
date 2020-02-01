@@ -5,11 +5,12 @@ import { useStyles } from './styles';
 import { useStyles as commonUseStyles } from '../../Css';
 import { Typography, Icon, withNotificationBanner } from '../../atoms';
 import Comment from './Comment';
-import CommentService, { IComment, ICommentDateSeperator } from '../../services/CommentsServices';
+import CommentService, { IComment } from '../../services/CommentsServices';
 import ContentLoader from '../../atoms/ContentLoader';
 import { withApi } from '../../utils/ApiConnector';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import CommentUtils from '../../utils/CommentUtils';
+import { getReadableDate } from '../../utils/TimeUtils';
 
 interface IProps {
   Api: any;
@@ -29,7 +30,8 @@ const Comments: React.FC<IProps> = ({
   const [quotedComment, setQuotedComment] = useState<string>('');
   const [newComment, setNewComment] = useState<string>('');
   const [isLoadingComments, setIsLoadingComments] = useState<boolean>(false);
-  const [comments, setComments] = useState<Array<IComment | ICommentDateSeperator>>([]);
+  const [nextCursor, setNextCursor] = useState<null | number>(null);
+  const [comments, setComments] = useState<Array<IComment>>([]);
   const classes = useStyles();
   const commonCss = commonUseStyles();
   const commentInputRef = useRef<any>(null);
@@ -47,7 +49,8 @@ const Comments: React.FC<IProps> = ({
         CommentService.onSnapshotChanged(
           { params: { sourceCodeID: sourceCodeId, limit: 15 } },
           function(querySnapshot: Array<any>) {
-            const comments = CommentUtils.parseComments(querySnapshot);
+            const { comments, next } = CommentUtils.parseComments(querySnapshot);
+            setNextCursor(next);
             setIsLoadingComments(false);
             setComments(comments);
             focusLastComment();
@@ -69,16 +72,22 @@ const Comments: React.FC<IProps> = ({
       if (
         tempCommentContainerRef.scrollTop <= 40 &&
         isLoadingComments !== true &&
-        visible === true
+        visible === true &&
+        nextCursor !== null
       ) {
         /**
          * load more comments
          * and set isLoadingMoreComments = true
          */
-        CommentService.fetchMoreComments({
-          params: { sourceCodeID: sourceCodeId, after: comments },
-        });
         setIsLoadingComments(true);
+        CommentService.fetchMoreComments({
+          params: { sourceCodeID: sourceCodeId, after: comments[0].clientTimestamp, limit: 15 },
+        }).then(function(querySnapshot: Array<any>) {
+          const { comments, next } = CommentUtils.parseComments(querySnapshot, 'fetchMore');
+          setNextCursor(next);
+          setIsLoadingComments(false);
+          setComments(comments);
+        });
       }
     }
 
@@ -86,7 +95,7 @@ const Comments: React.FC<IProps> = ({
     return () => {
       tempCommentContainerRef.removeEventListener('scroll', handleScroll);
     };
-  }, [visible, comments, isLoadingComments, sourceCodeId]);
+  }, [visible, comments, isLoadingComments, sourceCodeId, nextCursor]);
 
   function focusLastComment() {
     /**
@@ -161,16 +170,16 @@ const Comments: React.FC<IProps> = ({
     }
   }
 
-  function renderDateSeperator(date: string, id: string) {
+  function renderDateSeperator(date: number) {
     return (
-      <React.Fragment key={id}>
+      <React.Fragment>
         <div className={classes.commentDateSeperatorContainer}>
           <hr className={classes.commentDateSeperatorHr} />
         </div>
         <div className={classes.commentStickyDateContainer}>
           <div>
             <Typography thickness="semi-bold" className={classes.commentDateSeperatorText}>
-              {date}
+              {getReadableDate(date)}
             </Typography>
           </div>
         </div>
@@ -189,28 +198,32 @@ const Comments: React.FC<IProps> = ({
   }
 
   function renderComments() {
+    let previousDate: number | null = null;
     return (
       <>
-        {isLoadingComments === true && renderContentLoaders()}
-        {comments.map(comment => {
-          return comment.type !== 'seperator' ? (
-            <Comment
-              key={comment.id}
-              text={comment.text}
-              codeReference={comment.codeReference}
-              id={comment.id}
-              authorName={comment.author.name}
-              authorPhotoURL={comment.author.photoURL}
-              userId={user.uid}
-              authorId={comment.author.id}
-              numReplies={comment.numReplies}
-              createdAt={comment.createdAt}
-              onHandleReply={handleQuoteComment}
-              sourceCodeId={sourceCodeId}
-            />
-          ) : (
-            renderDateSeperator(comment.text, comment.id)
+        {comments.map((comment, index) => {
+          let currentDate = new Date(comment.createdAt).getDate();
+          let component = (
+            <React.Fragment key={comment.id}>
+              {currentDate !== previousDate && renderDateSeperator(comment.createdAt)}
+              {isLoadingComments === true && index === 0 && renderContentLoaders()}
+              <Comment
+                text={comment.text}
+                codeReference={comment.codeReference}
+                id={comment.id}
+                authorName={comment.author.name}
+                authorPhotoURL={comment.author.photoURL}
+                userId={user.uid}
+                authorId={comment.author.id}
+                numReplies={comment.numReplies}
+                createdAt={comment.createdAt}
+                onHandleReply={handleQuoteComment}
+                sourceCodeId={sourceCodeId}
+              />
+            </React.Fragment>
           );
+          currentDate !== previousDate && (previousDate = currentDate);
+          return component;
         })}
       </>
     );
