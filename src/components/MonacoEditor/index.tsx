@@ -25,6 +25,7 @@ interface IProps {
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
   Api: any;
   user: any;
+  sourceCodeId: string;
 }
 
 const MonacoEditor: React.FC<IProps> = ({
@@ -39,6 +40,7 @@ const MonacoEditor: React.FC<IProps> = ({
   user: _user,
   ownerId,
   Api,
+  sourceCodeId,
 }) => {
   const [shouldDisplayCommentBox, setShouldDisplayCommentBox] = useState<boolean>(false);
   const [shouldDisplayCommentIcon, setShouldDisplayCommentIcon] = useState<boolean>(false);
@@ -46,7 +48,7 @@ const MonacoEditor: React.FC<IProps> = ({
   const [isMonacoReady, setIsMonacoReady] = useState<boolean>(false);
   const [isEditorReady, setIsEditorReady] = useState<boolean>(false);
   const [selectionRange, setSelectionRange] = useState<any>(null);
-  const [selectionValue, setSelectionValue] = useState<any>(null);
+  const [selectionValue, setSelectionValue] = useState<string>('');
   const [user, setUser] = useState<any>(_user);
   const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
   const [sourceCode, setSourceCode] = useState('');
@@ -136,7 +138,7 @@ const MonacoEditor: React.FC<IProps> = ({
   }, [theme]);
 
   useEffect(() => {
-    if (selectionValue) {
+    if (!!selectionValue === true) {
       setShouldDisplayCommentIcon(true);
     }
   }, [selectionValue, selectionRange]);
@@ -185,7 +187,8 @@ const MonacoEditor: React.FC<IProps> = ({
   function handleHideCommentBox() {
     setShouldDisplayCommentBox(false);
     setSelectionRange(null);
-    setSelectionValue(null);
+    setSelectionValue('');
+    setShouldDisplayCommentIcon(false);
     editorRef.current.getModel().setValue(sourceCode);
   }
 
@@ -329,6 +332,8 @@ const MonacoEditor: React.FC<IProps> = ({
             onOpenSignInModal={handleOpenSignInModal}
             user={user}
             mousePosition={mousePosition}
+            sourceCodeId={sourceCodeId}
+            codeReference={selectionValue}
           />
         )}
       </div>

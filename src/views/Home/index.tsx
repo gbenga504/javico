@@ -121,6 +121,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
             ownerId={fetchedSourceCode.ownerId}
             onSetSourcecodeOwner={setSourcecodeOwner}
             user={user}
+            sourceCodeId={fetchedSourceCode.sourceCodeId}
           />
           <div className={classes.mainRightSection}>
             <div
