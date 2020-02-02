@@ -26,6 +26,8 @@ interface IProps {
   Api: any;
   user: any;
   sourceCodeId: string;
+  currentSection: 'comments' | 'console';
+  onChangeCurrentSection: () => void;
 }
 
 const MonacoEditor: React.FC<IProps> = ({
@@ -41,6 +43,8 @@ const MonacoEditor: React.FC<IProps> = ({
   ownerId,
   Api,
   sourceCodeId,
+  currentSection,
+  onChangeCurrentSection,
 }) => {
   const [shouldDisplayCommentBox, setShouldDisplayCommentBox] = useState<boolean>(false);
   const [shouldDisplayCommentIcon, setShouldDisplayCommentIcon] = useState<boolean>(false);
@@ -334,6 +338,8 @@ const MonacoEditor: React.FC<IProps> = ({
             mousePosition={mousePosition}
             sourceCodeId={sourceCodeId}
             codeReference={selectionValue}
+            currentSection={currentSection}
+            onChangeCurrentSection={onChangeCurrentSection}
           />
         )}
       </div>

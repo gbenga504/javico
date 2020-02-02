@@ -16,6 +16,8 @@ interface IProps {
   sourceCodeId: string;
   codeReference: string;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
+  currentSection: 'comments' | 'console';
+  onChangeCurrentSection: () => void;
 }
 
 const MuiTabs = withStyles({
@@ -58,6 +60,8 @@ const InlineCodeComment: React.FC<IProps> = ({
   sourceCodeId,
   codeReference,
   onSetNotificationSettings,
+  currentSection,
+  onChangeCurrentSection,
 }) => {
   const [comment, setComment] = useState('');
   const [currentTab, setCurrentTab] = useState(0);
@@ -99,6 +103,7 @@ const InlineCodeComment: React.FC<IProps> = ({
           setIsCreatingComment(false);
           onHideCommentBox();
           handleCancelComment(res);
+          currentSection !== 'comments' && onChangeCurrentSection();
         })
         .catch(err => {
           setIsCreatingComment(false);

@@ -21,7 +21,7 @@ interface IProps {
 
 const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
   const [terminalExecutableCode, setTerminalExecutableCode] = useState('');
-  const [currentSection, setCurrentSection] = useState('console');
+  const [currentSection, setCurrentSection] = useState<'comments' | 'console'>('console');
   const [user, setUser] = useState<any>(null);
   const [isLoading, setisLoading] = useState<boolean>(false);
   const [fetchedSourceCode, setFetchedSourceCode] = useState({
@@ -117,11 +117,13 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
           <MonacoEditor
             onHandleLoading={toggleIsLoading}
             onRunSourceCode={setTerminalExecutableCode}
+            onChangeCurrentSection={handleToggleView}
             fetchedSourceCode={fetchedSourceCode.sourceCode}
             ownerId={fetchedSourceCode.ownerId}
             onSetSourcecodeOwner={setSourcecodeOwner}
             user={user}
             sourceCodeId={fetchedSourceCode.sourceCodeId}
+            currentSection={currentSection}
           />
           <div className={classes.mainRightSection}>
             <div
