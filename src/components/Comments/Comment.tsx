@@ -2,23 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { makeStyles, Menu, MenuItem, CircularProgress } from '@material-ui/core';
 
 import { useStyles as commonUseStyles, padding, color, fontsize } from '../../Css';
-import { Typography, Icon } from '../../atoms';
+import { Typography, Icon, withNotificationBanner } from '../../atoms';
 import Reply from './Reply';
 import SyntaxHighlighter from '../SyntaxHighlighter';
 import DeleteMessageModal from '../DeleteMessageModal';
 import EditMessagePanel from '../EditMessagePanel';
 import { parseTime } from '../../utils/TimeUtils';
 import { IReply } from '../../services/CommentReplyServices';
+import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
+import CommentService from '../../services/CommentsServices';
 
 interface IProps {
-  text: any;
+  text: string;
   codeReference?: string;
   id: string;
   authorName: string;
   authorPhotoURL: string;
-  createdAt: string;
+  createdAt: number;
   numReplies: number;
   onHandleReply: (comment: string) => void;
+  onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
+  sourceCodeId: string;
+  userId: string;
+  authorId: string;
 }
 
 const Comment: React.FC<IProps> = ({
@@ -30,6 +36,10 @@ const Comment: React.FC<IProps> = ({
   numReplies,
   createdAt,
   onHandleReply,
+  sourceCodeId,
+  onSetNotificationSettings,
+  userId,
+  authorId,
 }) => {
   const [isRepliesVisible, setIsRepliesVisible] = useState<boolean>(false);
   const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | HTMLElement>(null);
@@ -82,6 +92,14 @@ const Comment: React.FC<IProps> = ({
 
   function handleDeleteComment() {
     setIsDeleteCommentLoading(true);
+    CommentService.deleteComment({ params: { sourceCodeID: sourceCodeId, ID: id } })
+      .then(res => {
+        setIsDeleteCommentLoading(false);
+        setIsConfirmDeleteModalVisible(false);
+      })
+      .catch(error => {
+        onSetNotificationSettings(error, 'danger', 'long');
+      });
   }
 
   function handleCommentChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -98,7 +116,22 @@ const Comment: React.FC<IProps> = ({
   }
 
   function handleEditMessage() {
+    if (text.trim() === editableComment.trim()) {
+      handleCloseEditMessagePanel();
+      return;
+    }
     setIsEditingComment(true);
+    CommentService.updateComment({
+      data: { text: editableComment.trim() },
+      params: { sourceCodeID: sourceCodeId, ID: id },
+    })
+      .then(res => {
+        setIsEditingComment(false);
+        setIsEditMessagePanelVisible(false);
+      })
+      .catch(error => {
+        onSetNotificationSettings(error, 'danger', 'long');
+      });
   }
 
   function handleLoadMoreReplies() {
@@ -117,8 +150,8 @@ const Comment: React.FC<IProps> = ({
         open={Boolean(optionsAnchorEl)}
         onClose={handleCloseOptions}>
         <MenuItem onClick={() => handleReplyComment(text)}>Reply</MenuItem>
-        <MenuItem onClick={handleOpenEditMessagePanel}>Edit</MenuItem>
-        <MenuItem onClick={handleOpenConfirmDeleteModal}>Delete</MenuItem>
+        {authorId === userId && <MenuItem onClick={handleOpenEditMessagePanel}>Edit</MenuItem>}
+        {authorId === userId && <MenuItem onClick={handleOpenConfirmDeleteModal}>Delete</MenuItem>}
       </Menu>
     );
   }
@@ -207,7 +240,7 @@ const Comment: React.FC<IProps> = ({
         {codeReference && (
           <SyntaxHighlighter containerStyle={{ marginTop: 5 }} sourceCode={codeReference} />
         )}
-        {numReplies && numReplies > 0 && renderReplies()}
+        {!!numReplies === true && numReplies > 0 && renderReplies()}
       </div>
       {renderMenuOptions()}
       <DeleteMessageModal
@@ -266,6 +299,7 @@ const useStyles = makeStyles(theme => ({
   commentTime: {
     fontSize: fontsize.xsmall,
     color: `#ABABAD !important`,
+    marginLeft: 5,
   },
   commentUserComment: {
     fontSize: fontsize.small + 0.5,
@@ -277,4 +311,4 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default Comment;
+export default withNotificationBanner(React.memo(Comment));

@@ -3,15 +3,34 @@ import { TextareaAutosize } from '@material-ui/core';
 
 import { useStyles } from './styles';
 import { useStyles as commonUseStyles } from '../../Css';
-import { Typography, Icon } from '../../atoms';
+import { Typography, Icon, withNotificationBanner } from '../../atoms';
 import Comment from './Comment';
-import { IComment } from '../../services/CommentsServices';
+import CommentService, { IComment } from '../../services/CommentsServices';
 import ContentLoader from '../../atoms/ContentLoader';
+import { withApi } from '../../utils/ApiConnector';
+import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
+import CommentUtils from '../../utils/CommentUtils';
+import { getReadableDate } from '../../utils/TimeUtils';
 
-const Comments: React.FC<{ visible: boolean }> = ({ visible }) => {
+interface IProps {
+  Api: any;
+  visible: boolean;
+  onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
+  sourceCodeId: string;
+  user: any;
+}
+
+const Comments: React.FC<IProps> = ({
+  visible,
+  onSetNotificationSettings,
+  Api,
+  sourceCodeId,
+  user,
+}) => {
   const [quotedComment, setQuotedComment] = useState<string>('');
   const [newComment, setNewComment] = useState<string>('');
   const [isLoadingComments, setIsLoadingComments] = useState<boolean>(false);
+  const [nextCursor, setNextCursor] = useState<null | number>(null);
   const [comments, setComments] = useState<Array<IComment>>([]);
   const classes = useStyles();
   const commonCss = commonUseStyles();
@@ -20,15 +39,26 @@ const Comments: React.FC<{ visible: boolean }> = ({ visible }) => {
 
   useEffect(() => {
     if (visible === true) {
-      if (comments.length === 0 && isLoadingComments === false) {
+      if (comments.length === 0 && isLoadingComments === false && !!sourceCodeId === true) {
         /**
          * Initialize the load process using the API
          * and set comment loading state to false after success or error
          * also focus last comment after successful load
          */
         setIsLoadingComments(true);
-        focusLastComment();
-        setComments([]);
+        CommentService.onSnapshotChanged(
+          { params: { sourceCodeID: sourceCodeId, limit: 15 } },
+          function(querySnapshot: Array<any>) {
+            const { comments, next } = CommentUtils.parseComments(querySnapshot);
+            setNextCursor(next);
+            setIsLoadingComments(false);
+            setComments(comments);
+            focusLastComment();
+          },
+          function(error: any) {
+            onSetNotificationSettings(error, 'danger', 'long');
+          },
+        );
       }
       focusCommentInput();
     }
@@ -36,22 +66,36 @@ const Comments: React.FC<{ visible: boolean }> = ({ visible }) => {
   }, [visible]);
 
   useEffect(() => {
+    let tempCommentContainerRef: any = commentContainerRef.current;
+
     function handleScroll() {
-      if (commentContainerRef.current.scrollTop <= 40 && isLoadingComments !== true) {
+      if (
+        tempCommentContainerRef.scrollTop <= 40 &&
+        isLoadingComments !== true &&
+        visible === true &&
+        nextCursor !== null
+      ) {
         /**
          * load more comments
          * and set isLoadingMoreComments = true
          */
         setIsLoadingComments(true);
+        CommentService.fetchMoreComments({
+          params: { sourceCodeID: sourceCodeId, after: comments[0].clientTimestamp, limit: 15 },
+        }).then(function(querySnapshot: Array<any>) {
+          const { comments, next } = CommentUtils.parseComments(querySnapshot, 'fetchMore');
+          setNextCursor(next);
+          setIsLoadingComments(false);
+          setComments(comments);
+        });
       }
     }
 
-    window.addEventListener('scroll', handleScroll);
+    tempCommentContainerRef.addEventListener('scroll', handleScroll);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      tempCommentContainerRef.removeEventListener('scroll', handleScroll);
     };
-    // eslint-disable-next-line
-  }, []);
+  }, [visible, comments, isLoadingComments, sourceCodeId, nextCursor]);
 
   function focusLastComment() {
     /**
@@ -82,27 +126,64 @@ const Comments: React.FC<{ visible: boolean }> = ({ visible }) => {
   }
 
   function handleRemoveQuotedComment(event: React.KeyboardEvent) {
+    //Remove quoted comment when user presses the delete button
     if (event.keyCode === 8 && !!quotedComment === true && newComment.length === 0) {
       setQuotedComment('');
     }
+
+    //Send comment when user presses enter and the shift key is not pressed
+    if (event.keyCode === 13 && event.shiftKey === false) {
+      event.preventDefault();
+      handleSendComment();
+    }
   }
 
-  function handleSendComment() {}
+  function handleSendComment() {
+    if (newComment.trim().length > 0) {
+      const user = Api.getCurrentUser();
 
-  function renderDateSeperator(date: string, id: string) {
+      if (!!user === false) {
+        onSetNotificationSettings('Please login to add a review', 'danger', 'long');
+      } else if (!!sourceCodeId === false) {
+        onSetNotificationSettings(
+          'Cannot make comment on an unsaved source code',
+          'danger',
+          'long',
+        );
+      } else {
+        CommentService.createComment({
+          data: {
+            sourceCodeId,
+            author: {
+              id: user.uid,
+              name: user.displayName,
+              photoURL: user.photoURL,
+            },
+            text: newComment,
+          },
+          params: {
+            sourceCodeID: sourceCodeId,
+          },
+        }).catch(err => onSetNotificationSettings(err, 'danger', 'long'));
+        setNewComment('');
+      }
+    }
+  }
+
+  function renderDateSeperator(date: number) {
     return (
-      <>
-        <div className={classes.commentDateSeperatorContainer} key={id}>
+      <React.Fragment>
+        <div className={classes.commentDateSeperatorContainer}>
           <hr className={classes.commentDateSeperatorHr} />
         </div>
-        <div className={classes.commentStickyDateContainer} key={`${Number(id) + 1}`}>
+        <div className={classes.commentStickyDateContainer}>
           <div>
             <Typography thickness="semi-bold" className={classes.commentDateSeperatorText}>
-              {date}
+              {getReadableDate(date)}
             </Typography>
           </div>
         </div>
-      </>
+      </React.Fragment>
     );
   }
 
@@ -117,25 +198,32 @@ const Comments: React.FC<{ visible: boolean }> = ({ visible }) => {
   }
 
   function renderComments() {
+    let previousDate: number | null = null;
     return (
       <>
-        {isLoadingComments === true && renderContentLoaders()}
-        {comments.map(comment => {
-          return comment.type !== 'seperator' ? (
-            <Comment
-              key={comment.id}
-              text={comment.text}
-              codeReference={comment.codeReference}
-              id={comment.id}
-              authorName={comment.author.name}
-              authorPhotoURL={comment.author.photoURL}
-              numReplies={comment.numReplies}
-              createdAt={comment.createdAt}
-              onHandleReply={handleQuoteComment}
-            />
-          ) : (
-            renderDateSeperator(comment.text, comment.id)
+        {comments.map((comment, index) => {
+          let currentDate = new Date(comment.createdAt).getDate();
+          let component = (
+            <React.Fragment key={comment.id}>
+              {currentDate !== previousDate && renderDateSeperator(comment.createdAt)}
+              {isLoadingComments === true && index === 0 && renderContentLoaders()}
+              <Comment
+                text={comment.text}
+                codeReference={comment.codeReference}
+                id={comment.id}
+                authorName={comment.author.name}
+                authorPhotoURL={comment.author.photoURL}
+                userId={user.uid}
+                authorId={comment.author.id}
+                numReplies={comment.numReplies}
+                createdAt={comment.createdAt}
+                onHandleReply={handleQuoteComment}
+                sourceCodeId={sourceCodeId}
+              />
+            </React.Fragment>
           );
+          currentDate !== previousDate && (previousDate = currentDate);
+          return component;
         })}
       </>
     );
@@ -191,4 +279,4 @@ const Comments: React.FC<{ visible: boolean }> = ({ visible }) => {
   );
 };
 
-export default Comments;
+export default withNotificationBanner(withApi(React.memo(Comments)));

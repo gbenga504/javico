@@ -18,13 +18,14 @@ export const useStyles = makeStyles(theme => ({
   commentsBody: {
     overflowY: 'scroll',
     marginTop: 38,
-    paddingBottom: theme.spacing(17),
+    paddingBottom: theme.spacing(25),
   },
   commentInput: {
     position: 'absolute',
     bottom: 0,
     right: 0,
     left: 0,
+    zIndex: 4,
     backgroundImage: 'linear-gradient(to top,rgba(28, 32, 34) 70%,rgba(28, 32, 34, 0.1) 100%)',
   },
   commentInputFieldContainer: {
@@ -91,7 +92,7 @@ export const useStyles = makeStyles(theme => ({
     paddingTop: 10,
     alignItems: 'center',
     background: color.deepBlue,
-    zIndex: 2000,
+    zIndex: 2,
   },
   commentDateSeperatorHr: {
     border: 0,
@@ -107,7 +108,7 @@ export const useStyles = makeStyles(theme => ({
     top: 12,
     position: 'sticky',
     display: 'flex',
-    zIndex: 3000,
+    zIndex: 3,
     justifyContent: 'center',
     '& div': {
       marginTop: -12,

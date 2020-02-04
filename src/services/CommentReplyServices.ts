@@ -7,6 +7,7 @@ interface IPayload {
   data?: {
     commentId: string;
     author: {
+      id: string;
       name: string;
       photoURL: string;
     };
@@ -29,7 +30,7 @@ export interface IReply {
   };
   text: string;
   id: string;
-  createdAt: string;
+  createdAt: number;
 }
 
 export default class CommentReplyService {
@@ -82,7 +83,7 @@ export default class CommentReplyService {
     return Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comment/${params.commentID}/replies`)
       .orderBy('createdAt', 'desc')
-      .startAfter(params.after)
+      .startAfter('createdAt', params.after)
       .limit(params.limit)
       .get();
   };

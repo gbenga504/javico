@@ -21,13 +21,14 @@ interface IProps {
 
 const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
   const [terminalExecutableCode, setTerminalExecutableCode] = useState('');
-  const [currentSection, setCurrentSection] = useState('console');
+  const [currentSection, setCurrentSection] = useState<'comments' | 'console'>('console');
   const [user, setUser] = useState<any>(null);
   const [isLoading, setisLoading] = useState<boolean>(false);
   const [fetchedSourceCode, setFetchedSourceCode] = useState({
     sourceCode: '',
     readme: '',
     ownerId: '',
+    sourceCodeId: '',
   });
   const classes = useStyles();
   const commonCss = commonUseStyles();
@@ -42,10 +43,6 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
     });
   }, [Api]);
 
-  function setSourcecodeOwner(data: any) {
-    setFetchedSourceCode({ ...fetchedSourceCode, ...data });
-  }
-
   useEffect(() => {
     if (getIdFromUrl()) {
       toggleIsLoading(true);
@@ -59,6 +56,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
             sourceCode,
             readme,
             ownerId,
+            sourceCodeId: res.id,
           });
         })
         .catch((error: any) => {
@@ -68,6 +66,10 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
     }
     // eslint-disable-next-line
   }, []);
+
+  function setSourcecodeOwner(data: any) {
+    setFetchedSourceCode({ ...fetchedSourceCode, ...data });
+  }
 
   function handleToggleView() {
     setCurrentSection(currentSection === 'console' ? 'comments' : 'console');
@@ -115,10 +117,13 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
           <MonacoEditor
             onHandleLoading={toggleIsLoading}
             onRunSourceCode={setTerminalExecutableCode}
+            onChangeCurrentSection={handleToggleView}
             fetchedSourceCode={fetchedSourceCode.sourceCode}
             ownerId={fetchedSourceCode.ownerId}
             onSetSourcecodeOwner={setSourcecodeOwner}
             user={user}
+            sourceCodeId={fetchedSourceCode.sourceCodeId}
+            currentSection={currentSection}
           />
           <div className={classes.mainRightSection}>
             <div
@@ -141,7 +146,11 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
                   : classes.hideRightSubSection
               }`}>
               <Suspense fallback={null}>
-                <Comments visible={currentSection === 'comments'} />
+                <Comments
+                  visible={currentSection === 'comments'}
+                  sourceCodeId={fetchedSourceCode.sourceCodeId}
+                  user={user}
+                />
               </Suspense>
             </div>
             {renderSwitchView()}

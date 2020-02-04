@@ -2,13 +2,15 @@ import Api from '../utils/ApiConnector';
 
 interface IPayload {
   data?: {
-    sourceCodeId: string;
-    author: {
+    sourceCodeId?: string;
+    author?: {
+      id: string;
       name: string;
       photoURL: string;
     };
     text: string;
     codeReference?: string;
+    clientTimestamp?: string;
   };
   params: {
     sourceCodeID: string;
@@ -21,6 +23,7 @@ interface IPayload {
 export interface IComment {
   sourceCodeId: string;
   author: {
+    id: string;
     name: string;
     photoURL: string;
   };
@@ -28,8 +31,10 @@ export interface IComment {
   codeReference?: string;
   type: 'comment' | 'seperator';
   id: string;
-  createdAt: string;
+  createdAt: number;
   numReplies: number;
+  updatedAt?: string;
+  clientTimestamp: number;
 }
 
 export default class CommentService {
@@ -37,7 +42,12 @@ export default class CommentService {
     const { data, params } = payload;
     return Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments`)
-      .add({ ...data, numReplies: 0, createdAt: Api.app.firestore.FieldValue.serverTimestamp() });
+      .add({
+        ...data,
+        numReplies: 0,
+        createdAt: Api.app.firestore.FieldValue.serverTimestamp(),
+        clientTimestamp: Date.now(),
+      });
   };
 
   static deleteComment = (payload: IPayload): Promise<any> => {
@@ -60,9 +70,9 @@ export default class CommentService {
     const { params } = payload;
     return Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments`)
-      .orderBy('createdAt', 'desc')
+      .orderBy('clientTimestamp', 'desc')
       .startAfter(params.after)
-      .limit(params.limit)
+      .limit(params.limit || 15)
       .get();
   };
 
@@ -75,8 +85,8 @@ export default class CommentService {
     const { params } = payload;
     Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments`)
-      .orderBy('createdAt', 'desc')
-      .limit(params.limit)
+      .orderBy('clientTimestamp', 'desc')
+      .limit(params.limit || 15)
       .onSnapshot(handleDataChanged, handleError);
   };
 }

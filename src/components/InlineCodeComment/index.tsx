@@ -6,16 +6,18 @@ import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import { withNotificationBanner, Typography, ButtonWithLoading } from '../../atoms';
 import { useStyles as commonUseStyles, color, fontsize } from '../../Css';
 import MarkdownRenderer from '../MarkDownRenderer';
+import CommentService from '../../services/CommentsServices';
 
 interface IProps {
-  visible: boolean;
   user: any;
   onHideCommentBox: any;
   mousePosition: any;
-  onRequestClose: () => null;
   onOpenSignInModal: () => null;
-  onSignInSuccess: (user: any) => null;
+  sourceCodeId: string;
+  codeReference: string;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
+  currentSection: 'comments' | 'console';
+  onChangeCurrentSection: () => void;
 }
 
 const MuiTabs = withStyles({
@@ -55,9 +57,15 @@ const InlineCodeComment: React.FC<IProps> = ({
   onOpenSignInModal,
   onHideCommentBox,
   mousePosition,
+  sourceCodeId,
+  codeReference,
+  onSetNotificationSettings,
+  currentSection,
+  onChangeCurrentSection,
 }) => {
   const [comment, setComment] = useState('');
   const [currentTab, setCurrentTab] = useState(0);
+  const [isCreatingComment, setIsCreatingComment] = useState<boolean>(false);
   const [isCommentBoxFocused, setIsCommentBoxFocused] = useState(true);
   const commentRef = useRef<any>(null);
   const commonCss = commonUseStyles();
@@ -75,10 +83,32 @@ const InlineCodeComment: React.FC<IProps> = ({
     if (!user) {
       onOpenSignInModal();
     } else {
-      /**
-       * @todo
-       * save comment in firestore and show loading symbol when saving
-       */
+      setIsCreatingComment(true);
+      CommentService.createComment({
+        data: {
+          sourceCodeId,
+          author: {
+            id: user.uid,
+            name: user.displayName,
+            photoURL: user.photoURL,
+          },
+          text: comment,
+          codeReference,
+        },
+        params: {
+          sourceCodeID: sourceCodeId,
+        },
+      })
+        .then(res => {
+          setIsCreatingComment(false);
+          onHideCommentBox();
+          handleCancelComment(res);
+          currentSection !== 'comments' && onChangeCurrentSection();
+        })
+        .catch(err => {
+          setIsCreatingComment(false);
+          onSetNotificationSettings(err, 'danger', 'long');
+        });
     }
   }
 
@@ -124,7 +154,7 @@ const InlineCodeComment: React.FC<IProps> = ({
               Cancel
             </Button>
             <ButtonWithLoading
-              loading={false}
+              loading={isCreatingComment}
               color="primary"
               variant="contained"
               onClick={handleSubmitComment}>

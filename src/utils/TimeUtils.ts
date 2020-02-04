@@ -11,12 +11,12 @@ function getNthDate(date: number): string {
   }
 }
 
-export function parseTime(time: string): string {
+export function parseTime(time: number): string {
   let date = new Date(time);
   return date.toLocaleString('default', { hour: 'numeric', minute: 'numeric', hour12: true });
 }
 
-export function getReadableDate(time: string): string {
+export function getReadableDate(time: number): string {
   let date = new Date(time);
   const month = date.toLocaleString('default', { month: 'long' });
   return `${month} ${getNthDate(date.getDate())}, ${date.getFullYear()}`;
