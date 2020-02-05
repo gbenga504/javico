@@ -10,7 +10,7 @@ interface IPayload {
     };
     text: string;
     codeReference?: string;
-    clientTimestamp?: string;
+    clientTimestamp?: number;
   };
   params: {
     sourceCodeID: string;
@@ -29,7 +29,6 @@ export interface IComment {
   };
   text: string;
   codeReference?: string;
-  type: 'comment' | 'seperator';
   id: string;
   createdAt: number;
   numReplies: number;
@@ -40,14 +39,12 @@ export interface IComment {
 export default class CommentService {
   static createComment = (payload: IPayload): Promise<any> => {
     const { data, params } = payload;
-    return Api.firestore
-      .collection(`source-codes/${params.sourceCodeID}/comments`)
-      .add({
-        ...data,
-        numReplies: 0,
-        createdAt: Api.app.firestore.FieldValue.serverTimestamp(),
-        clientTimestamp: Date.now(),
-      });
+    return Api.firestore.collection(`source-codes/${params.sourceCodeID}/comments`).add({
+      ...data,
+      numReplies: 0,
+      createdAt: Api.app.firestore.FieldValue.serverTimestamp(),
+      clientTimestamp: Date.now(),
+    });
   };
 
   static deleteComment = (payload: IPayload): Promise<any> => {

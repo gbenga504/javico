@@ -11,6 +11,7 @@ import { withApi } from '../../utils/ApiConnector';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import CommentUtils from '../../utils/CommentUtils';
 import { getReadableDate } from '../../utils/TimeUtils';
+import CommentReplyService from '../../services/CommentReplyServices';
 
 interface IProps {
   Api: any;
@@ -28,9 +29,10 @@ const Comments: React.FC<IProps> = ({
   user,
 }) => {
   const [quotedComment, setQuotedComment] = useState<string>('');
-  const [newComment, setNewComment] = useState<string>('');
+  const [idOfQuotedComment, setIdOfQuotedComment] = useState<string>('');
+  const [newMessage, setNewMessage] = useState<string>('');
   const [isLoadingComments, setIsLoadingComments] = useState<boolean>(false);
-  const [nextCursor, setNextCursor] = useState<null | number>(null);
+  const [nextCursor, setNextCursor] = useState<null | undefined | number>(null);
   const [comments, setComments] = useState<Array<IComment>>([]);
   const classes = useStyles();
   const commonCss = commonUseStyles();
@@ -116,30 +118,36 @@ const Comments: React.FC<IProps> = ({
     setTimeout(() => commentInputRef.current.focus(), 100);
   }
 
-  function handleQuoteComment(comment: string): void {
+  function handleQuoteComment(comment: string, commentId: string): void {
     setQuotedComment(comment);
+    setIdOfQuotedComment(commentId);
     focusCommentInput();
   }
 
   function handleCommentChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
-    setNewComment(event.target.value);
+    setNewMessage(event.target.value);
   }
 
   function handleRemoveQuotedComment(event: React.KeyboardEvent) {
     //Remove quoted comment when user presses the delete button
-    if (event.keyCode === 8 && !!quotedComment === true && newComment.length === 0) {
+    if (event.keyCode === 8 && !!quotedComment === true && newMessage.length === 0) {
       setQuotedComment('');
+      setIdOfQuotedComment('');
     }
 
     //Send comment when user presses enter and the shift key is not pressed
     if (event.keyCode === 13 && event.shiftKey === false) {
       event.preventDefault();
-      handleSendComment();
+      !!quotedComment === true ? handleSendReply() : handleSendComment();
     }
   }
 
+  function handleSendMessage() {
+    !!quotedComment === true ? handleSendReply() : handleSendComment();
+  }
+
   function handleSendComment() {
-    if (newComment.trim().length > 0) {
+    if (newMessage.trim().length > 0) {
       const user = Api.getCurrentUser();
 
       if (!!user === false) {
@@ -159,13 +167,44 @@ const Comments: React.FC<IProps> = ({
               name: user.displayName,
               photoURL: user.photoURL,
             },
-            text: newComment,
+            text: newMessage,
           },
           params: {
             sourceCodeID: sourceCodeId,
           },
         }).catch(err => onSetNotificationSettings(err, 'danger', 'long'));
-        setNewComment('');
+        setNewMessage('');
+      }
+    }
+  }
+
+  function handleSendReply() {
+    if (newMessage.trim().length > 0) {
+      const user = Api.getCurrentUser();
+
+      if (!!user === false) {
+        onSetNotificationSettings('Please login to add a review', 'danger', 'long');
+      } else if (!!sourceCodeId === false) {
+        onSetNotificationSettings('Cannot make reply on an unsaved source code', 'danger', 'long');
+      } else {
+        CommentReplyService.createReply({
+          data: {
+            author: {
+              id: user.uid,
+              name: user.displayName,
+              photoURL: user.photoURL,
+            },
+            text: newMessage,
+            commentId: idOfQuotedComment,
+          },
+          params: {
+            sourceCodeID: sourceCodeId,
+            commentID: idOfQuotedComment,
+          },
+        }).catch(err => onSetNotificationSettings(err, 'danger', 'long'));
+        setNewMessage('');
+        setQuotedComment('');
+        setIdOfQuotedComment('');
       }
     }
   }
@@ -213,7 +252,7 @@ const Comments: React.FC<IProps> = ({
                 id={comment.id}
                 authorName={comment.author.name}
                 authorPhotoURL={comment.author.photoURL}
-                userId={user.uid}
+                userId={(user && user.uid) || null}
                 authorId={comment.author.id}
                 numReplies={comment.numReplies}
                 createdAt={comment.createdAt}
@@ -258,13 +297,13 @@ const Comments: React.FC<IProps> = ({
             rowsMax={6}
             rows={1}
             ref={commentInputRef}
-            value={newComment}
+            value={newMessage}
             onChange={handleCommentChange}
             onKeyDown={handleRemoveQuotedComment}
           />
           <Icon
             className={classes.commentInputSendIcon}
-            onClick={handleSendComment}
+            onClick={handleSendMessage}
             name="send"
             style={{
               cursor:
