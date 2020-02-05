@@ -12,6 +12,7 @@ import InlineCodeComment from '../InlineCodeComment';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import { getIdFromUrl, updateUrl } from '../../utils/UrlUtils';
 import SourceCodeService from '../../services/SourceCodeServices';
+import SourceCodeTitleComponent from './SourceCodeTitle';
 
 interface IProps {
   value?: string;
@@ -424,33 +425,14 @@ const MonacoEditor: React.FC<IProps> = ({
   return (
     <>
       <div className={classes.monacoEditorContainer}>
-        <div className={classes.monacoEditorTitleHead}>
-          {!!sourceCodeTitle ? (
-            !isRenameTitle ? (
-              <span className={classes.monacoEditorTitle}>
-                <span style={{ fontSize: 14, padding: 5 }}>{renameTitleValue}.js</span>
-
-                <Icon
-                  className={`comment__hide-title-menu-icon`}
-                  onClick={handleShowOptions}
-                  name="more"
-                />
-              </span>
-            ) : (
-              <span
-                className={classes.monacoEditorTitle}
-                style={{ border: `1px solid ${color.themeBlue}` }}>
-                <input
-                  onKeyDown={handleRenameTitleInputKeydown}
-                  onChange={handleRenameTitleChange}
-                  className={classes.monacoEditorRenameTitleInput}
-                  value={renameTitleValue}
-                  autoFocus
-                />
-              </span>
-            )
-          ) : null}
-        </div>
+        <SourceCodeTitleComponent
+          onHandleShowOptions={handleShowOptions}
+          sourceCodeTitle={sourceCodeTitle}
+          isRenameTitle={isRenameTitle}
+          renameTitleValue={renameTitleValue}
+          onHandleRenameTitleChange={handleRenameTitleChange}
+          onHandleRenameTitleInputKeydown={handleRenameTitleInputKeydown}
+        />
         {renderTitleMenuOptions()}
         {renderLoading()}
         <div
