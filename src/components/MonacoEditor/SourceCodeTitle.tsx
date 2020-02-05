@@ -1,27 +1,126 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core';
+import React, { useState, useEffect } from 'react';
+import { makeStyles, MenuItem, Menu } from '@material-ui/core';
 
 import { color } from '../../Css';
-import { Icon } from '../../atoms';
+import { Icon, withNotificationBanner } from '../../atoms';
+import { getIdFromUrl } from '../../utils/UrlUtils';
+import SourceCodeService from '../../services/SourceCodeServices';
+import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 
 interface IProps {
   sourceCodeTitle: string;
-  onHandleRenameTitleChange: any;
-  isRenameTitle: boolean;
-  onHandleShowOptions: any;
-  renameTitleValue: string;
-  onHandleRenameTitleInputKeydown: any;
+  onHandleLoading: any;
+  sourceCode: string;
+  onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
 }
 
 const SourceCodeTitle: React.FC<IProps> = ({
+  onSetNotificationSettings,
   sourceCodeTitle,
-  onHandleRenameTitleChange,
-  isRenameTitle,
-  onHandleShowOptions,
-  renameTitleValue,
-  onHandleRenameTitleInputKeydown,
+  onHandleLoading,
+  sourceCode,
 }) => {
+  const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | HTMLElement>(null);
+  const [isRenameTitle, setIsRenameTitle] = useState<boolean>(false);
+  const [renameTitleValue, setRenameTitleValue] = useState<string>(sourceCodeTitle);
   const classes = useStyles();
+
+  useEffect(() => {
+    setRenameTitleValue(sourceCodeTitle);
+  }, [sourceCodeTitle]);
+
+  function handleShowOptions(event: React.MouseEvent<HTMLButtonElement>) {
+    setOptionsAnchorEl(event.currentTarget);
+  }
+
+  function handleCloseOptions() {
+    setOptionsAnchorEl(null);
+  }
+
+  function handleRenameTitle() {
+    setIsRenameTitle(true);
+    setOptionsAnchorEl(null);
+  }
+
+  function cancelRenameTitle(e: any) {
+    e = e || window.event;
+    var isEscape = false;
+    if ('key' in e) {
+      isEscape = e.key === 'Escape' || e.key === 'Esc';
+    } else {
+      isEscape = e.keyCode === 27;
+    }
+    if (isEscape) {
+      setIsRenameTitle(false);
+    }
+  }
+
+  function handleRenameTitleChange(event: any) {
+    setRenameTitleValue(event.target.value);
+  }
+
+  function saveRenameTitle(e: any) {
+    if (e.keyCode === 13) {
+      e.preventDefault();
+      onHandleLoading(true);
+      const id = getIdFromUrl();
+      if (id) {
+        if (renameTitleValue === sourceCodeTitle) {
+          onHandleLoading();
+          setIsRenameTitle(false);
+          return;
+        }
+        SourceCodeService.saveSourceCode({
+          data: { title: renameTitleValue, sourceCode },
+          params: { ID: id },
+        })
+          .then((res: any) => {
+            onHandleLoading();
+            setIsRenameTitle(false);
+          })
+          .catch((error: any) => {
+            onHandleLoading();
+            setRenameTitleValue(sourceCodeTitle);
+            onSetNotificationSettings(error.message, 'danger', 'long');
+          });
+      }
+    }
+  }
+
+  function handleRenameTitleInputKeydown(event: any) {
+    if (isRenameTitle) {
+      cancelRenameTitle(event);
+      saveRenameTitle(event);
+    }
+  }
+
+  function renderTitleMenuOptions() {
+    return (
+      <Menu
+        anchorEl={optionsAnchorEl}
+        keepMounted
+        classes={{
+          paper: classes.titleMenuPaper,
+        }}
+        open={Boolean(optionsAnchorEl)}
+        onClose={handleCloseOptions}>
+        <MenuItem
+          onClick={handleRenameTitle}
+          classes={{
+            root: classes.titleMenuList,
+          }}>
+          Rename
+        </MenuItem>
+        <MenuItem
+          classes={{
+            root: classes.titleMenuList,
+          }}>
+          Delete
+        </MenuItem>
+      </Menu>
+    );
+  }
+
   return (
     <div className={classes.monacoEditorTitleHead}>
       {!!sourceCodeTitle ? (
@@ -31,7 +130,7 @@ const SourceCodeTitle: React.FC<IProps> = ({
 
             <Icon
               className={`comment__hide-title-menu-icon`}
-              onClick={onHandleShowOptions}
+              onClick={handleShowOptions}
               name="more"
             />
           </span>
@@ -40,8 +139,8 @@ const SourceCodeTitle: React.FC<IProps> = ({
             className={classes.monacoEditorTitle}
             style={{ border: `1px solid ${color.themeBlue}` }}>
             <input
-              onKeyDown={onHandleRenameTitleInputKeydown}
-              onChange={onHandleRenameTitleChange}
+              onKeyDown={handleRenameTitleInputKeydown}
+              onChange={handleRenameTitleChange}
               className={classes.monacoEditorRenameTitleInput}
               value={renameTitleValue}
               autoFocus
@@ -49,6 +148,7 @@ const SourceCodeTitle: React.FC<IProps> = ({
           </span>
         )
       ) : null}
+      {renderTitleMenuOptions()}
     </div>
   );
 };
@@ -96,4 +196,4 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default SourceCodeTitle;
+export default withNotificationBanner(SourceCodeTitle);
