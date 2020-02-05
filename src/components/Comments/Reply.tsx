@@ -8,6 +8,7 @@ import EditMessagePanel from '../EditMessagePanel';
 import { parseTime } from '../../utils/TimeUtils';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import CommentReplyService from '../../services/CommentReplyServices';
+import MarkdownRenderer from '../MarkDownRenderer';
 
 interface IProps {
   id: string;
@@ -130,7 +131,7 @@ const Reply: React.FC<IProps> = ({
             />
           </div>
           <Typography className={classes.replyUserText} variant="span">
-            {text}
+            <MarkdownRenderer source={text} linkTarget="_blank" />
           </Typography>
         </div>
       </>
@@ -190,6 +191,9 @@ const useStyles = makeStyles(theme => ({
   },
   replyUserText: {
     fontSize: fontsize.small,
+    '& p': {
+      margin: 0,
+    },
   },
   replyMoreIcon: {
     color: color.white,
