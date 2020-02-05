@@ -200,7 +200,8 @@ const Comment: React.FC<IProps> = ({
           className={classes.commentReplyActionButtonContainer}>
           <Icon name={isRepliesVisible === true ? 'ios-arrow-up' : 'ios-arrow-down'} />
           <Typography thickness="semi-bold">
-            {isRepliesVisible === true ? 'Hide' : 'View'} {numReplies} replies
+            {isRepliesVisible === true ? 'Hide' : 'View'} {numReplies}{' '}
+            {numReplies === 1 ? 'reply' : 'replies'}
           </Typography>
         </div>
         {isRepliesVisible === true &&
