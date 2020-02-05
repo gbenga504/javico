@@ -428,10 +428,10 @@ const MonacoEditor: React.FC<IProps> = ({
           {!!sourceCodeTitle ? (
             !isRenameTitle ? (
               <span className={classes.monacoEditorTitle}>
-                <span style={{ fontSize: 14, padding: 5 }}>{renameTitleValue}</span>
+                <span style={{ fontSize: 14, padding: 5 }}>{renameTitleValue}.js</span>
 
                 <Icon
-                  className={classes.monacoEditorTitleMoreIcon}
+                  className={`comment__hide-title-menu-icon`}
                   onClick={handleShowOptions}
                   name="more"
                 />

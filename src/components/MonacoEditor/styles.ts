@@ -9,7 +9,7 @@ export const useStyles = makeStyles(theme => ({
     background: color.darkThemeBlack,
   },
   monacoEditorTitleHead: {
-    height: 40,
+    height: 30,
     display: 'flex',
     alignItems: 'center',
     backgroundColor: color.darkThemeLightBorder,
@@ -22,6 +22,14 @@ export const useStyles = makeStyles(theme => ({
     height: '100%',
     cursor: 'default',
     padding: 10,
+    '& .comment__hide-title-menu-icon': {
+      cursor: 'pointer',
+      fontSize: 20,
+      display: 'none',
+    },
+    '&:hover .comment__hide-title-menu-icon': {
+      display: 'block',
+    },
   },
   monacoEditorRenameTitleInput: {
     backgroundColor: 'transparent',
@@ -29,12 +37,6 @@ export const useStyles = makeStyles(theme => ({
     color: color.white,
     fontSize: 14,
     border: 'none',
-  },
-  monacoEditorTitleMoreIcon: {
-    cursor: 'pointer',
-    fontSize: 20,
-    // display: 'none',
-    // visibility: 'hidden',
   },
   titleMenuPaper: {
     backgroundColor: color.deepBlue,
