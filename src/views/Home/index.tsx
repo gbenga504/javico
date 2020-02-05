@@ -28,6 +28,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
     sourceCode: '',
     readme: '',
     ownerId: '',
+    title: '',
     sourceCodeId: '',
   });
   const classes = useStyles();
@@ -50,12 +51,14 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
         params: { ID: getIdFromUrl() },
       })
         .then(res => {
-          const { sourceCode, readme, ownerId } = res.data();
+          const { sourceCode, readme, ownerId, title } = res.data();
           toggleIsLoading();
+
           setFetchedSourceCode({
             sourceCode,
             readme,
             ownerId,
+            title,
             sourceCodeId: res.id,
           });
         })
@@ -120,6 +123,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
             onChangeCurrentSection={handleToggleView}
             fetchedSourceCode={fetchedSourceCode.sourceCode}
             ownerId={fetchedSourceCode.ownerId}
+            sourceCodeTitle={fetchedSourceCode.title}
             onSetSourcecodeOwner={setSourcecodeOwner}
             user={user}
             sourceCodeId={fetchedSourceCode.sourceCodeId}

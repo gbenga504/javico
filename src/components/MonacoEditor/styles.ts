@@ -7,11 +7,48 @@ export const useStyles = makeStyles(theme => ({
     flex: 1,
     position: 'relative',
     background: color.darkThemeBlack,
-    paddingTop: theme.spacing(3),
+  },
+  monacoEditorTitleHead: {
+    height: 40,
+    display: 'flex',
+    alignItems: 'center',
+    backgroundColor: color.darkThemeLightBorder,
+  },
+  monacoEditorTitle: {
+    color: 'white',
+    display: 'flex',
+    alignItems: 'center',
+    backgroundColor: color.deepBlue,
+    height: '100%',
+    cursor: 'default',
+    padding: 10,
+  },
+  monacoEditorRenameTitleInput: {
+    backgroundColor: 'transparent',
+    outline: 'none',
+    color: color.white,
+    fontSize: 14,
+    border: 'none',
+  },
+  monacoEditorTitleMoreIcon: {
+    cursor: 'pointer',
+    fontSize: 20,
+    // display: 'none',
+    // visibility: 'hidden',
+  },
+  titleMenuPaper: {
+    backgroundColor: color.deepBlue,
+  },
+  titleMenuList: {
+    backgroundColor: color.darkThemeLightBorder,
+    color: color.white,
+    '&:hover': {
+      backgroundColor: color.deepBlue,
+    },
   },
   monacoEditor: {
     flex: 1,
-    height: '100%',
+    height: '93%',
   },
   monacoEditorRunButtonIcon: {
     color: color.white,

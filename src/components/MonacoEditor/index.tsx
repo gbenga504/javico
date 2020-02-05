@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { Fab, Tooltip } from '@material-ui/core';
+import { Fab, Tooltip, Menu, MenuItem } from '@material-ui/core';
 
 import { useStyles } from './styles';
 import { useStyles as commonUseStyles, color } from '../../Css';
@@ -20,6 +20,7 @@ interface IProps {
   language?: string;
   onHandleLoading: any;
   fetchedSourceCode: string;
+  sourceCodeTitle: string;
   onSetSourcecodeOwner: any;
   ownerId: string;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
@@ -38,6 +39,7 @@ const MonacoEditor: React.FC<IProps> = ({
   language = 'javascript',
   fetchedSourceCode,
   onSetNotificationSettings,
+  sourceCodeTitle,
   onSetSourcecodeOwner,
   user: _user,
   ownerId,
@@ -48,11 +50,14 @@ const MonacoEditor: React.FC<IProps> = ({
 }) => {
   const [shouldDisplayCommentBox, setShouldDisplayCommentBox] = useState<boolean>(false);
   const [shouldDisplayCommentIcon, setShouldDisplayCommentIcon] = useState<boolean>(false);
+  const [isRenameTitle, setIsRenameTitle] = useState<boolean>(false);
+  const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | HTMLElement>(null);
   const [mousePosition, setMousePosition] = useState<any>({});
   const [isMonacoReady, setIsMonacoReady] = useState<boolean>(false);
   const [isEditorReady, setIsEditorReady] = useState<boolean>(false);
   const [selectionRange, setSelectionRange] = useState<any>(null);
   const [selectionValue, setSelectionValue] = useState<string>('');
+  const [renameTitleValue, setRenameTitleValue] = useState<string>(sourceCodeTitle);
   const [user, setUser] = useState<any>(_user);
   const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
   const [sourceCode, setSourceCode] = useState('');
@@ -101,8 +106,9 @@ const MonacoEditor: React.FC<IProps> = ({
       editorRef.current.getModel().setValue(fetchedSourceCode);
       disableEditor(user ? user.uid !== ownerId : true);
     }
+    setRenameTitleValue(sourceCodeTitle);
     // eslint-disable-next-line
-  }, [fetchedSourceCode]);
+  }, [fetchedSourceCode, sourceCodeTitle]);
 
   useEffect(() => {
     if (_user) {
@@ -196,6 +202,14 @@ const MonacoEditor: React.FC<IProps> = ({
     editorRef.current.getModel().setValue(sourceCode);
   }
 
+  function handleShowOptions(event: React.MouseEvent<HTMLButtonElement>) {
+    setOptionsAnchorEl(event.currentTarget);
+  }
+
+  function handleCloseOptions() {
+    setOptionsAnchorEl(null);
+  }
+
   function handleHighlightText(e: any) {
     const selection = editorRef.current.getSelection();
     const value = editorRef.current.getModel().getValueInRange(selection);
@@ -261,13 +275,74 @@ const MonacoEditor: React.FC<IProps> = ({
     setIsSignInModalVisible(true);
   }
 
+  function handleRenameTitleInputKeydown(event: any) {
+    if (isRenameTitle) {
+      cancelRenameTitle(event);
+      saveRenameTitle(event);
+    }
+  }
+
   function handleHideCommentIcon() {
     if (shouldDisplayCommentIcon === true) {
       setShouldDisplayCommentIcon(false);
     }
   }
 
+  function cancelRenameTitle(e: any) {
+    e = e || window.event;
+    var isEscape = false;
+    if ('key' in e) {
+      isEscape = e.key === 'Escape' || e.key === 'Esc';
+    } else {
+      isEscape = e.keyCode === 27;
+    }
+    if (isEscape) {
+      setIsRenameTitle(false);
+    }
+  }
+
+  function saveRenameTitle(e: any) {
+    if (e.keyCode === 13) {
+      e.preventDefault();
+      onHandleLoading(true);
+      const id = getIdFromUrl();
+      if (id) {
+        if (renameTitleValue === sourceCodeTitle) {
+          onHandleLoading();
+          setIsRenameTitle(false);
+          return;
+        }
+        SourceCodeService.saveSourceCode({
+          data: { title: renameTitleValue, sourceCode },
+          params: { ID: id },
+        })
+          .then((res: any) => {
+            onHandleLoading();
+            setIsRenameTitle(false);
+          })
+          .catch((error: any) => {
+            onHandleLoading();
+            setRenameTitleValue(sourceCodeTitle);
+            onSetNotificationSettings(error.message, 'danger', 'long');
+          });
+      }
+    }
+  }
+
+  function handleRenameTitleChange(event: any) {
+    setRenameTitleValue(event.target.value);
+  }
+
+  function handleRenameTitle() {
+    setIsRenameTitle(true);
+    setOptionsAnchorEl(null);
+  }
+
   function handleSaveSourceCode(event: React.KeyboardEvent) {
+    if (isRenameTitle) {
+      cancelRenameTitle(event);
+    }
+
     if ((event.ctrlKey === true || event.metaKey === true) && event.keyCode === 83) {
       event.preventDefault();
 
@@ -319,9 +394,64 @@ const MonacoEditor: React.FC<IProps> = ({
     );
   }
 
+  function renderTitleMenuOptions() {
+    return (
+      <Menu
+        anchorEl={optionsAnchorEl}
+        keepMounted
+        classes={{
+          paper: classes.titleMenuPaper,
+        }}
+        open={Boolean(optionsAnchorEl)}
+        onClose={handleCloseOptions}>
+        <MenuItem
+          onClick={handleRenameTitle}
+          classes={{
+            root: classes.titleMenuList,
+          }}>
+          Rename
+        </MenuItem>
+        <MenuItem
+          classes={{
+            root: classes.titleMenuList,
+          }}>
+          Delete
+        </MenuItem>
+      </Menu>
+    );
+  }
+
   return (
     <>
       <div className={classes.monacoEditorContainer}>
+        <div className={classes.monacoEditorTitleHead}>
+          {!!sourceCodeTitle ? (
+            !isRenameTitle ? (
+              <span className={classes.monacoEditorTitle}>
+                <span style={{ fontSize: 14, padding: 5 }}>{renameTitleValue}</span>
+
+                <Icon
+                  className={classes.monacoEditorTitleMoreIcon}
+                  onClick={handleShowOptions}
+                  name="more"
+                />
+              </span>
+            ) : (
+              <span
+                className={classes.monacoEditorTitle}
+                style={{ border: `1px solid ${color.themeBlue}` }}>
+                <input
+                  onKeyDown={handleRenameTitleInputKeydown}
+                  onChange={handleRenameTitleChange}
+                  className={classes.monacoEditorRenameTitleInput}
+                  value={renameTitleValue}
+                  autoFocus
+                />
+              </span>
+            )
+          ) : null}
+        </div>
+        {renderTitleMenuOptions()}
         {renderLoading()}
         <div
           onKeyUp={handleHideCommentIcon}
