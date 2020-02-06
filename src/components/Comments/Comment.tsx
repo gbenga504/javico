@@ -33,7 +33,7 @@ const Comment: React.FC<IProps> = ({
   text,
   codeReference,
   id,
-  authorName,
+  authorName = 'Anonymous',
   authorPhotoURL,
   numReplies,
   createdAt,

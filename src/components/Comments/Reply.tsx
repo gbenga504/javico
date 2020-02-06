@@ -23,7 +23,7 @@ interface IProps {
 
 const Reply: React.FC<IProps> = ({
   id,
-  authorName,
+  authorName = 'Anonymous',
   authorPhotoURL,
   text,
   createdAt,
