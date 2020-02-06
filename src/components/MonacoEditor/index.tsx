@@ -12,7 +12,7 @@ import InlineCodeComment from '../InlineCodeComment';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import { getIdFromUrl, updateUrl } from '../../utils/UrlUtils';
 import SourceCodeService from '../../services/SourceCodeServices';
-import SourceCodeTitleComponent from './SourceCodeTitle';
+import SourceCodeHeading from './SourceCodeHeading';
 
 interface IProps {
   value?: string;
@@ -325,10 +325,11 @@ const MonacoEditor: React.FC<IProps> = ({
   return (
     <>
       <div className={classes.monacoEditorContainer}>
-        <SourceCodeTitleComponent
+        <SourceCodeHeading
           sourceCodeTitle={sourceCodeTitle}
           onHandleLoading={onHandleLoading}
           sourceCode={sourceCode}
+          isOwner={user ? user.uid === ownerId : false}
         />
         {renderLoading()}
         <div

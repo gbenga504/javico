@@ -11,17 +11,20 @@ interface IProps {
   sourceCodeTitle: string;
   onHandleLoading: any;
   sourceCode: string;
+  isOwner: boolean;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
 }
 
-const SourceCodeTitle: React.FC<IProps> = ({
+const SourceCodeHeading: React.FC<IProps> = ({
   onSetNotificationSettings,
   sourceCodeTitle,
   onHandleLoading,
+  isOwner,
   sourceCode,
 }) => {
   const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | HTMLElement>(null);
   const [isRenameTitle, setIsRenameTitle] = useState<boolean>(false);
+  const [preserveTitle, setPreserveTitle] = useState<string>(sourceCodeTitle);
   const [renameTitleValue, setRenameTitleValue] = useState<string>(sourceCodeTitle);
   const classes = useStyles();
 
@@ -38,6 +41,7 @@ const SourceCodeTitle: React.FC<IProps> = ({
   }
 
   function handleRenameTitle() {
+    setPreserveTitle(renameTitleValue);
     setIsRenameTitle(true);
     setOptionsAnchorEl(null);
   }
@@ -51,7 +55,7 @@ const SourceCodeTitle: React.FC<IProps> = ({
       isEscape = e.keyCode === 27;
     }
     if (isEscape) {
-      setIsRenameTitle(false);
+      closeRenameTitle();
     }
   }
 
@@ -94,6 +98,11 @@ const SourceCodeTitle: React.FC<IProps> = ({
     }
   }
 
+  function closeRenameTitle() {
+    setRenameTitleValue(preserveTitle);
+    setIsRenameTitle(false);
+  }
+
   function renderTitleMenuOptions() {
     return (
       <Menu
@@ -111,12 +120,6 @@ const SourceCodeTitle: React.FC<IProps> = ({
           }}>
           Rename
         </MenuItem>
-        <MenuItem
-          classes={{
-            root: classes.titleMenuList,
-          }}>
-          Delete
-        </MenuItem>
       </Menu>
     );
   }
@@ -128,11 +131,13 @@ const SourceCodeTitle: React.FC<IProps> = ({
           <span className={classes.monacoEditorTitle}>
             <span style={{ fontSize: 14, padding: 5 }}>{renameTitleValue}.js</span>
 
-            <Icon
-              className={`comment__hide-title-menu-icon`}
-              onClick={handleShowOptions}
-              name="more"
-            />
+            {isOwner && (
+              <Icon
+                className={`${classes.commentTitleMenuIcon} comment__hide-title-menu-icon`}
+                onClick={handleShowOptions}
+                name="more"
+              />
+            )}
           </span>
         ) : (
           <span
@@ -144,6 +149,14 @@ const SourceCodeTitle: React.FC<IProps> = ({
               className={classes.monacoEditorRenameTitleInput}
               value={renameTitleValue}
               autoFocus
+            />
+            <Icon
+              className={classes.commentTitleMenuIcon}
+              onClick={closeRenameTitle}
+              style={{
+                fontSize: 14,
+              }}
+              name="close"
             />
           </span>
         )
@@ -169,13 +182,17 @@ const useStyles = makeStyles(theme => ({
     cursor: 'default',
     padding: 10,
     '& .comment__hide-title-menu-icon': {
-      cursor: 'pointer',
-      fontSize: 20,
       display: 'none',
     },
     '&:hover .comment__hide-title-menu-icon': {
       display: 'block',
     },
+  },
+  commentTitleMenuIcon: {
+    cursor: 'pointer',
+    fontSize: 20,
+    visibility: 'visible',
+    color: color.white,
   },
   monacoEditorRenameTitleInput: {
     backgroundColor: 'transparent',
@@ -196,4 +213,4 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default withNotificationBanner(SourceCodeTitle);
+export default withNotificationBanner(SourceCodeHeading);
