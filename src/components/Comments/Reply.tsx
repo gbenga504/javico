@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { makeStyles, Menu, MenuItem } from '@material-ui/core';
 
 import { useStyles as commonUseStyles, padding, color, fontsize } from '../../Css';
-import { Typography, Icon } from '../../atoms';
+import { Typography, Icon, withNotificationBanner } from '../../atoms';
 import DeleteMessageModal from '../DeleteMessageModal';
 import EditMessagePanel from '../EditMessagePanel';
 import { parseTime } from '../../utils/TimeUtils';
+import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
+import CommentReplyService from '../../services/CommentReplyServices';
+import MarkdownRenderer from '../MarkDownRenderer';
 
 interface IProps {
   id: string;
@@ -13,9 +16,21 @@ interface IProps {
   authorPhotoURL: string;
   text: string;
   createdAt: number;
+  sourceCodeId: string;
+  commentId: string;
+  onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
 }
 
-const Reply: React.FC<IProps> = ({ id, authorName, authorPhotoURL, text, createdAt }) => {
+const Reply: React.FC<IProps> = ({
+  id,
+  authorName = 'Anonymous',
+  authorPhotoURL,
+  text,
+  createdAt,
+  onSetNotificationSettings,
+  sourceCodeId,
+  commentId,
+}) => {
   const classes = useStyles();
   const commonCss = commonUseStyles();
   const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | HTMLElement>(null);
@@ -44,6 +59,12 @@ const Reply: React.FC<IProps> = ({ id, authorName, authorPhotoURL, text, created
 
   function handleDeleteReply() {
     setIsDeleteReplyLoading(true);
+    CommentReplyService.deleteReply({
+      params: { sourceCodeID: sourceCodeId, commentID: commentId, ID: id },
+    }).then(res => {
+      setIsDeleteReplyLoading(false);
+      setIsConfirmDeleteModalVisible(false);
+    });
   }
 
   function handleReplyChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -60,7 +81,22 @@ const Reply: React.FC<IProps> = ({ id, authorName, authorPhotoURL, text, created
   }
 
   function handleEditMessage() {
+    if (text.trim() === editableReply.trim()) {
+      handleCloseEditMessagePanel();
+      return;
+    }
     setIsEditingReply(true);
+    CommentReplyService.updateReply({
+      data: { text: editableReply.trim() },
+      params: { sourceCodeID: sourceCodeId, commentID: commentId, ID: id },
+    })
+      .then(res => {
+        setIsEditingReply(false);
+        setIsEditMessagePanelVisible(false);
+      })
+      .catch(error => {
+        onSetNotificationSettings(error, 'danger', 'long');
+      });
   }
 
   function renderMenuOptions() {
@@ -80,7 +116,7 @@ const Reply: React.FC<IProps> = ({ id, authorName, authorPhotoURL, text, created
     return (
       <>
         <img className={classes.replyUserImage} src={authorPhotoURL} alt={authorName} />
-        <div className={commonCss.flexColumn} style={padding(8, 'l')}>
+        <div className={commonCss.flexColumn} style={{ ...padding(8, 'l'), width: '100%' }}>
           <div
             className={commonCss.flexRow}
             style={{ justifyContent: 'space-between', alignItems: 'center' }}>
@@ -95,7 +131,7 @@ const Reply: React.FC<IProps> = ({ id, authorName, authorPhotoURL, text, created
             />
           </div>
           <Typography className={classes.replyUserText} variant="span">
-            {text}
+            <MarkdownRenderer source={text} linkTarget="_blank" />
           </Typography>
         </div>
       </>
@@ -155,6 +191,9 @@ const useStyles = makeStyles(theme => ({
   },
   replyUserText: {
     fontSize: fontsize.small,
+    '& p': {
+      margin: 0,
+    },
   },
   replyMoreIcon: {
     color: color.white,
@@ -163,4 +202,4 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default Reply;
+export default React.memo(withNotificationBanner(Reply));

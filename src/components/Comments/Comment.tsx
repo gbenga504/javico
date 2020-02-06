@@ -8,9 +8,11 @@ import SyntaxHighlighter from '../SyntaxHighlighter';
 import DeleteMessageModal from '../DeleteMessageModal';
 import EditMessagePanel from '../EditMessagePanel';
 import { parseTime } from '../../utils/TimeUtils';
-import { IReply } from '../../services/CommentReplyServices';
+import CommentReplyService, { IReply } from '../../services/CommentReplyServices';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import CommentService from '../../services/CommentsServices';
+import CommentUtils from '../../utils/CommentUtils';
+import MarkdownRenderer from '../MarkDownRenderer';
 
 interface IProps {
   text: string;
@@ -20,7 +22,7 @@ interface IProps {
   authorPhotoURL: string;
   createdAt: number;
   numReplies: number;
-  onHandleReply: (comment: string) => void;
+  onHandleReply: (comment: string, commentId: string) => void;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
   sourceCodeId: string;
   userId: string;
@@ -31,7 +33,7 @@ const Comment: React.FC<IProps> = ({
   text,
   codeReference,
   id,
-  authorName,
+  authorName = 'Anonymous',
   authorPhotoURL,
   numReplies,
   createdAt,
@@ -56,12 +58,24 @@ const Comment: React.FC<IProps> = ({
   useEffect(() => {
     if (isRepliesVisible === true && replies && replies.length === 0) {
       /**
-       * @todo
        * Fetch the initial replies and setIsRepliesLoading and setReplies
        */
       setIsRepliesLoading(true);
-      setReplies([]);
+      CommentReplyService.onSnapshotChanged(
+        {
+          params: { sourceCodeID: sourceCodeId, limit: 10, commentID: id },
+        },
+        function(querySnapshot: Array<any>) {
+          const { replies } = CommentUtils.parseReplies(querySnapshot, id);
+          setIsRepliesLoading(false);
+          setReplies(replies);
+        },
+        function(error: any) {
+          onSetNotificationSettings(error, 'danger', 'long');
+        },
+      );
     }
+    // eslint-disable-next-line
   }, [isRepliesVisible, replies]);
 
   function handleToggleRepliesVisibility() {
@@ -77,7 +91,7 @@ const Comment: React.FC<IProps> = ({
   }
 
   function handleReplyComment(text: string) {
-    onHandleReply(text);
+    onHandleReply(text, id);
     handleCloseOptions();
   }
 
@@ -140,6 +154,19 @@ const Comment: React.FC<IProps> = ({
      * Load more replies
      * setReplies and setIsRepliesLoading function
      */
+    setIsRepliesLoading(true);
+    CommentReplyService.fetchMoreReply({
+      params: {
+        sourceCodeID: sourceCodeId,
+        after: replies[0].clientTimestamp,
+        limit: 15,
+        commentID: id,
+      },
+    }).then(function(querySnapshot: Array<any>) {
+      const { replies } = CommentUtils.parseReplies(querySnapshot, id, 'fetchMore');
+      setIsRepliesLoading(false);
+      setReplies(replies);
+    });
   }
 
   function renderMenuOptions() {
@@ -173,7 +200,8 @@ const Comment: React.FC<IProps> = ({
           className={classes.commentReplyActionButtonContainer}>
           <Icon name={isRepliesVisible === true ? 'ios-arrow-up' : 'ios-arrow-down'} />
           <Typography thickness="semi-bold">
-            {isRepliesVisible === true ? 'Hide' : 'View'} {numReplies} replies
+            {isRepliesVisible === true ? 'Hide' : 'View'} {numReplies}{' '}
+            {numReplies === 1 ? 'reply' : 'replies'}
           </Typography>
         </div>
         {isRepliesVisible === true &&
@@ -186,10 +214,15 @@ const Comment: React.FC<IProps> = ({
                 authorPhotoURL={reply.author.photoURL}
                 text={reply.text}
                 createdAt={reply.createdAt}
+                sourceCodeId={sourceCodeId}
+                commentId={id}
               />
             );
           })}
-        {replies.length < numReplies && isRepliesLoading === false && renderShowMoreRepliesButton()}
+        {replies.length < numReplies &&
+          isRepliesVisible === true &&
+          isRepliesLoading === false &&
+          renderShowMoreRepliesButton()}
         {isRepliesLoading === true && <CircularProgress color="primary" size={20} />}
       </>
     );
@@ -212,7 +245,7 @@ const Comment: React.FC<IProps> = ({
           />
         </div>
         <Typography className={classes.commentUserComment} variant="span">
-          {text}
+          <MarkdownRenderer source={text} linkTarget="_blank" />
         </Typography>
       </>
     );
@@ -303,6 +336,9 @@ const useStyles = makeStyles(theme => ({
   },
   commentUserComment: {
     fontSize: fontsize.small + 0.5,
+    '& p': {
+      margin: 0,
+    },
   },
   commentMoreIcon: {
     color: color.white,

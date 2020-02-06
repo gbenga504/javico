@@ -12,6 +12,7 @@ interface IPayload {
       photoURL: string;
     };
     text: string;
+    clientTimestamp?: string;
   };
   params: {
     ID?: string;
@@ -31,6 +32,8 @@ export interface IReply {
   text: string;
   id: string;
   createdAt: number;
+  updatedAt?: string;
+  clientTimestamp?: number;
 }
 
 export default class CommentReplyService {
@@ -48,14 +51,16 @@ export default class CommentReplyService {
     return Api.firestore.runTransaction((transaction: any) => {
       return transaction.get(commentRef).then((res: any) => {
         if (!res.exists) {
-          throw 'Document does not exist!';
+          throw new Error('Document does not exist!');
         }
         const numReplies = res.data().numReplies;
         transaction.update(commentRef, {
           numReplies: numReplies ? numReplies + 1 : 1,
+          updatedAt: Api.app.firestore.FieldValue.serverTimestamp(),
         });
         transaction.set(repliesRef, {
           ...data,
+          clientTimestamp: Date.now(),
           createdAt: Api.app.firestore.FieldValue.serverTimestamp(),
         });
       });
@@ -64,10 +69,27 @@ export default class CommentReplyService {
 
   static deleteReply = (payload: IPayload): Promise<any> => {
     const { params } = payload;
-    return Api.firestore
+    const replyRef = Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments/${params.commentID}/replies`)
-      .doc(params.ID)
-      .delete();
+      .doc(params.ID);
+    const commentRef = Api.firestore
+      .collection(`source-codes`)
+      .doc(params.sourceCodeID)
+      .collection('comments')
+      .doc(params.commentID);
+
+    return Api.firestore.runTransaction((transaction: any) => {
+      return transaction.get(commentRef).then((res: any) => {
+        if (!res.exists) {
+          throw new Error('Document does not exist!');
+        }
+        const numReplies = res.data().numReplies;
+        transaction.update(commentRef, {
+          numReplies: numReplies ? numReplies - 1 : 0,
+        });
+        transaction.delete(replyRef);
+      });
+    });
   };
 
   static updateReply = (payload: any): Promise<any> => {
@@ -82,9 +104,9 @@ export default class CommentReplyService {
     const { params } = payload;
     return Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comment/${params.commentID}/replies`)
-      .orderBy('createdAt', 'desc')
-      .startAfter('createdAt', params.after)
-      .limit(params.limit)
+      .orderBy('clientTimestamp', 'desc')
+      .startAfter(params.after)
+      .limit(params.limit || 10)
       .get();
   };
 
@@ -97,8 +119,8 @@ export default class CommentReplyService {
     const { params } = payload;
     Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments/${params.commentID}/replies`)
-      .orderBy('createdAt', 'desc')
-      .limit(params.limit)
+      .orderBy('clientTimestamp', 'desc')
+      .limit(params.limit || 10)
       .onSnapshot(handleDataChanged, handleError);
   };
 }
