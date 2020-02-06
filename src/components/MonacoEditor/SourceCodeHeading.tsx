@@ -9,7 +9,7 @@ import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 
 interface IProps {
   sourceCodeTitle: string;
-  onHandleLoading: any;
+  onHandleLoading: (isLoading?: boolean) => void;
   sourceCode: string;
   isOwner: boolean;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
@@ -48,7 +48,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
 
   function cancelRenameTitle(e: any) {
     e = e || window.event;
-    var isEscape = false;
+    let isEscape = false;
     if ('key' in e) {
       isEscape = e.key === 'Escape' || e.key === 'Esc';
     } else {
