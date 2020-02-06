@@ -182,11 +182,11 @@ const useStyles = makeStyles(theme => ({
     cursor: 'default',
     padding: 10,
     '& .comment__hide-title-menu-icon': {
-      display: 'none',
-    },
-    '&:hover .comment__hide-title-menu-icon': {
       display: 'block',
     },
+    // '&:hover .comment__hide-title-menu-icon': {
+    //   display: 'block',
+    // },
   },
   commentTitleMenuIcon: {
     cursor: 'pointer',
