@@ -12,6 +12,7 @@ import InlineCodeComment from '../InlineCodeComment';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import { getIdFromUrl, updateUrl } from '../../utils/UrlUtils';
 import SourceCodeService from '../../services/SourceCodeServices';
+import SourceCodeHeading from './SourceCodeHeading';
 
 interface IProps {
   value?: string;
@@ -20,6 +21,7 @@ interface IProps {
   language?: string;
   onHandleLoading: any;
   fetchedSourceCode: string;
+  sourceCodeTitle: string;
   onSetSourcecodeOwner: any;
   ownerId: string;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
@@ -38,6 +40,7 @@ const MonacoEditor: React.FC<IProps> = ({
   language = 'javascript',
   fetchedSourceCode,
   onSetNotificationSettings,
+  sourceCodeTitle,
   onSetSourcecodeOwner,
   user: _user,
   ownerId,
@@ -322,6 +325,12 @@ const MonacoEditor: React.FC<IProps> = ({
   return (
     <>
       <div className={classes.monacoEditorContainer}>
+        <SourceCodeHeading
+          sourceCodeTitle={sourceCodeTitle}
+          onHandleLoading={onHandleLoading}
+          sourceCode={sourceCode}
+          isOwner={user ? user.uid === ownerId : false}
+        />
         {renderLoading()}
         <div
           onKeyUp={handleHideCommentIcon}
