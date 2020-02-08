@@ -45,8 +45,12 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
   }, [Api]);
 
   useEffect(() => {
+    fetchSourceCode(toggleIsLoading(true));
+    // eslint-disable-next-line
+  }, []);
+
+  function fetchSourceCode(cb: any) {
     if (getIdFromUrl()) {
-      toggleIsLoading(true);
       SourceCodeService.fetchSourceCode({
         params: { ID: getIdFromUrl() },
       })
@@ -61,14 +65,16 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
             title,
             sourceCodeId: res.id,
           });
+          cb && cb();
         })
         .catch((error: any) => {
           toggleIsLoading();
           onSetNotificationSettings(error.message, 'danger', 'long');
         });
+    } else {
+      toggleIsLoading();
     }
-    // eslint-disable-next-line
-  }, []);
+  }
 
   function setSourcecodeOwner(data: any) {
     setFetchedSourceCode({ ...fetchedSourceCode, ...data });
@@ -99,7 +105,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
   return (
     <>
       <Helmet>
-        <title>My Title</title>
+        <title>{fetchedSourceCode.title}.js</title>
         <meta name="description" content="Helmet application" />
         <meta property="og:title" content="Review my sourcecode" />
         <meta
@@ -128,6 +134,8 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
             user={user}
             sourceCodeId={fetchedSourceCode.sourceCodeId}
             currentSection={currentSection}
+            isFetchingSourcecode={isLoading}
+            fetchSourceCode={fetchSourceCode}
           />
           <div className={classes.mainRightSection}>
             <div
