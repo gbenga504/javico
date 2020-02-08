@@ -210,6 +210,8 @@ const MonacoEditor: React.FC<IProps> = ({
       setSelectionRange(selection);
       setMousePosition({ x: e.clientX, y: e.clientY });
       setSelectionValue(value);
+    } else {
+      handleHideCommentIcon();
     }
   }
 
