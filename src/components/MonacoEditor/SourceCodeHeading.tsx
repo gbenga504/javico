@@ -39,6 +39,9 @@ const SourceCodeHeading: React.FC<IProps> = ({
 
   useEffect(() => {
     setRenameTitleValue(sourceCodeTitle);
+    if (isRenameTitle) {
+      setIsRenameTitle(false);
+    }
   }, [sourceCodeTitle]);
 
   function handleShowOptions(event: React.MouseEvent<HTMLButtonElement>) {
@@ -52,11 +55,6 @@ const SourceCodeHeading: React.FC<IProps> = ({
   function handleRenameTitle() {
     setIsRenameTitle(true);
     setOptionsAnchorEl(null);
-  }
-
-  function upsertSourcecodeCb() {
-    onHandleLoading();
-    closeRenameTitle();
   }
 
   function cancelRenameTitle(e: any) {
@@ -127,7 +125,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
           sourceCodeId: res.id,
         });
         updateUrl(res);
-        fetchSourceCode(upsertSourcecodeCb());
+        fetchSourceCode(onHandleLoading());
       })
       .catch((error: any) => {
         onHandleLoading();
@@ -141,7 +139,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
       params: { ID: id },
     })
       .then((res: any) => {
-        fetchSourceCode(upsertSourcecodeCb());
+        fetchSourceCode(onHandleLoading());
       })
       .catch((error: any) => {
         onHandleLoading();
