@@ -42,6 +42,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
     if (isRenameTitle) {
       setIsRenameTitle(false);
     }
+    // eslint-disable-next-line
   }, [sourceCodeTitle]);
 
   function handleShowOptions(event: React.MouseEvent<HTMLButtonElement>) {
