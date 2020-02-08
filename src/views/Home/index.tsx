@@ -105,7 +105,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
   return (
     <>
       <Helmet>
-        <title>{fetchedSourceCode.title}.js</title>
+        <title>{!!fetchedSourceCode.ownerId ? fetchedSourceCode.title : 'Untitled'}.js</title>
         <meta name="description" content="Helmet application" />
         <meta property="og:title" content="Review my sourcecode" />
         <meta
@@ -116,7 +116,6 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
         <meta property="og:url" content={`${getSourcecodeUrl()}`} />
         <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
-
       <div className={`${classes.relative} ${commonCss.flexRow}`}>
         <div className={classes.linearProgress}>
           <IndeterminateLinearProgress isVisible={isLoading} />
