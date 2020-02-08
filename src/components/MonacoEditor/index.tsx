@@ -24,12 +24,14 @@ interface IProps {
   sourceCodeTitle: string;
   onSetSourcecodeOwner: any;
   ownerId: string;
+  isFetchingSourcecode: boolean;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
   Api: any;
   user: any;
   sourceCodeId: string;
   currentSection: 'comments' | 'console';
   onChangeCurrentSection: () => void;
+  fetchSourceCode: (cb: any) => void;
 }
 
 const MonacoEditor: React.FC<IProps> = ({
@@ -42,12 +44,14 @@ const MonacoEditor: React.FC<IProps> = ({
   onSetNotificationSettings,
   sourceCodeTitle,
   onSetSourcecodeOwner,
+  isFetchingSourcecode,
   user: _user,
   ownerId,
   Api,
   sourceCodeId,
   currentSection,
   onChangeCurrentSection,
+  fetchSourceCode,
 }) => {
   const [shouldDisplayCommentBox, setShouldDisplayCommentBox] = useState<boolean>(false);
   const [shouldDisplayCommentIcon, setShouldDisplayCommentIcon] = useState<boolean>(false);
@@ -328,7 +332,12 @@ const MonacoEditor: React.FC<IProps> = ({
         <SourceCodeHeading
           sourceCodeTitle={sourceCodeTitle}
           onHandleLoading={onHandleLoading}
+          isFetchingSourcecode={isFetchingSourcecode}
+          onSetSourcecodeOwner={onSetSourcecodeOwner}
           sourceCode={sourceCode}
+          user={user}
+          ownerId={ownerId}
+          fetchSourceCode={fetchSourceCode}
           isOwner={user ? user.uid === ownerId : false}
         />
         {renderLoading()}

@@ -3,28 +3,35 @@ import { makeStyles, MenuItem, Menu } from '@material-ui/core';
 
 import { color } from '../../Css';
 import { Icon, withNotificationBanner } from '../../atoms';
-import { getIdFromUrl } from '../../utils/UrlUtils';
+import { getIdFromUrl, updateUrl } from '../../utils/UrlUtils';
 import SourceCodeService from '../../services/SourceCodeServices';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 
 interface IProps {
   sourceCodeTitle: string;
+  isFetchingSourcecode: boolean;
+  onSetSourcecodeOwner: any;
   onHandleLoading: (isLoading?: boolean) => void;
+  fetchSourceCode: (cb: any) => void;
   sourceCode: string;
-  isOwner: boolean;
+  ownerId: string;
+  user: any;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
 }
 
 const SourceCodeHeading: React.FC<IProps> = ({
   onSetNotificationSettings,
   sourceCodeTitle,
+  onSetSourcecodeOwner,
+  isFetchingSourcecode,
+  fetchSourceCode,
   onHandleLoading,
-  isOwner,
+  ownerId,
+  user,
   sourceCode,
 }) => {
   const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | HTMLElement>(null);
   const [isRenameTitle, setIsRenameTitle] = useState<boolean>(false);
-  const [preserveTitle, setPreserveTitle] = useState<string>(sourceCodeTitle);
   const [renameTitleValue, setRenameTitleValue] = useState<string>(sourceCodeTitle);
   const classes = useStyles();
 
@@ -41,9 +48,13 @@ const SourceCodeHeading: React.FC<IProps> = ({
   }
 
   function handleRenameTitle() {
-    setPreserveTitle(renameTitleValue);
     setIsRenameTitle(true);
     setOptionsAnchorEl(null);
+  }
+
+  function upsertSourcecodeCb() {
+    onHandleLoading();
+    closeRenameTitle();
   }
 
   function cancelRenameTitle(e: any) {
@@ -71,24 +82,56 @@ const SourceCodeHeading: React.FC<IProps> = ({
       if (id) {
         if (renameTitleValue === sourceCodeTitle) {
           onHandleLoading();
-          setIsRenameTitle(false);
+          closeRenameTitle();
           return;
         }
-        SourceCodeService.saveSourceCode({
-          data: { title: renameTitleValue, sourceCode },
-          params: { ID: id },
-        })
-          .then((res: any) => {
-            onHandleLoading();
-            setIsRenameTitle(false);
-          })
-          .catch((error: any) => {
-            onHandleLoading();
-            setRenameTitleValue(sourceCodeTitle);
-            onSetNotificationSettings(error.message, 'danger', 'long');
-          });
+        let data = { title: renameTitleValue, sourceCode };
+        updateSourcecode(data, id);
+      } else {
+        let data = {
+          ownerId: user.uid,
+          sourceCode,
+          readme: '',
+          title: renameTitleValue,
+          tags: [],
+        };
+        saveSourceCode(data);
       }
     }
+  }
+
+  function saveSourceCode(data: any) {
+    SourceCodeService.saveSourceCode({
+      data,
+    })
+      .then(res => {
+        onSetSourcecodeOwner({
+          sourceCode,
+          ownerId: user.uid,
+          sourceCodeId: res.id,
+        });
+        updateUrl(res);
+        fetchSourceCode(upsertSourcecodeCb());
+      })
+      .catch((error: any) => {
+        onHandleLoading();
+        onSetNotificationSettings(error.message, 'danger', 'long');
+      });
+  }
+
+  function updateSourcecode(data: any, id: any) {
+    SourceCodeService.saveSourceCode({
+      data,
+      params: { ID: id },
+    })
+      .then((res: any) => {
+        fetchSourceCode(upsertSourcecodeCb());
+      })
+      .catch((error: any) => {
+        onHandleLoading();
+        setRenameTitleValue(sourceCodeTitle);
+        onSetNotificationSettings(error.message, 'danger', 'long');
+      });
   }
 
   function handleRenameTitleInputKeydown(event: any) {
@@ -99,8 +142,8 @@ const SourceCodeHeading: React.FC<IProps> = ({
   }
 
   function closeRenameTitle() {
-    setRenameTitleValue(preserveTitle);
     setIsRenameTitle(false);
+    setRenameTitleValue(sourceCodeTitle);
   }
 
   function renderTitleMenuOptions() {
@@ -124,43 +167,48 @@ const SourceCodeHeading: React.FC<IProps> = ({
     );
   }
 
+  const isOwner = user ? user.uid === ownerId : false;
+
   return (
     <div className={classes.monacoEditorTitleHead}>
-      {!!sourceCodeTitle ? (
-        !isRenameTitle ? (
-          <span className={classes.monacoEditorTitle}>
-            <span style={{ fontSize: 14, padding: 5 }}>{renameTitleValue}.js</span>
-
-            {isOwner && (
-              <Icon
-                className={`${classes.commentTitleMenuIcon} comment__hide-title-menu-icon`}
-                onClick={handleShowOptions}
-                name="more"
-              />
-            )}
-          </span>
-        ) : (
-          <span
-            className={classes.monacoEditorTitle}
-            style={{ border: `1px solid ${color.themeBlue}` }}>
-            <input
-              onKeyDown={handleRenameTitleInputKeydown}
-              onChange={handleRenameTitleChange}
-              className={classes.monacoEditorRenameTitleInput}
-              value={renameTitleValue}
-              autoFocus
-            />
-            <Icon
-              className={classes.commentTitleMenuIcon}
-              onClick={closeRenameTitle}
-              style={{
-                fontSize: 14,
-              }}
-              name="close"
-            />
-          </span>
-        )
-      ) : null}
+      {!isRenameTitle ? (
+        <>
+          {(!isFetchingSourcecode || getIdFromUrl()) && (
+            <span className={classes.monacoEditorTitle}>
+              <span style={{ fontSize: 14, padding: 5 }}>
+                {!!sourceCodeTitle ? `${sourceCodeTitle}.js` : getIdFromUrl() ? '' : 'Untitled.js'}
+              </span>
+              {(isOwner || !getIdFromUrl()) && (
+                <Icon
+                  className={`${classes.commentTitleMenuIcon} comment__hide-title-menu-icon`}
+                  onClick={handleShowOptions}
+                  name="more"
+                />
+              )}
+            </span>
+          )}
+        </>
+      ) : (
+        <span
+          className={classes.monacoEditorTitle}
+          style={{ border: `1px solid ${color.themeBlue}` }}>
+          <input
+            onKeyDown={handleRenameTitleInputKeydown}
+            onChange={handleRenameTitleChange}
+            className={classes.monacoEditorRenameTitleInput}
+            value={renameTitleValue}
+            autoFocus
+          />
+          <Icon
+            className={classes.commentTitleMenuIcon}
+            onClick={closeRenameTitle}
+            style={{
+              fontSize: 14,
+            }}
+            name="close"
+          />
+        </span>
+      )}
       {renderTitleMenuOptions()}
     </div>
   );
