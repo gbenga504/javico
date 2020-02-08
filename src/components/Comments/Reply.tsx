@@ -5,7 +5,7 @@ import { useStyles as commonUseStyles, padding, color, fontsize } from '../../Cs
 import { Typography, Icon, withNotificationBanner } from '../../atoms';
 import DeleteMessageModal from '../DeleteMessageModal';
 import EditMessagePanel from '../EditMessagePanel';
-import { parseTime } from '../../utils/TimeUtils';
+import { getRelativeTime } from '../../utils/TimeUtils';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import CommentReplyService from '../../services/CommentReplyServices';
 import MarkdownRenderer from '../MarkDownRenderer';
@@ -122,7 +122,7 @@ const Reply: React.FC<IProps> = ({
             style={{ justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography className={classes.replyUsername} thickness="bold" variant="span">
               {authorName}{' '}
-              <Typography className={classes.replyTime}>{parseTime(createdAt)}</Typography>
+              <Typography className={classes.replyTime}>{getRelativeTime(createdAt)}</Typography>
             </Typography>
             <Icon
               name="ios-more"

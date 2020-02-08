@@ -158,12 +158,12 @@ const Comment: React.FC<IProps> = ({
     CommentReplyService.fetchMoreReply({
       params: {
         sourceCodeID: sourceCodeId,
-        after: replies[0].clientTimestamp,
-        limit: 15,
+        after: replies[replies.length - 1].clientTimestamp,
+        limit: 10,
         commentID: id,
       },
     }).then(function(querySnapshot: Array<any>) {
-      const { replies } = CommentUtils.parseReplies(querySnapshot, id, 'fetchMore');
+      const { replies } = CommentUtils.parseReplies(querySnapshot, id);
       setIsRepliesLoading(false);
       setReplies(replies);
     });

@@ -103,8 +103,8 @@ export default class CommentReplyService {
   static fetchMoreReply = (payload: IPayload): Promise<any> => {
     const { params } = payload;
     return Api.firestore
-      .collection(`source-codes/${params.sourceCodeID}/comment/${params.commentID}/replies`)
-      .orderBy('clientTimestamp', 'desc')
+      .collection(`source-codes/${params.sourceCodeID}/comments/${params.commentID}/replies`)
+      .orderBy('clientTimestamp', 'asc')
       .startAfter(params.after)
       .limit(params.limit || 10)
       .get();
@@ -119,7 +119,7 @@ export default class CommentReplyService {
     const { params } = payload;
     Api.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments/${params.commentID}/replies`)
-      .orderBy('clientTimestamp', 'desc')
+      .orderBy('clientTimestamp', 'asc')
       .limit(params.limit || 10)
       .onSnapshot(handleDataChanged, handleError);
   };
