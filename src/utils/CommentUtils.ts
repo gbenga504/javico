@@ -82,7 +82,6 @@ export default class CommentUtils {
   static parseReplies(
     replies: any,
     commentId: string,
-    action?: 'fetchMore' | null,
   ): { replies: IReply[]; next: null | undefined | number } {
     let temp: any = [];
     let tempStore: any = {};
@@ -93,7 +92,7 @@ export default class CommentUtils {
     }
 
     replies.forEach((reply: any) => {
-      temp.unshift({ id: reply.id, ...reply.data(), metadata: { ...reply.metadata } });
+      temp.push({ id: reply.id, ...reply.data(), metadata: { ...reply.metadata } });
     });
 
     temp.forEach((reply: any) => {
@@ -114,17 +113,10 @@ export default class CommentUtils {
       }
     });
 
-    if (action === 'fetchMore') {
-      CommentUtils.__REPLY_STORE[commentId] = {
-        ...tempStore,
-        ...CommentUtils.__REPLY_STORE[commentId],
-      };
-    } else {
-      CommentUtils.__REPLY_STORE[commentId] = {
-        ...CommentUtils.__REPLY_STORE[commentId],
-        ...tempStore,
-      };
-    }
+    CommentUtils.__REPLY_STORE[commentId] = {
+      ...CommentUtils.__REPLY_STORE[commentId],
+      ...tempStore,
+    };
 
     if (didStoreUpdate === false) {
       replies.docChanges().forEach(function(change: any) {
@@ -134,15 +126,16 @@ export default class CommentUtils {
       });
     }
 
-    let firstReply =
+    let allReplies =
       (CommentUtils.__REPLY_STORE[commentId] &&
-        Object.values(CommentUtils.__REPLY_STORE[commentId])[0]) ||
-      undefined;
-    let next = (firstReply && firstReply.clientTimestamp) || null;
+        Object.values(CommentUtils.__REPLY_STORE[commentId])) ||
+      [];
+    let lastReply = allReplies[allReplies.length - 1];
+    let next = (lastReply && lastReply.clientTimestamp) || null;
     CommentUtils.repliesNextCursor[commentId] =
       temp.length === 0 || CommentUtils.repliesNextCursor[commentId] === null ? null : next;
     return {
-      replies: Object.values(CommentUtils.__REPLY_STORE[commentId] || {}),
+      replies: allReplies,
       next: CommentUtils.repliesNextCursor[commentId],
     };
   }
