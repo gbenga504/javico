@@ -337,6 +337,7 @@ const MonacoEditor: React.FC<IProps> = ({
           isFetchingSourcecode={isFetchingSourcecode}
           onSetSourcecodeOwner={onSetSourcecodeOwner}
           sourceCode={sourceCode}
+          onHandleOpenSignInModal={handleOpenSignInModal}
           user={user}
           ownerId={ownerId}
           fetchSourceCode={fetchSourceCode}

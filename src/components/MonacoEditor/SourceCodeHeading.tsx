@@ -6,6 +6,7 @@ import { Icon, withNotificationBanner } from '../../atoms';
 import { getIdFromUrl, updateUrl } from '../../utils/UrlUtils';
 import SourceCodeService from '../../services/SourceCodeServices';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
+import SignInViaGithubModal from '../SignInViaGithubModal';
 
 interface IProps {
   sourceCodeTitle: string;
@@ -32,11 +33,16 @@ const SourceCodeHeading: React.FC<IProps> = ({
 }) => {
   const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | HTMLElement>(null);
   const [isRenameTitle, setIsRenameTitle] = useState<boolean>(false);
+  const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
   const [renameTitleValue, setRenameTitleValue] = useState<string>(sourceCodeTitle);
   const classes = useStyles();
 
   useEffect(() => {
     setRenameTitleValue(sourceCodeTitle);
+    if (isRenameTitle) {
+      setIsRenameTitle(false);
+    }
+    // eslint-disable-next-line
   }, [sourceCodeTitle]);
 
   function handleShowOptions(event: React.MouseEvent<HTMLButtonElement>) {
@@ -50,11 +56,6 @@ const SourceCodeHeading: React.FC<IProps> = ({
   function handleRenameTitle() {
     setIsRenameTitle(true);
     setOptionsAnchorEl(null);
-  }
-
-  function upsertSourcecodeCb() {
-    onHandleLoading();
-    closeRenameTitle();
   }
 
   function cancelRenameTitle(e: any) {
@@ -74,11 +75,20 @@ const SourceCodeHeading: React.FC<IProps> = ({
     setRenameTitleValue(event.target.value);
   }
 
+  function handleCloseSignInModal() {
+    setIsSignInModalVisible(false);
+  }
+
   function saveRenameTitle(e: any) {
     if (e.keyCode === 13) {
       e.preventDefault();
       onHandleLoading(true);
       const id = getIdFromUrl();
+      if (!renameTitleValue) {
+        onSetNotificationSettings("Sourcecode title can't be empty", 'danger', 'long');
+        onHandleLoading();
+        return;
+      }
       if (id) {
         if (renameTitleValue === sourceCodeTitle) {
           onHandleLoading();
@@ -88,19 +98,24 @@ const SourceCodeHeading: React.FC<IProps> = ({
         let data = { title: renameTitleValue, sourceCode };
         updateSourcecode(data, id);
       } else {
-        let data = {
-          ownerId: user.uid,
-          sourceCode,
-          readme: '',
-          title: renameTitleValue,
-          tags: [],
-        };
-        saveSourceCode(data);
+        if (!!user) {
+          saveSourceCode(user);
+        } else {
+          onHandleLoading();
+          setIsSignInModalVisible(true);
+        }
       }
     }
   }
 
-  function saveSourceCode(data: any) {
+  function saveSourceCode(user: any) {
+    let data = {
+      ownerId: user.uid,
+      sourceCode,
+      readme: '',
+      title: renameTitleValue,
+      tags: [],
+    };
     SourceCodeService.saveSourceCode({
       data,
     })
@@ -111,7 +126,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
           sourceCodeId: res.id,
         });
         updateUrl(res);
-        fetchSourceCode(upsertSourcecodeCb());
+        fetchSourceCode(onHandleLoading());
       })
       .catch((error: any) => {
         onHandleLoading();
@@ -125,7 +140,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
       params: { ID: id },
     })
       .then((res: any) => {
-        fetchSourceCode(upsertSourcecodeCb());
+        fetchSourceCode(onHandleLoading());
       })
       .catch((error: any) => {
         onHandleLoading();
@@ -178,7 +193,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
               <span style={{ fontSize: 14, padding: 5 }}>
                 {!!sourceCodeTitle ? `${sourceCodeTitle}.js` : getIdFromUrl() ? '' : 'Untitled.js'}
               </span>
-              {(isOwner || !getIdFromUrl()) && (
+              {(isOwner || !getIdFromUrl() || (!user === true && !ownerId === true)) && (
                 <Icon
                   className={`${classes.commentTitleMenuIcon} comment__hide-title-menu-icon`}
                   onClick={handleShowOptions}
@@ -210,6 +225,11 @@ const SourceCodeHeading: React.FC<IProps> = ({
         </span>
       )}
       {renderTitleMenuOptions()}
+      <SignInViaGithubModal
+        visible={isSignInModalVisible}
+        onRequestClose={handleCloseSignInModal}
+        onSignInSuccess={saveSourceCode}
+      />
     </div>
   );
 };

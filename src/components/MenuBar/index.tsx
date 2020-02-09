@@ -159,9 +159,8 @@ const MenuBar: React.FC<IProps> = ({ Api, onSetNotificationSettings }) => {
         if (el.text === 'Share code' && !getIdFromUrl()) return null;
         if (el.text === 'Sign in' && !!currentUser === true) return null;
         return (
-          <div style={{ position: 'relative' }}>
+          <div key={el.text} style={{ position: 'relative' }}>
             <div
-              key={el.icon}
               className={`${commonCss.flexRow} ${commonCss.center} ${classes.menubarIcon}`}
               onClick={() => triggerAction(el.action)}>
               <Tooltip title={el.text} leaveDelay={300} placement="bottom" enterDelay={100}>
