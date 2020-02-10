@@ -7,7 +7,7 @@
       }
     },
     {
-      "files": ["src/**/*.js", "src/**/*.ts", "src/**/*.tsx"],
+      "files": ["public/**/*.js", "src/**/*.js", "src/**/*.ts", "src/**/*.tsx"],
       "options": {
         "trailingComma": "all",
         "tabWidth": 2,
