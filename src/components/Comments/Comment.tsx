@@ -326,7 +326,6 @@ const useStyles = makeStyles(theme => ({
   commentUsername: {
     cursor: 'pointer',
     display: 'inline-block',
-    margin: theme.spacing(0, 0, 1),
     fontSize: fontsize.small,
   },
   commentTime: {
