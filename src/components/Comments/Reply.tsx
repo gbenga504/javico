@@ -23,7 +23,7 @@ interface IProps {
 
 const Reply: React.FC<IProps> = ({
   id,
-  authorName = 'Anonymous',
+  authorName,
   authorPhotoURL,
   text,
   createdAt,
@@ -121,7 +121,7 @@ const Reply: React.FC<IProps> = ({
             className={commonCss.flexRow}
             style={{ justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography className={classes.replyUsername} thickness="bold" variant="span">
-              {authorName}{' '}
+              {!!authorName ? authorName : 'Anonymous'}{' '}
               <Typography className={classes.replyTime}>{getRelativeTime(createdAt)}</Typography>
             </Typography>
             <Icon
