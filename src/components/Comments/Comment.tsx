@@ -33,7 +33,7 @@ const Comment: React.FC<IProps> = ({
   text,
   codeReference,
   id,
-  authorName = 'Anonymous',
+  authorName,
   authorPhotoURL,
   numReplies,
   createdAt,
@@ -235,7 +235,7 @@ const Comment: React.FC<IProps> = ({
           className={commonCss.flexRow}
           style={{ justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography className={classes.commentUsername} thickness="bold" variant="span">
-            {authorName}{' '}
+            {!!authorName ? authorName : 'Anonymous'}{' '}
             <Typography className={classes.commentTime}>{parseTime(createdAt)}</Typography>
           </Typography>
           <Icon
