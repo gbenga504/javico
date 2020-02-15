@@ -6,9 +6,9 @@ export const getIdFromUrl = () => {
 
 export const getSourcecodeUrl = () => window.location.href;
 
-export const updateUrl = (res: any) => {
+export const updateUrl = (res: any, ownerId: string) => {
   const location = window.location.href;
-  const href = `${location}${res.id}`;
+  const href = `${location}${ownerId}/${res.id}`;
   var base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
 
   //Change to new page with hash

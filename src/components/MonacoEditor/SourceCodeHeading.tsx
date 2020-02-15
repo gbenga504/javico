@@ -125,7 +125,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
           ownerId: user.uid,
           sourceCodeId: res.id,
         });
-        updateUrl(res);
+        updateUrl(res, user.uid);
         fetchSourceCode(onHandleLoading());
       })
       .catch((error: any) => {
