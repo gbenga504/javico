@@ -17,6 +17,7 @@ interface IProps {
   text: string;
   createdAt: number;
   sourceCodeId: string;
+  isReplyOwner: boolean;
   commentId: string;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
 }
@@ -30,6 +31,7 @@ const Reply: React.FC<IProps> = ({
   onSetNotificationSettings,
   sourceCodeId,
   commentId,
+  isReplyOwner,
 }) => {
   const classes = useStyles();
   const commonCss = commonUseStyles();
@@ -124,11 +126,14 @@ const Reply: React.FC<IProps> = ({
               {!!authorName ? authorName : 'Anonymous'}{' '}
               <Typography className={classes.replyTime}>{getRelativeTime(createdAt)}</Typography>
             </Typography>
-            <Icon
-              name="ios-more"
-              className={`${classes.replyMoreIcon} reply__show-more-button`}
-              onClick={handleShowOptions}
-            />
+
+            {isReplyOwner && (
+              <Icon
+                name="ios-more"
+                className={`${classes.replyMoreIcon} reply__show-more-button`}
+                onClick={handleShowOptions}
+              />
+            )}
           </div>
           <Typography className={classes.replyUserText} variant="span">
             <MarkdownRenderer source={text} linkTarget="_blank" />
