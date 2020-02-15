@@ -242,7 +242,7 @@ const MonacoEditor: React.FC<IProps> = ({
           ownerId: me.uid,
           sourceCode,
           readme: '',
-          title: 'test.js',
+          title: 'Untitled',
           tags: [],
         },
       })
@@ -253,7 +253,7 @@ const MonacoEditor: React.FC<IProps> = ({
             ownerId: me.uid,
             sourceCodeId: res.id,
           });
-          updateUrl(res);
+          updateUrl(res, me.uid);
         })
         .catch((error: any) => {
           onHandleLoading();
