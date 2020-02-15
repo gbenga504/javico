@@ -216,6 +216,7 @@ const Comment: React.FC<IProps> = ({
                 createdAt={reply.createdAt}
                 sourceCodeId={sourceCodeId}
                 commentId={id}
+                isReplyOwner={reply.author.id === userId}
               />
             );
           })}

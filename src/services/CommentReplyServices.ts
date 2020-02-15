@@ -28,6 +28,7 @@ export interface IReply {
   author: {
     name: string;
     photoURL: string;
+    id: string;
   };
   text: string;
   id: string;
