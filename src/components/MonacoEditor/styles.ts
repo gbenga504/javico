@@ -4,7 +4,7 @@ import { color, fontsize } from '../../Css';
 
 export const useStyles = makeStyles(theme => ({
   monacoEditorContainer: {
-    flex: 1,
+    width: '50%',
     position: 'relative',
     background: color.darkThemeBlack,
   },

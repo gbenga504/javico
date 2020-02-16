@@ -13,6 +13,7 @@ body {
   letter-spacing: -0.015em;
   font-family: "Eina Regular", sans-serif;
   color: var(--white-color);
+  overflow: hidden;
 }
 
 code {
