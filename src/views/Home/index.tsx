@@ -184,6 +184,7 @@ const useStyles = makeStyles({
     height: '100%',
     borderLeft: `1px solid ${color.darkThemeLightBorder}`,
     minWidth: '50%',
+    overflow: 'hidden',
     backgroundColor: color.darkThemeBlack,
     position: 'relative',
   },
