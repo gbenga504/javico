@@ -13,6 +13,11 @@ interface IReplyNextStore {
   [key: string]: null | undefined | number;
 }
 
+/**
+ * @class
+ * @classdesc
+ * This utils helps handle comment and reply based activities like formatting or parsing.
+ */
 export default class CommentUtils {
   static __COMMENT_STORE = {} as ICommentStore;
   static __REPLY_STORE = {} as IReplyStore;
@@ -23,6 +28,10 @@ export default class CommentUtils {
     comments: any,
     action?: 'fetchMore' | null,
   ): { comments: IComment[]; next: null | undefined | number } {
+    //This function parses and formats the comments
+    //Comments are arranged based on the action performed i.e fetchMore or (Others|null)
+    //__COMMENT_STORE is also used to keep track of all the comments that has been loaded thus far on the app.
+    //__COMMENT_STORE makes it possible to avoid duplication of data if there is a matching comment id
     let temp: any = [];
     let tempStore: any = {};
     let didStoreUpdate: boolean = false;
@@ -65,6 +74,8 @@ export default class CommentUtils {
       CommentUtils.__COMMENT_STORE = { ...CommentUtils.__COMMENT_STORE, ...tempStore };
     }
 
+    //Delete the document if no update occurs i.e there is no addition or update to the __COMMENT_STORE
+    //Since its possible that we have a deletion instead
     if (didStoreUpdate === false) {
       comments.docChanges().forEach(function(change: any) {
         if (change.type === 'removed') {
@@ -73,6 +84,7 @@ export default class CommentUtils {
       });
     }
 
+    //Use the clientTimestamp field of the first data as a next param for our cursor based pagination
     let firstComment = Object.values(CommentUtils.__COMMENT_STORE)[0];
     let next = (firstComment && firstComment.clientTimestamp) || null;
     CommentUtils.next = temp.length === 0 || CommentUtils.next === null ? null : next;
@@ -83,6 +95,9 @@ export default class CommentUtils {
     replies: any,
     commentId: string,
   ): { replies: IReply[]; next: null | undefined | number } {
+    //This function parses and formats the replies
+    //__REPLY_STORE is also used to keep track of all the replies that has been loaded thus far on the app. This replies are scoped by comment using the commentId as a key
+    //__REPLY_STORE makes it possible to avoid duplication of data if there is a matching reply id
     let temp: any = [];
     let tempStore: any = {};
     let didStoreUpdate: boolean = false;
@@ -118,6 +133,8 @@ export default class CommentUtils {
       ...tempStore,
     };
 
+    //Delete the document if no update occurs i.e there is no addition or update to the __REPLY_STORE
+    //Since its possible that we have a deletion instead
     if (didStoreUpdate === false) {
       replies.docChanges().forEach(function(change: any) {
         if (change.type === 'removed') {
@@ -126,6 +143,7 @@ export default class CommentUtils {
       });
     }
 
+    //Use the clientTimestamp field of the first data as a next param for our cursor based pagination
     let allReplies =
       (CommentUtils.__REPLY_STORE[commentId] &&
         Object.values(CommentUtils.__REPLY_STORE[commentId])) ||

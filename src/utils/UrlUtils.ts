@@ -6,6 +6,8 @@ export const getIdFromUrl = () => {
 
 export const getSourcecodeUrl = () => window.location.href;
 
+export const getBaseUrl = () => window.location.origin;
+
 export const updateUrl = (res: any, ownerId: string) => {
   const location = window.location.href;
   const href = `${location}${ownerId}/${res.id}`;
