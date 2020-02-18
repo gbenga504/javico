@@ -96,7 +96,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
           variant="contained"
           onClick={handleToggleView}
           classes={{ root: classes.switchButtonRoot, label: classes.switchButtonLabel }}>
-          <Icon name="ios-swap" />
+          <Icon name="chatboxes" style={{ color: '#fff', zIndex: 5 }} />
         </Button>
       </Tooltip>
     );
