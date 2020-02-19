@@ -107,7 +107,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
         title={`${!!fetchedSourceCode.ownerId ? fetchedSourceCode.title : 'Untitled'}.js by ${
           !!user && !!user.displayName ? user.displayName : 'Anonymous'
         }`}
-        description="Review my source code"
+        description={fetchedSourceCode.readme || 'Review my source code'}
         ogImage={!!user ? user.photoURL : `${getBaseUrl()}/favicon.png`}
         ogUrl={getBaseUrl()}
       />
