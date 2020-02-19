@@ -26,7 +26,3 @@ const Icon: React.FC<IProps> = ({ name, style, size, className, onClick }) => {
   );
 };
 export default Icon;
-
-// const Icon: React.FC<IProps> = ({ name, style, size, className, onClick }) =>
-//   React.createElement('ion-icon', { name, style, size, class: className, onClick });
-// export default Icon;
