@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { makeStyles, Menu, MenuItem } from '@material-ui/core';
+import { MoreHoriz as MoreHorizIcon } from '@material-ui/icons';
 
 import { useStyles as commonUseStyles, padding, color, fontsize } from '../../Css';
-import { Typography, Icon, withNotificationBanner } from '../../atoms';
+import { Typography, withNotificationBanner } from '../../atoms';
 import DeleteMessageModal from '../DeleteMessageModal';
 import EditMessagePanel from '../EditMessagePanel';
 import { getRelativeTime } from '../../utils/TimeUtils';
@@ -42,7 +43,7 @@ const Reply: React.FC<IProps> = ({
   const [isEditMessagePanelVisible, setIsEditMessagePanelVisible] = useState<boolean>(false);
   const [isEditingReply, setIsEditingReply] = useState<boolean>(false);
 
-  function handleShowOptions(event: React.MouseEvent<HTMLButtonElement>) {
+  function handleShowOptions(event: any) {
     setOptionsAnchorEl(event.currentTarget);
   }
 
@@ -128,10 +129,9 @@ const Reply: React.FC<IProps> = ({
             </Typography>
 
             {isReplyOwner && (
-              <Icon
-                name="ios-more"
+              <MoreHorizIcon
                 className={`${classes.replyMoreIcon} reply__show-more-button`}
-                onClick={handleShowOptions}
+                onClick={e => handleShowOptions(e)}
               />
             )}
           </div>

@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Tooltip, Menu, MenuItem, Button } from '@material-ui/core';
+import {
+  Search as SearchIcon,
+  Share as ShareoptionIcon,
+  GitHub as GitHubIcon,
+  WbIncandescent as WbIncandescentIcon,
+  Fullscreen as FullscreenIcon,
+  FullscreenExit as FullscreenExitIcon,
+} from '@material-ui/icons';
 
 import { useStyles } from './styles';
 import { useStyles as commonUseStyles, color } from '../../Css';
-import { Icon, withNotificationBanner } from '../../atoms';
+import { withNotificationBanner } from '../../atoms';
 import { withApi } from '../../utils/ApiConnector';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import ShareIcon from './ShareIcon';
@@ -31,15 +39,15 @@ const fullScreenEnabled =
   doc.msFullscreenElement;
 
 const iconList = (fullScreenMode: boolean) => [
-  { text: 'Search file', action: '', icon: 'ios-search' },
+  { text: 'Search file', action: '', icon: SearchIcon },
   {
     text: fullScreenMode === false ? 'Make full screen' : 'Resize screen',
     action: 'toggleFullScreen',
-    icon: fullScreenMode === false ? 'ios-expand' : 'ios-contract',
+    icon: fullScreenMode === false ? FullscreenIcon : FullscreenExitIcon,
   },
-  { text: 'Share code', action: 'toggleCodeOptions', icon: 'ios-share-alt' },
-  { text: 'Sign in', action: 'signInWithGithub', icon: 'logo-github' },
-  { text: 'Light theme', action: '', icon: 'ios-bulb' },
+  { text: 'Share code', action: 'toggleCodeOptions', icon: ShareoptionIcon },
+  { text: 'Sign in', action: 'signInWithGithub', icon: GitHubIcon },
+  { text: 'Light theme', action: '', icon: WbIncandescentIcon },
 ];
 
 const shareOptionsList = [
@@ -158,6 +166,8 @@ const MenuBar: React.FC<IProps> = ({ Api, onSetNotificationSettings }) => {
       {iconList(fullScreenMode).map(el => {
         if (el.text === 'Share code' && !getIdFromUrl()) return null;
         if (el.text === 'Sign in' && !!currentUser === true) return null;
+        const IconComponent = el.icon;
+
         return (
           <div key={el.text} style={{ position: 'relative' }}>
             <div
@@ -165,7 +175,7 @@ const MenuBar: React.FC<IProps> = ({ Api, onSetNotificationSettings }) => {
               onClick={() => triggerAction(el.action)}>
               <Tooltip title={el.text} leaveDelay={300} placement="bottom" enterDelay={100}>
                 <span className={commonCss.flexRow}>
-                  <Icon name={el.icon} />
+                  <IconComponent />
                 </span>
               </Tooltip>
             </div>

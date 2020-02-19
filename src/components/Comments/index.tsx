@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { TextareaAutosize } from '@material-ui/core';
+import { Send as SendIcon } from '@material-ui/icons';
 
 import { useStyles } from './styles';
 import { useStyles as commonUseStyles } from '../../Css';
-import { Typography, Icon, withNotificationBanner } from '../../atoms';
+import { Typography, withNotificationBanner } from '../../atoms';
 import Comment from './Comment';
 import CommentService, { IComment } from '../../services/CommentsServices';
 import ContentLoader from '../../atoms/ContentLoader';
@@ -301,10 +302,9 @@ const Comments: React.FC<IProps> = ({
             onChange={handleCommentChange}
             onKeyDown={handleRemoveQuotedComment}
           />
-          <Icon
+          <SendIcon
             className={classes.commentInputSendIcon}
             onClick={handleSendMessage}
-            name="send"
             style={{
               cursor:
                 process.env.REACT_APP_IS_COMMENT_FEATURE_AVAILABLE === 'true'

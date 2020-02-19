@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles, Menu, MenuItem, CircularProgress } from '@material-ui/core';
+import {
+  MoreHoriz as MoreHorizIcon,
+  KeyboardReturn as KeyboardReturnIcon,
+  ExpandMore as ExpandMoreIcon,
+  ExpandLess as ExpandLessIcon,
+} from '@material-ui/icons';
 
 import { useStyles as commonUseStyles, padding, color, fontsize } from '../../Css';
 import { Typography, Icon, withNotificationBanner } from '../../atoms';
@@ -82,7 +88,7 @@ const Comment: React.FC<IProps> = ({
     setIsRepliesVisible(prevIsRepliesVisible => !prevIsRepliesVisible);
   }
 
-  function handleShowOptions(event: React.MouseEvent<HTMLButtonElement>) {
+  function handleShowOptions(event: any) {
     setOptionsAnchorEl(event.currentTarget);
   }
 
@@ -186,19 +192,20 @@ const Comment: React.FC<IProps> = ({
   function renderShowMoreRepliesButton() {
     return (
       <div onClick={handleLoadMoreReplies} className={classes.commentReplyActionButtonContainer}>
-        <Icon name="ios-return-right" />
+        <KeyboardReturnIcon />
         <Typography thickness="semi-bold">Show more replies</Typography>
       </div>
     );
   }
 
   function renderReplies() {
+    const IconComponent = isRepliesVisible === true ? ExpandLessIcon : ExpandMoreIcon;
     return (
       <>
         <div
           onClick={handleToggleRepliesVisibility}
           className={classes.commentReplyActionButtonContainer}>
-          <Icon name={isRepliesVisible === true ? 'ios-arrow-up' : 'ios-arrow-down'} />
+          <IconComponent style={{ color: color.themeBlue }} />
           <Typography thickness="semi-bold">
             {isRepliesVisible === true ? 'Hide' : 'View'} {numReplies}{' '}
             {numReplies === 1 ? 'reply' : 'replies'}
@@ -239,10 +246,9 @@ const Comment: React.FC<IProps> = ({
             {!!authorName ? authorName : 'Anonymous'}{' '}
             <Typography className={classes.commentTime}>{parseTime(createdAt)}</Typography>
           </Typography>
-          <Icon
-            name="ios-more"
+          <MoreHorizIcon
             className={`${classes.commentMoreIcon} comment__show-more-button`}
-            onClick={handleShowOptions}
+            onClick={e => handleShowOptions(e)}
           />
         </div>
         <Typography className={classes.commentUserComment} variant="span">

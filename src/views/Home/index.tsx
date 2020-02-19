@@ -1,5 +1,6 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Tooltip, makeStyles, Button } from '@material-ui/core';
+import { InsertComment as InsertCommentIcon, Code as CodeIcon } from '@material-ui/icons';
 
 import MenuBar from '../../components/MenuBar';
 import MonacoEditor from '../../components/MonacoEditor';
@@ -89,6 +90,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
   }
 
   function renderSwitchView() {
+    const IconComponent = currentSection === 'console' ? InsertCommentIcon : CodeIcon;
     return (
       <Tooltip title="Switch View" placement="left" enterDelay={100}>
         <Button
@@ -96,7 +98,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
           variant="contained"
           onClick={handleToggleView}
           classes={{ root: classes.switchButtonRoot, label: classes.switchButtonLabel }}>
-          <Icon name="chatboxes" style={{ color: '#fff', zIndex: 5 }} />
+          <IconComponent style={{ color: '#fff', zIndex: 5, fontSize: 16, margin: 5 }} />
         </Button>
       </Tooltip>
     );

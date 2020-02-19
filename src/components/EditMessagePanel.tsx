@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { makeStyles, TextareaAutosize, Button } from '@material-ui/core';
+import { KeyboardReturn as KeyboardReturnIcon } from '@material-ui/icons';
 
 import { color, fontsize, useStyles as commonUseStyles, margin } from '../Css';
 import { ButtonWithLoading, Icon } from '../atoms';
@@ -60,7 +61,7 @@ const EditMessagePanel: React.FC<IProps> = ({
           color="primary"
           variant="contained"
           onClick={onEditMessage}
-          startIcon={<Icon name="ios-return-left" />}>
+          startIcon={<KeyboardReturnIcon />}>
           Save Changes
         </ButtonWithLoading>
       </div>
