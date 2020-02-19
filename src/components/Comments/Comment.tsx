@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles, Menu, MenuItem, CircularProgress } from '@material-ui/core';
+import {
+  MoreHoriz as MoreHorizIcon,
+  KeyboardReturn as KeyboardReturnIcon,
+  ExpandMore as ExpandMoreIcon,
+  ExpandLess as ExpandLessIcon,
+} from '@material-ui/icons';
 
 import { useStyles as commonUseStyles, padding, color, fontsize } from '../../Css';
-import { Typography, Icon, withNotificationBanner } from '../../atoms';
+import { Typography, withNotificationBanner } from '../../atoms';
 import Reply from './Reply';
 import SyntaxHighlighter from '../SyntaxHighlighter';
 import DeleteMessageModal from '../DeleteMessageModal';
@@ -44,7 +50,7 @@ const Comment: React.FC<IProps> = ({
   authorId,
 }) => {
   const [isRepliesVisible, setIsRepliesVisible] = useState<boolean>(false);
-  const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | HTMLElement>(null);
+  const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | SVGSVGElement>(null);
   const [isConfirmDeleteModalVisible, setIsConfirmDeleteModalVisible] = useState<boolean>(false);
   const [isDeleteCommentLoading, setIsDeleteCommentLoading] = useState<boolean>(false);
   const [editableComment, setEditableComment] = useState<string>(text);
@@ -82,7 +88,7 @@ const Comment: React.FC<IProps> = ({
     setIsRepliesVisible(prevIsRepliesVisible => !prevIsRepliesVisible);
   }
 
-  function handleShowOptions(event: React.MouseEvent<HTMLButtonElement>) {
+  function handleShowOptions(event: React.MouseEvent<SVGSVGElement>) {
     setOptionsAnchorEl(event.currentTarget);
   }
 
@@ -186,19 +192,20 @@ const Comment: React.FC<IProps> = ({
   function renderShowMoreRepliesButton() {
     return (
       <div onClick={handleLoadMoreReplies} className={classes.commentReplyActionButtonContainer}>
-        <Icon name="ios-return-right" />
+        <KeyboardReturnIcon />
         <Typography thickness="semi-bold">Show more replies</Typography>
       </div>
     );
   }
 
   function renderReplies() {
+    const IconComponent = isRepliesVisible === true ? ExpandLessIcon : ExpandMoreIcon;
     return (
       <>
         <div
           onClick={handleToggleRepliesVisibility}
           className={classes.commentReplyActionButtonContainer}>
-          <Icon name={isRepliesVisible === true ? 'ios-arrow-up' : 'ios-arrow-down'} />
+          <IconComponent style={{ color: color.themeBlue }} />
           <Typography thickness="semi-bold">
             {isRepliesVisible === true ? 'Hide' : 'View'} {numReplies}{' '}
             {numReplies === 1 ? 'reply' : 'replies'}
@@ -239,10 +246,9 @@ const Comment: React.FC<IProps> = ({
             {!!authorName ? authorName : 'Anonymous'}{' '}
             <Typography className={classes.commentTime}>{parseTime(createdAt)}</Typography>
           </Typography>
-          <Icon
-            name="ios-more"
+          <MoreHorizIcon
             className={`${classes.commentMoreIcon} comment__show-more-button`}
-            onClick={handleShowOptions}
+            onClick={e => handleShowOptions(e)}
           />
         </div>
         <Typography className={classes.commentUserComment} variant="span">
