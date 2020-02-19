@@ -32,7 +32,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
   user,
   sourceCode,
 }) => {
-  const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | HTMLElement>(null);
+  const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | SVGSVGElement>(null);
   const [isRenameTitle, setIsRenameTitle] = useState<boolean>(false);
   const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
   const [renameTitleValue, setRenameTitleValue] = useState<string>(sourceCodeTitle);
@@ -46,7 +46,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
     // eslint-disable-next-line
   }, [sourceCodeTitle]);
 
-  function handleShowOptions(event: any) {
+  function handleShowOptions(event: React.MouseEvent<SVGSVGElement>) {
     setOptionsAnchorEl(event.currentTarget);
   }
 

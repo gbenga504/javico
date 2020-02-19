@@ -50,7 +50,7 @@ const Comment: React.FC<IProps> = ({
   authorId,
 }) => {
   const [isRepliesVisible, setIsRepliesVisible] = useState<boolean>(false);
-  const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | HTMLElement>(null);
+  const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | SVGSVGElement>(null);
   const [isConfirmDeleteModalVisible, setIsConfirmDeleteModalVisible] = useState<boolean>(false);
   const [isDeleteCommentLoading, setIsDeleteCommentLoading] = useState<boolean>(false);
   const [editableComment, setEditableComment] = useState<string>(text);
@@ -88,7 +88,7 @@ const Comment: React.FC<IProps> = ({
     setIsRepliesVisible(prevIsRepliesVisible => !prevIsRepliesVisible);
   }
 
-  function handleShowOptions(event: any) {
+  function handleShowOptions(event: React.MouseEvent<SVGSVGElement>) {
     setOptionsAnchorEl(event.currentTarget);
   }
 

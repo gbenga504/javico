@@ -36,14 +36,14 @@ const Reply: React.FC<IProps> = ({
 }) => {
   const classes = useStyles();
   const commonCss = commonUseStyles();
-  const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | HTMLElement>(null);
+  const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | SVGSVGElement>(null);
   const [isConfirmDeleteModalVisible, setIsConfirmDeleteModalVisible] = useState<boolean>(false);
   const [isDeleteReplyLoading, setIsDeleteReplyLoading] = useState<boolean>(false);
   const [editableReply, setEditableReply] = useState<string>(text);
   const [isEditMessagePanelVisible, setIsEditMessagePanelVisible] = useState<boolean>(false);
   const [isEditingReply, setIsEditingReply] = useState<boolean>(false);
 
-  function handleShowOptions(event: any) {
+  function handleShowOptions(event: React.MouseEvent<SVGSVGElement>) {
     setOptionsAnchorEl(event.currentTarget);
   }
 
