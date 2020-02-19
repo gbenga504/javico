@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { makeStyles, Menu, MenuItem, CircularProgress } from '@material-ui/core';
+import { makeStyles, Menu, MenuItem } from '@material-ui/core';
 
 import { useStyles as commonUseStyles, padding, color, fontsize } from '../../Css';
 import { Typography, Icon, withNotificationBanner } from '../../atoms';
-import Reply from './Reply';
 import SyntaxHighlighter from '../SyntaxHighlighter';
 import DeleteMessageModal from '../DeleteMessageModal';
 import EditMessagePanel from '../EditMessagePanel';
@@ -13,6 +12,7 @@ import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import CommentService from '../../services/CommentsServices';
 import CommentUtils from '../../utils/CommentUtils';
 import MarkdownRenderer from '../MarkDownRenderer';
+import Replies from './Replies';
 
 interface IProps {
   text: string;
@@ -148,27 +148,6 @@ const Comment: React.FC<IProps> = ({
       });
   }
 
-  function handleLoadMoreReplies() {
-    /**
-     * @todo
-     * Load more replies
-     * setReplies and setIsRepliesLoading function
-     */
-    setIsRepliesLoading(true);
-    CommentReplyService.fetchMoreReply({
-      params: {
-        sourceCodeID: sourceCodeId,
-        after: replies[replies.length - 1].clientTimestamp,
-        limit: 10,
-        commentID: id,
-      },
-    }).then(function(querySnapshot: Array<any>) {
-      const { replies } = CommentUtils.parseReplies(querySnapshot, id);
-      setIsRepliesLoading(false);
-      setReplies(replies);
-    });
-  }
-
   function renderMenuOptions() {
     return (
       <Menu
@@ -180,52 +159,6 @@ const Comment: React.FC<IProps> = ({
         {authorId === userId && <MenuItem onClick={handleOpenEditMessagePanel}>Edit</MenuItem>}
         {authorId === userId && <MenuItem onClick={handleOpenConfirmDeleteModal}>Delete</MenuItem>}
       </Menu>
-    );
-  }
-
-  function renderShowMoreRepliesButton() {
-    return (
-      <div onClick={handleLoadMoreReplies} className={classes.commentReplyActionButtonContainer}>
-        <Icon name="ios-return-right" />
-        <Typography thickness="semi-bold">Show more replies</Typography>
-      </div>
-    );
-  }
-
-  function renderReplies() {
-    return (
-      <>
-        <div
-          onClick={handleToggleRepliesVisibility}
-          className={classes.commentReplyActionButtonContainer}>
-          <Icon name={isRepliesVisible === true ? 'ios-arrow-up' : 'ios-arrow-down'} />
-          <Typography thickness="semi-bold">
-            {isRepliesVisible === true ? 'Hide' : 'View'} {numReplies}{' '}
-            {numReplies === 1 ? 'reply' : 'replies'}
-          </Typography>
-        </div>
-        {isRepliesVisible === true &&
-          replies.map((reply: IReply) => {
-            return (
-              <Reply
-                key={reply.id}
-                id={reply.id}
-                authorName={reply.author.name}
-                authorPhotoURL={reply.author.photoURL}
-                text={reply.text}
-                createdAt={reply.createdAt}
-                sourceCodeId={sourceCodeId}
-                commentId={id}
-                isReplyOwner={reply.author.id === userId}
-              />
-            );
-          })}
-        {replies.length < numReplies &&
-          isRepliesVisible === true &&
-          isRepliesLoading === false &&
-          renderShowMoreRepliesButton()}
-        {isRepliesLoading === true && <CircularProgress color="primary" size={20} />}
-      </>
     );
   }
 
@@ -274,7 +207,21 @@ const Comment: React.FC<IProps> = ({
         {codeReference && (
           <SyntaxHighlighter containerStyle={{ marginTop: 5 }} sourceCode={codeReference} />
         )}
-        {!!numReplies === true && numReplies > 0 && renderReplies()}
+        {!!numReplies === true && numReplies > 0 && (
+          <Replies
+            onHandleToggleRepliesVisibility={handleToggleRepliesVisibility}
+            classes={classes}
+            numReplies={numReplies}
+            replies={replies}
+            sourceCodeId={sourceCodeId}
+            setIsRepliesLoading={setIsRepliesLoading}
+            isRepliesLoading={isRepliesLoading}
+            isRepliesVisible={isRepliesVisible}
+            setReplies={setReplies}
+            commentId={id}
+            userId={userId}
+          />
+        )}
       </div>
       {renderMenuOptions()}
       <DeleteMessageModal
@@ -344,6 +291,12 @@ const useStyles = makeStyles(theme => ({
     color: color.white,
     fontSize: fontsize.large,
     display: 'none',
+  },
+  repliesReply: {
+    willChange: 'height',
+    display: 'block',
+    // -webkit-transition: height 0.4s cubic-bezier(0.65, 0.05, 0.36, 1);
+    transition: 'height 0.4s cubic-bezier(0.65, 0.05, 0.36, 1)',
   },
 }));
 
