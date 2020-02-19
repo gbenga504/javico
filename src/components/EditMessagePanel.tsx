@@ -3,7 +3,7 @@ import { makeStyles, TextareaAutosize, Button } from '@material-ui/core';
 import { KeyboardReturn as KeyboardReturnIcon } from '@material-ui/icons';
 
 import { color, fontsize, useStyles as commonUseStyles, margin } from '../Css';
-import { ButtonWithLoading, Icon } from '../atoms';
+import { ButtonWithLoading } from '../atoms';
 
 interface IProps {
   visible: boolean;

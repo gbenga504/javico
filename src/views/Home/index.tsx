@@ -6,7 +6,7 @@ import MenuBar from '../../components/MenuBar';
 import MonacoEditor from '../../components/MonacoEditor';
 import Console from '../../components/Console';
 import { color, useStyles as commonUseStyles, padding } from '../../Css';
-import { IndeterminateLinearProgress, Icon, withNotificationBanner } from '../../atoms';
+import { IndeterminateLinearProgress, withNotificationBanner } from '../../atoms';
 import { withApi } from '../../utils/ApiConnector';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import SourceCodeService from '../../services/SourceCodeServices';

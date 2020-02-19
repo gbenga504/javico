@@ -8,7 +8,7 @@ import {
 } from '@material-ui/icons';
 
 import { useStyles as commonUseStyles, padding, color, fontsize } from '../../Css';
-import { Typography, Icon, withNotificationBanner } from '../../atoms';
+import { Typography, withNotificationBanner } from '../../atoms';
 import Reply from './Reply';
 import SyntaxHighlighter from '../SyntaxHighlighter';
 import DeleteMessageModal from '../DeleteMessageModal';

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { makeStyles, MenuItem, Menu, IconButton } from '@material-ui/core';
+import { makeStyles, MenuItem, Menu } from '@material-ui/core';
 import { MoreVert as MoreVertIcon, Close as CloseIcon } from '@material-ui/icons';
 
 import { color } from '../../Css';
-import { Icon, withNotificationBanner } from '../../atoms';
+import { withNotificationBanner } from '../../atoms';
 import { getIdFromUrl, updateUrl } from '../../utils/UrlUtils';
 import SourceCodeService from '../../services/SourceCodeServices';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
