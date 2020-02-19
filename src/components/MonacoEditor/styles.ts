@@ -54,7 +54,7 @@ export const useStyles = makeStyles(theme => ({
   },
   monacoEditorRunButtonIcon: {
     color: color.white,
-    fontSize: fontsize.xlarge,
+    fontSize: fontsize.xlarge * 2,
     marginLeft: 2,
   },
   monacoEditorCodeComment: {

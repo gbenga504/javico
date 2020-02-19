@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { makeStyles, Menu, MenuItem } from '@material-ui/core';
+import { MoreHoriz as MoreHorizIcon } from '@material-ui/icons';
 
 import { useStyles as commonUseStyles, padding, color, fontsize } from '../../Css';
-import { Typography, Icon, withNotificationBanner } from '../../atoms';
+import { Typography, withNotificationBanner } from '../../atoms';
 import DeleteMessageModal from '../DeleteMessageModal';
 import EditMessagePanel from '../EditMessagePanel';
 import { getRelativeTime } from '../../utils/TimeUtils';
@@ -35,14 +36,14 @@ const Reply: React.FC<IProps> = ({
 }) => {
   const classes = useStyles();
   const commonCss = commonUseStyles();
-  const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | HTMLElement>(null);
+  const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | SVGSVGElement>(null);
   const [isConfirmDeleteModalVisible, setIsConfirmDeleteModalVisible] = useState<boolean>(false);
   const [isDeleteReplyLoading, setIsDeleteReplyLoading] = useState<boolean>(false);
   const [editableReply, setEditableReply] = useState<string>(text);
   const [isEditMessagePanelVisible, setIsEditMessagePanelVisible] = useState<boolean>(false);
   const [isEditingReply, setIsEditingReply] = useState<boolean>(false);
 
-  function handleShowOptions(event: React.MouseEvent<HTMLButtonElement>) {
+  function handleShowOptions(event: React.MouseEvent<SVGSVGElement>) {
     setOptionsAnchorEl(event.currentTarget);
   }
 
@@ -128,10 +129,9 @@ const Reply: React.FC<IProps> = ({
             </Typography>
 
             {isReplyOwner && (
-              <Icon
-                name="ios-more"
+              <MoreHorizIcon
                 className={`${classes.replyMoreIcon} reply__show-more-button`}
-                onClick={handleShowOptions}
+                onClick={e => handleShowOptions(e)}
               />
             )}
           </div>

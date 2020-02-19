@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, Tab } from '@material-ui/core';
+import { Warning as WarningIcon, Error as ErrorIcon } from '@material-ui/icons';
 
 import { useStyles } from './styles';
 import { useStyles as commonUseStyles } from '../../Css';
-import { Typography, Icon, withNotificationBanner, ButtonWithLoading } from '../../atoms';
+import { Typography, withNotificationBanner, ButtonWithLoading } from '../../atoms';
 import MarDownRenderer from '../MarkDownRenderer';
 import { getIdFromUrl } from '../../utils/UrlUtils';
 import { withApi } from '../../utils/ApiConnector';
@@ -112,7 +113,7 @@ const Console: React.FC<{
     return (
       <div className={`${commonCss.flexRow} ${classes.consoleTerminalWarningMessages}`} key={index}>
         <div>
-          <Icon className={classes.consoleTerminalWarningIcon} name="warning"></Icon>
+          <WarningIcon className={classes.consoleTerminalWarningIcon} />
         </div>
         <Typography color="warning" thickness="semi-bold">
           {message}
@@ -125,7 +126,7 @@ const Console: React.FC<{
     return (
       <div className={`${commonCss.flexRow} ${classes.consoleTerminalErrorMessages}`} key={index}>
         <div>
-          <Icon className={classes.consoleTerminalErrorIcon} name="close-circle"></Icon>
+          <ErrorIcon className={classes.consoleTerminalErrorIcon} />
         </div>
         <Typography color="error" thickness="semi-bold">
           {message}

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles, MenuItem, Menu } from '@material-ui/core';
+import { MoreVert as MoreVertIcon, Close as CloseIcon } from '@material-ui/icons';
 
 import { color } from '../../Css';
-import { Icon, withNotificationBanner } from '../../atoms';
+import { withNotificationBanner } from '../../atoms';
 import { getIdFromUrl, updateUrl } from '../../utils/UrlUtils';
 import SourceCodeService from '../../services/SourceCodeServices';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
@@ -31,7 +32,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
   user,
   sourceCode,
 }) => {
-  const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | HTMLElement>(null);
+  const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | SVGSVGElement>(null);
   const [isRenameTitle, setIsRenameTitle] = useState<boolean>(false);
   const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
   const [renameTitleValue, setRenameTitleValue] = useState<string>(sourceCodeTitle);
@@ -45,7 +46,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
     // eslint-disable-next-line
   }, [sourceCodeTitle]);
 
-  function handleShowOptions(event: React.MouseEvent<HTMLButtonElement>) {
+  function handleShowOptions(event: React.MouseEvent<SVGSVGElement>) {
     setOptionsAnchorEl(event.currentTarget);
   }
 
@@ -194,10 +195,9 @@ const SourceCodeHeading: React.FC<IProps> = ({
                 {!!sourceCodeTitle ? `${sourceCodeTitle}.js` : getIdFromUrl() ? '' : 'Untitled.js'}
               </span>
               {(isOwner || !getIdFromUrl() || (!user === true && !ownerId === true)) && (
-                <Icon
+                <MoreVertIcon
                   className={`${classes.commentTitleMenuIcon} comment__hide-title-menu-icon`}
-                  onClick={handleShowOptions}
-                  name="more"
+                  onClick={e => handleShowOptions(e)}
                 />
               )}
             </span>
@@ -214,13 +214,12 @@ const SourceCodeHeading: React.FC<IProps> = ({
             value={renameTitleValue}
             autoFocus
           />
-          <Icon
+          <CloseIcon
             className={classes.commentTitleMenuIcon}
             onClick={closeRenameTitle}
             style={{
               fontSize: 14,
             }}
-            name="close"
           />
         </span>
       )}

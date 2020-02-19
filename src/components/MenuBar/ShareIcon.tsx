@@ -1,8 +1,8 @@
 import React from 'react';
 import { TwitterShareButton } from 'react-share';
 import { makeStyles } from '@material-ui/core';
+import { Twitter as TwitterIcon, FileCopy as FileCopyIcon } from '@material-ui/icons';
 
-import { Icon } from '../../atoms';
 import { getSourcecodeUrl } from '../../utils/UrlUtils';
 import { Tooltip } from '@material-ui/core';
 import { color } from '../../Css';
@@ -59,26 +59,23 @@ const ShareIcon: React.FC<IProps> = ({
         } ${classes.shareCodeOptions}`}
         style={{ top: index * 45, animationDelay: `${index * 150}ms` }}>
         {iconName === 'ios-copy' ? (
-          <button
-            id="shareIcon"
-            className={classes.copyIcon}
-            onClick={copyToClipboard}
-            style={{
-              color,
-              fontSize: 16,
-            }}>
-            <Icon name={iconName} />
-          </button>
-        ) : (
-          <TwitterShareButton url={DEVELOPER_CODE_URL}>
-            <button
-              id="shareIcon"
-              className={classes.copyIcon}
+          <button id="shareIcon" className={classes.copyIcon} onClick={copyToClipboard}>
+            <FileCopyIcon
               style={{
                 color,
                 fontSize: 16,
-              }}>
-              <Icon name={iconName} />
+              }}
+            />
+          </button>
+        ) : (
+          <TwitterShareButton url={DEVELOPER_CODE_URL}>
+            <button id="shareIcon" className={classes.copyIcon}>
+              <TwitterIcon
+                style={{
+                  color,
+                  fontSize: 16,
+                }}
+              />
             </button>
           </TwitterShareButton>
         )}
