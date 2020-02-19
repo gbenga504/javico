@@ -6,7 +6,7 @@ import { useStyles } from './styles';
 import { useStyles as commonUseStyles } from '../../Css';
 import { Typography, withNotificationBanner, ButtonWithLoading } from '../../atoms';
 import MarDownRenderer from '../MarkDownRenderer';
-import { getIdFromUrl } from '../../utils/UrlUtils';
+import { getIdFromUrl, getSourcecodeUrl, getBaseUrl } from '../../utils/UrlUtils';
 import { withApi } from '../../utils/ApiConnector';
 import SignInViaGithubModal from '../SignInViaGithubModal';
 import SourceCodeService from '../../services/SourceCodeServices';
@@ -174,10 +174,14 @@ const Console: React.FC<{
   }
 
   function renderPreview() {
+    let isInCleanSlate = getSourcecodeUrl() === `${getBaseUrl()}/`;
+    let optionalMessage = isInCleanSlate
+      ? '**Please sign in and save your code to add a README**'
+      : '**No README to display**';
     return (
       <div className={classes.consoleSection}>
         <div className={classes.consolePreview}>
-          <MarDownRenderer source={readMe} />
+          <MarDownRenderer source={readMe || optionalMessage} />
         </div>
       </div>
     );

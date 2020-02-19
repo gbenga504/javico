@@ -6,12 +6,11 @@ import MenuBar from '../../components/MenuBar';
 import MonacoEditor from '../../components/MonacoEditor';
 import Console from '../../components/Console';
 import { color, useStyles as commonUseStyles, padding } from '../../Css';
-import { IndeterminateLinearProgress, withNotificationBanner } from '../../atoms';
+import { IndeterminateLinearProgress, withNotificationBanner, Seo } from '../../atoms';
 import { withApi } from '../../utils/ApiConnector';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import SourceCodeService from '../../services/SourceCodeServices';
-import { getIdFromUrl, getSourcecodeUrl } from '../../utils/UrlUtils';
-import Helmet from 'react-helmet';
+import { getIdFromUrl, getBaseUrl } from '../../utils/UrlUtils';
 
 const Comments = lazy(() => import('../../components/Comments'));
 
@@ -106,18 +105,18 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
 
   return (
     <>
-      <Helmet>
-        <title>{!!fetchedSourceCode.ownerId ? fetchedSourceCode.title : 'Untitled'}.js</title>
-        <meta name="description" content="Helmet application" />
-        <meta property="og:title" content="Review my sourcecode" />
-        <meta
-          property="og:image"
-          content="https://cdn3.vectorstock.com/i/1000x1000/27/97/github-logo-icon-vector-25322797.jpg"
-        />
-        <meta property="og:description" content="This is just an example page." />
-        <meta property="og:url" content={`${getSourcecodeUrl()}`} />
-        <meta name="twitter:card" content="summary_large_image" />
-      </Helmet>
+      <Seo
+        title={`${!!fetchedSourceCode.ownerId ? fetchedSourceCode.title : 'Untitled'}.js by ${
+          !!user && !!user.displayName ? user.displayName : 'Anonymous'
+        }`}
+        description={
+          !!fetchedSourceCode.readme === true
+            ? `${fetchedSourceCode.readme.substring(0, 60)}...`
+            : 'Review my source code'
+        }
+        ogImage={!!user ? user.photoURL : `${getBaseUrl()}/favicon.png`}
+        ogUrl={getBaseUrl()}
+      />
       <div className={`${classes.relative} ${commonCss.flexRow}`}>
         <div className={classes.linearProgress}>
           <IndeterminateLinearProgress isVisible={isLoading} />
