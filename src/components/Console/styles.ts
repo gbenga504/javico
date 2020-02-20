@@ -61,6 +61,7 @@ export const useStyles = makeStyles(theme => ({
     color: color.white,
     width: '100%',
     height: '100%',
+    fontSize: fontsize.base,
   },
   saveReadmeButton: {
     margin: theme.spacing(1),

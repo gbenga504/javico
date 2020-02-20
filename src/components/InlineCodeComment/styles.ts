@@ -62,4 +62,9 @@ export const useStyles = makeStyles(theme => ({
   commentDialogContent: {
     fontSize: 15,
   },
+  openInNewIcon: {
+    fontSize: 16,
+    marginBottom: 3,
+    marginLeft: 3,
+  },
 }));

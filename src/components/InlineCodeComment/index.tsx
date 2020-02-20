@@ -149,7 +149,7 @@ const InlineCodeComment: React.FC<IProps> = ({
             target="_blank"
             className={classes.markdownLink}>
             Markdown is supported
-            <OpenInNewIcon style={{ fontSize: 16, marginBottom: 3 }} />
+            <OpenInNewIcon className={classes.openInNewIcon} />
           </Typography>
           <div className={commonCss.flexRow}>
             <Button className={commonCss.cancelButton} onClick={handleCancelComment}>
