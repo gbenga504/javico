@@ -210,7 +210,6 @@ const Comment: React.FC<IProps> = ({
         {!!numReplies === true && numReplies > 0 && (
           <Replies
             onHandleToggleRepliesVisibility={handleToggleRepliesVisibility}
-            classes={classes}
             numReplies={numReplies}
             replies={replies}
             sourceCodeId={sourceCodeId}
@@ -239,21 +238,6 @@ const useStyles = makeStyles(theme => ({
     marginLeft: 40,
     display: 'flex',
     flexDirection: 'column',
-  },
-  commentReplyActionButtonContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    cursor: 'pointer',
-    marginTop: theme.spacing(2),
-    '& ion-icon': {
-      color: color.themeBlue,
-      fontSize: 16,
-    },
-    '& span': {
-      color: `${color.themeBlue} !important`,
-      marginLeft: 10,
-      fontSize: fontsize.small,
-    },
   },
   comment: {
     backgroundColor: 'inherit',
@@ -291,12 +275,6 @@ const useStyles = makeStyles(theme => ({
     color: color.white,
     fontSize: fontsize.large,
     display: 'none',
-  },
-  repliesReply: {
-    willChange: 'height',
-    display: 'block',
-    // -webkit-transition: height 0.4s cubic-bezier(0.65, 0.05, 0.36, 1);
-    transition: 'height 0.4s cubic-bezier(0.65, 0.05, 0.36, 1)',
   },
 }));
 
