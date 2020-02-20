@@ -41,6 +41,8 @@ export const useStyles = makeStyles(theme => ({
     fontSize: fontsize.small,
     fontFamily: `${fonts.semiBold} !important`,
     textDecoration: 'none',
+    display: 'flex',
+    alignItems: 'center',
   },
   commentBoxContainer: {
     position: 'absolute',

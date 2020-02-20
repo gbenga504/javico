@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Paper, Button, Tabs, Tab, withStyles } from '@material-ui/core';
+import { OpenInNew as OpenInNewIcon } from '@material-ui/icons';
 
 import { useStyles } from './styles';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
@@ -148,6 +149,7 @@ const InlineCodeComment: React.FC<IProps> = ({
             target="_blank"
             className={classes.markdownLink}>
             Markdown is supported
+            <OpenInNewIcon style={{ fontSize: 16, marginBottom: 3 }} />
           </Typography>
           <div className={commonCss.flexRow}>
             <Button className={commonCss.cancelButton} onClick={handleCancelComment}>
