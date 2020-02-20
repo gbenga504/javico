@@ -91,7 +91,10 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
   function renderSwitchView() {
     const IconComponent = currentSection === 'console' ? InsertCommentIcon : CodeIcon;
     return (
-      <Tooltip title="Switch View" placement="left" enterDelay={100}>
+      <Tooltip
+        title={currentSection === 'console' ? 'chat' : 'terminal'}
+        placement="left"
+        enterDelay={100}>
         <Button
           color="primary"
           variant="contained"
