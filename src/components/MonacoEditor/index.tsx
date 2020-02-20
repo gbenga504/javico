@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Fab, Tooltip } from '@material-ui/core';
+import { ModeComment as ModeCommentIcon, PlayArrow as PlayArrowIcon } from '@material-ui/icons';
 
 import { useStyles } from './styles';
 import { useStyles as commonUseStyles, color } from '../../Css';
 import MonacoIntegrator from '../../utils/MonacoIntegrator';
 import MonacoThemes from '../../utils/MonacoThemes';
 import { withApi } from '../../utils/ApiConnector';
-import { Icon, AnimatedCircularLoader, withNotificationBanner } from '../../atoms';
+import { AnimatedCircularLoader, withNotificationBanner } from '../../atoms';
 import SignInViaGithubModal from '../SignInViaGithubModal';
 import InlineCodeComment from '../InlineCodeComment';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
@@ -314,12 +315,11 @@ const MonacoEditor: React.FC<IProps> = ({
         }}>
         <Tooltip title="Comment on code" placement="bottom" enterDelay={100}>
           <span className={commonCss.flexRow}>
-            <Icon
-              name="chatboxes"
-              size="small"
+            <ModeCommentIcon
               style={{
                 color: '#074e68',
                 margin: 12,
+                fontSize: 14,
               }}
             />
           </span>
@@ -369,7 +369,7 @@ const MonacoEditor: React.FC<IProps> = ({
         onClick={handleSourceCodeExecution}
         variant="round"
         classes={{ root: classes.monacoEditorRunButton }}>
-        <Icon name="play" className={classes.monacoEditorRunButtonIcon} />
+        <PlayArrowIcon className={classes.monacoEditorRunButtonIcon} />
       </Fab>
       <SignInViaGithubModal
         visible={isSignInModalVisible}
