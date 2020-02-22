@@ -10,7 +10,7 @@ import { IndeterminateLinearProgress, withNotificationBanner, Seo } from '../../
 import { withApi } from '../../utils/ApiConnector';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import SourceCodeService from '../../services/SourceCodeServices';
-import { getIdFromUrl, getBaseUrl } from '../../utils/UrlUtils';
+import { getSourceCodeIdFromUrl, getBaseUrl } from '../../utils/UrlUtils';
 
 const Comments = lazy(() => import('../../components/Comments'));
 
@@ -50,9 +50,9 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
   }, []);
 
   function fetchSourceCode(cb: any) {
-    if (getIdFromUrl()) {
+    if (getSourceCodeIdFromUrl()) {
       SourceCodeService.fetchSourceCode({
-        params: { ID: getIdFromUrl() },
+        params: { ID: getSourceCodeIdFromUrl() },
       })
         .then(res => {
           const { sourceCode, readme, ownerId, title } = res.data();
