@@ -241,11 +241,11 @@ const SourceCodeHeading: React.FC<IProps> = ({
 
   return (
     <div className={classes.monacoEditorTitleHead}>
-      <div style={{ display: 'flex', flex: 0.8, height: '100%' }}>
+      <div style={{ display: 'flex', flex: 0.9, height: '100%' }}>
         {renderSourcecodeTitle()}
         {renderTitleMenuOptions()}
       </div>
-      <div className={`${classes.createSourcecode} ${commonCss.flexRow} ${commonCss.center}`}>
+      <div className={`${classes.createSourcecode} ${commonCss.flexRow}`}>
         <Tooltip title="Fork project" leaveDelay={100} placement="bottom" enterDelay={100}>
           <IconButton color="secondary" classes={{ root: classes.createSourcecodeButton }}>
             <DeviceHubIcon className={classes.createSourcecodeIcon} />
@@ -274,10 +274,18 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: color.darkThemeLightBorder,
   },
   createSourcecode: {
-    flex: 0.2,
+    flex: 0.1,
   },
-  createSourcecodeButton: { padding: '0 12px' },
-  createSourcecodeIcon: { color: color.white },
+  createSourcecodeButton: {
+    padding: '0 12px',
+  },
+  createSourcecodeIcon: {
+    color: color.white,
+    transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+    '&:hover': {
+      color: color.themeBlue,
+    },
+  },
   monacoEditorTitle: {
     color: 'white',
     display: 'flex',
