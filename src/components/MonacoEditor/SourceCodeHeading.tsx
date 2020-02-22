@@ -9,17 +9,16 @@ import {
 
 import { useStyles as commonUseStyles, color } from '../../Css';
 import { withNotificationBanner } from '../../atoms';
-import { getSourceCodeIdFromUrl, updateUrl } from '../../utils/UrlUtils';
-import SourceCodeService from '../../services/SourceCodeServices';
+import { getSourceCodeIdFromUrl } from '../../utils/UrlUtils';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import SignInViaGithubModal from '../SignInViaGithubModal';
 
 interface IProps {
   sourceCodeTitle: string;
   isFetchingSourcecode: boolean;
-  onSetSourcecodeOwner: any;
   onHandleLoading: (isLoading?: boolean) => void;
-  fetchSourceCode: (cb: any) => void;
+  saveNewSourcecode: (data: any) => void;
+  updateSourcecode: (id: string, data: any) => void;
   sourceCode: string;
   ownerId: string;
   user: any;
@@ -29,9 +28,9 @@ interface IProps {
 const SourceCodeHeading: React.FC<IProps> = ({
   onSetNotificationSettings,
   sourceCodeTitle,
-  onSetSourcecodeOwner,
   isFetchingSourcecode,
-  fetchSourceCode,
+  saveNewSourcecode,
+  updateSourcecode,
   onHandleLoading,
   ownerId,
   user,
@@ -103,10 +102,10 @@ const SourceCodeHeading: React.FC<IProps> = ({
           return;
         }
         let data = { title: renameTitleValue, sourceCode };
-        updateSourcecode(data, id);
+        updateSourcecode(id, data);
       } else {
         if (!!user) {
-          saveSourceCode(user);
+          saveSourceCode();
         } else {
           onHandleLoading();
           setIsSignInModalVisible(true);
@@ -115,45 +114,14 @@ const SourceCodeHeading: React.FC<IProps> = ({
     }
   }
 
-  function saveSourceCode(user: any) {
+  function saveSourceCode() {
     let data = {
-      ownerId: user.uid,
       sourceCode,
       readme: '',
       title: renameTitleValue,
       tags: [],
     };
-    SourceCodeService.saveSourceCode({
-      data,
-    })
-      .then(res => {
-        onSetSourcecodeOwner({
-          sourceCode,
-          ownerId: user.uid,
-          sourceCodeId: res.id,
-        });
-        updateUrl(res, user.uid);
-        fetchSourceCode(onHandleLoading());
-      })
-      .catch((error: any) => {
-        onHandleLoading();
-        onSetNotificationSettings(error.message, 'danger', 'long');
-      });
-  }
-
-  function updateSourcecode(data: any, id: any) {
-    SourceCodeService.saveSourceCode({
-      data,
-      params: { ID: id },
-    })
-      .then((res: any) => {
-        fetchSourceCode(onHandleLoading());
-      })
-      .catch((error: any) => {
-        onHandleLoading();
-        setRenameTitleValue(sourceCodeTitle);
-        onSetNotificationSettings(error.message, 'danger', 'long');
-      });
+    saveNewSourcecode(data);
   }
 
   function handleRenameTitleInputKeydown(event: any) {

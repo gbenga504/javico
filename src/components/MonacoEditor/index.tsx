@@ -216,50 +216,62 @@ const MonacoEditor: React.FC<IProps> = ({
     }
   }
 
-  function handleSaveDeveloperCode() {
-    onHandleLoading(true);
+  function updateSourcecode(id: string, data: any) {
+    SourceCodeService.saveSourceCode({
+      data,
+      params: { ID: id },
+    })
+      .then((res: any) => {
+        fetchSourceCode(onHandleLoading());
+      })
+      .catch((error: any) => {
+        onHandleLoading();
+        onSetNotificationSettings(error.message, 'danger', 'long');
+      });
+  }
+
+  function saveNewSourcecode(data: any) {
     let me = Api.getCurrentUser();
+    onHandleLoading(true);
+    SourceCodeService.saveSourceCode({
+      data: {
+        ownerId: me.uid,
+        ...data,
+      },
+    })
+      .then(res => {
+        onHandleLoading();
+        onSetSourcecodeOwner({
+          sourceCode,
+          ownerId: me.uid,
+          sourceCodeId: res.id,
+        });
+        updateUrl(res, me.uid);
+        fetchSourceCode(onHandleLoading());
+      })
+      .catch((error: any) => {
+        onHandleLoading();
+        onSetNotificationSettings(error.message, 'danger', 'long');
+      });
+  }
+
+  function handleSaveDeveloperCode() {
     const id = getSourceCodeIdFromUrl();
     if (id) {
       if (sourceCode === fetchedSourceCode) {
-        onHandleLoading();
         onSetNotificationSettings('Your code is up to date', 'info', 'long');
         return;
       }
-      SourceCodeService.saveSourceCode({
-        data: { sourceCode },
-        params: { ID: id },
-      })
-        .then((res: any) => {
-          onHandleLoading();
-        })
-        .catch((error: any) => {
-          onHandleLoading();
-          onSetNotificationSettings(error.message, 'danger', 'long');
-        });
+      onHandleLoading(true);
+      updateSourcecode(id, { sourceCode });
     } else {
-      SourceCodeService.saveSourceCode({
-        data: {
-          ownerId: me.uid,
-          sourceCode,
-          readme: '',
-          title: 'Untitled',
-          tags: [],
-        },
-      })
-        .then(res => {
-          onHandleLoading();
-          onSetSourcecodeOwner({
-            sourceCode,
-            ownerId: me.uid,
-            sourceCodeId: res.id,
-          });
-          updateUrl(res, me.uid);
-        })
-        .catch((error: any) => {
-          onHandleLoading();
-          onSetNotificationSettings(error.message, 'danger', 'long');
-        });
+      const data = {
+        sourceCode,
+        readme: '',
+        title: 'Untitled',
+        tags: [],
+      };
+      saveNewSourcecode(data);
     }
   }
 
@@ -334,6 +346,8 @@ const MonacoEditor: React.FC<IProps> = ({
         <SourceCodeHeading
           sourceCodeTitle={sourceCodeTitle}
           onHandleLoading={onHandleLoading}
+          saveNewSourcecode={saveNewSourcecode}
+          updateSourcecode={updateSourcecode}
           isFetchingSourcecode={isFetchingSourcecode}
           onSetSourcecodeOwner={onSetSourcecodeOwner}
           sourceCode={sourceCode}
