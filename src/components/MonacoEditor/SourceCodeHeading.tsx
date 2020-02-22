@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { makeStyles, MenuItem, Menu } from '@material-ui/core';
-import { MoreVert as MoreVertIcon, Close as CloseIcon } from '@material-ui/icons';
+import { makeStyles, MenuItem, Menu, IconButton, Tooltip } from '@material-ui/core';
+import {
+  MoreVert as MoreVertIcon,
+  Close as CloseIcon,
+  DeviceHub as DeviceHubIcon,
+  NoteAdd as NoteAddIcon,
+} from '@material-ui/icons';
 
-import { color } from '../../Css';
+import { useStyles as commonUseStyles, color } from '../../Css';
 import { withNotificationBanner } from '../../atoms';
 import { getSourceCodeIdFromUrl, updateUrl } from '../../utils/UrlUtils';
 import SourceCodeService from '../../services/SourceCodeServices';
@@ -37,6 +42,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
   const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
   const [renameTitleValue, setRenameTitleValue] = useState<string>(sourceCodeTitle);
   const classes = useStyles();
+  const commonCss = commonUseStyles();
 
   useEffect(() => {
     setRenameTitleValue(sourceCodeTitle);
@@ -184,6 +190,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
   }
 
   function renderSourcecodeTitle() {
+    const isOwner = user ? user.uid === ownerId : false;
     return (
       <>
         {!isRenameTitle ? (
@@ -232,12 +239,24 @@ const SourceCodeHeading: React.FC<IProps> = ({
     );
   }
 
-  const isOwner = user ? user.uid === ownerId : false;
-
   return (
     <div className={classes.monacoEditorTitleHead}>
-      {renderSourcecodeTitle()}
-      {renderTitleMenuOptions()}
+      <div style={{ display: 'flex', flex: 0.8, height: '100%' }}>
+        {renderSourcecodeTitle()}
+        {renderTitleMenuOptions()}
+      </div>
+      <div className={`${classes.createSourcecode} ${commonCss.flexRow} ${commonCss.center}`}>
+        <Tooltip title="Fork project" leaveDelay={100} placement="bottom" enterDelay={100}>
+          <IconButton color="secondary" classes={{ root: classes.createSourcecodeButton }}>
+            <DeviceHubIcon className={classes.createSourcecodeIcon} />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Create new project" leaveDelay={100} placement="bottom" enterDelay={100}>
+          <IconButton color="secondary" classes={{ root: classes.createSourcecodeButton }}>
+            <NoteAddIcon className={classes.createSourcecodeIcon} />
+          </IconButton>
+        </Tooltip>
+      </div>
       <SignInViaGithubModal
         visible={isSignInModalVisible}
         onRequestClose={handleCloseSignInModal}
@@ -254,6 +273,11 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     backgroundColor: color.darkThemeLightBorder,
   },
+  createSourcecode: {
+    flex: 0.2,
+  },
+  createSourcecodeButton: { padding: '0 12px' },
+  createSourcecodeIcon: { color: color.white },
   monacoEditorTitle: {
     color: 'white',
     display: 'flex',
@@ -265,9 +289,6 @@ const useStyles = makeStyles(theme => ({
     '& .comment__hide-title-menu-icon': {
       display: 'block',
     },
-    // '&:hover .comment__hide-title-menu-icon': {
-    //   display: 'block',
-    // },
   },
   commentTitleMenuIcon: {
     cursor: 'pointer',
