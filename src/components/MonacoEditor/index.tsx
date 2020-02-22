@@ -17,7 +17,13 @@ import SourceCodeHeading from './SourceCodeHeading';
 
 interface IProps {
   value?: string;
-  onRunSourceCode?: (value: string) => void;
+  onRunSourceCode?: ({
+    sourceCode,
+    sourceCodeHash,
+  }: {
+    sourceCode: string;
+    sourceCodeHash: number;
+  }) => void;
   theme?: 'light' | 'dark' | 'ace' | 'night-dark';
   language?: string;
   onHandleLoading: any;
@@ -156,7 +162,7 @@ const MonacoEditor: React.FC<IProps> = ({
   }, [selectionValue, selectionRange]);
 
   function handleSourceCodeExecution() {
-    onRunSourceCode && onRunSourceCode(sourceCode);
+    onRunSourceCode && onRunSourceCode({ sourceCode, sourceCodeHash: Date.now() });
   }
 
   function disableEditor(disable = false) {

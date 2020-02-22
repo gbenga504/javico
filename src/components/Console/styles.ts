@@ -6,6 +6,21 @@ export const useStyles = makeStyles(theme => ({
   console: {
     height: '100vh',
     backgroundColor: color.darkThemeBlack,
+    '&>div:first-child': {
+      width: '100%',
+      display: 'flex',
+      justifyContent: 'space-between',
+      paddingRight: theme.spacing(25),
+    },
+  },
+  consoleTerminalBasedActionsContainer: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  consoleTerminalClearIcon: {
+    color: color.white,
+    fontSize: 16,
+    cursor: 'pointer',
   },
   consoleTab: {
     color: color.white,
@@ -21,6 +36,9 @@ export const useStyles = makeStyles(theme => ({
     padding: '3px 15px',
     borderBottom: `1px solid ${color.darkThemeLightBorder}`,
     fontSize: `${fontsize.terminal}px !important`,
+  },
+  consoleTerminalClearMessage: {
+    fontStyle: 'italic',
   },
   consoleTerminalWarningMessages: {
     padding: '3px 15px',
