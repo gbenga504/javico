@@ -183,50 +183,60 @@ const SourceCodeHeading: React.FC<IProps> = ({
     );
   }
 
+  function renderSourcecodeTitle() {
+    return (
+      <>
+        {!isRenameTitle ? (
+          <>
+            {(!isFetchingSourcecode || getSourceCodeIdFromUrl()) && (
+              <span className={classes.monacoEditorTitle}>
+                <span style={{ fontSize: 14, padding: 5 }}>
+                  {!!sourceCodeTitle
+                    ? `${sourceCodeTitle}.js`
+                    : getSourceCodeIdFromUrl()
+                    ? ''
+                    : 'Untitled.js'}
+                </span>
+                {(isOwner ||
+                  !getSourceCodeIdFromUrl() ||
+                  (!user === true && !ownerId === true)) && (
+                  <MoreVertIcon
+                    className={`${classes.commentTitleMenuIcon} comment__hide-title-menu-icon`}
+                    onClick={e => handleShowOptions(e)}
+                  />
+                )}
+              </span>
+            )}
+          </>
+        ) : (
+          <span
+            className={classes.monacoEditorTitle}
+            style={{ border: `1px solid ${color.themeBlue}` }}>
+            <input
+              onKeyDown={handleRenameTitleInputKeydown}
+              onChange={handleRenameTitleChange}
+              className={classes.monacoEditorRenameTitleInput}
+              value={renameTitleValue}
+              autoFocus
+            />
+            <CloseIcon
+              className={classes.commentTitleMenuIcon}
+              onClick={closeRenameTitle}
+              style={{
+                fontSize: 14,
+              }}
+            />
+          </span>
+        )}
+      </>
+    );
+  }
+
   const isOwner = user ? user.uid === ownerId : false;
 
   return (
     <div className={classes.monacoEditorTitleHead}>
-      {!isRenameTitle ? (
-        <>
-          {(!isFetchingSourcecode || getSourceCodeIdFromUrl()) && (
-            <span className={classes.monacoEditorTitle}>
-              <span style={{ fontSize: 14, padding: 5 }}>
-                {!!sourceCodeTitle
-                  ? `${sourceCodeTitle}.js`
-                  : getSourceCodeIdFromUrl()
-                  ? ''
-                  : 'Untitled.js'}
-              </span>
-              {(isOwner || !getSourceCodeIdFromUrl() || (!user === true && !ownerId === true)) && (
-                <MoreVertIcon
-                  className={`${classes.commentTitleMenuIcon} comment__hide-title-menu-icon`}
-                  onClick={e => handleShowOptions(e)}
-                />
-              )}
-            </span>
-          )}
-        </>
-      ) : (
-        <span
-          className={classes.monacoEditorTitle}
-          style={{ border: `1px solid ${color.themeBlue}` }}>
-          <input
-            onKeyDown={handleRenameTitleInputKeydown}
-            onChange={handleRenameTitleChange}
-            className={classes.monacoEditorRenameTitleInput}
-            value={renameTitleValue}
-            autoFocus
-          />
-          <CloseIcon
-            className={classes.commentTitleMenuIcon}
-            onClick={closeRenameTitle}
-            style={{
-              fontSize: 14,
-            }}
-          />
-        </span>
-      )}
+      {renderSourcecodeTitle()}
       {renderTitleMenuOptions()}
       <SignInViaGithubModal
         visible={isSignInModalVisible}
