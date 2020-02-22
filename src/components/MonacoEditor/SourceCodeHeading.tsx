@@ -4,7 +4,7 @@ import { MoreVert as MoreVertIcon, Close as CloseIcon } from '@material-ui/icons
 
 import { color } from '../../Css';
 import { withNotificationBanner } from '../../atoms';
-import { getIdFromUrl, updateUrl } from '../../utils/UrlUtils';
+import { getSourceCodeIdFromUrl, updateUrl } from '../../utils/UrlUtils';
 import SourceCodeService from '../../services/SourceCodeServices';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import SignInViaGithubModal from '../SignInViaGithubModal';
@@ -84,7 +84,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
     if (e.keyCode === 13) {
       e.preventDefault();
       onHandleLoading(true);
-      const id = getIdFromUrl();
+      const id = getSourceCodeIdFromUrl();
       if (!renameTitleValue) {
         onSetNotificationSettings("Sourcecode title can't be empty", 'danger', 'long');
         onHandleLoading();
@@ -189,12 +189,16 @@ const SourceCodeHeading: React.FC<IProps> = ({
     <div className={classes.monacoEditorTitleHead}>
       {!isRenameTitle ? (
         <>
-          {(!isFetchingSourcecode || getIdFromUrl()) && (
+          {(!isFetchingSourcecode || getSourceCodeIdFromUrl()) && (
             <span className={classes.monacoEditorTitle}>
               <span style={{ fontSize: 14, padding: 5 }}>
-                {!!sourceCodeTitle ? `${sourceCodeTitle}.js` : getIdFromUrl() ? '' : 'Untitled.js'}
+                {!!sourceCodeTitle
+                  ? `${sourceCodeTitle}.js`
+                  : getSourceCodeIdFromUrl()
+                  ? ''
+                  : 'Untitled.js'}
               </span>
-              {(isOwner || !getIdFromUrl() || (!user === true && !ownerId === true)) && (
+              {(isOwner || !getSourceCodeIdFromUrl() || (!user === true && !ownerId === true)) && (
                 <MoreVertIcon
                   className={`${classes.commentTitleMenuIcon} comment__hide-title-menu-icon`}
                   onClick={e => handleShowOptions(e)}

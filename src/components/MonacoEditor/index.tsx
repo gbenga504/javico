@@ -11,7 +11,7 @@ import { AnimatedCircularLoader, withNotificationBanner } from '../../atoms';
 import SignInViaGithubModal from '../SignInViaGithubModal';
 import InlineCodeComment from '../InlineCodeComment';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
-import { getIdFromUrl, updateUrl } from '../../utils/UrlUtils';
+import { getSourceCodeIdFromUrl, updateUrl } from '../../utils/UrlUtils';
 import SourceCodeService from '../../services/SourceCodeServices';
 import SourceCodeHeading from './SourceCodeHeading';
 
@@ -161,7 +161,7 @@ const MonacoEditor: React.FC<IProps> = ({
 
   function disableEditor(disable = false) {
     if (editorRef.current !== null)
-      editorRef.current.updateOptions({ readOnly: !getIdFromUrl() ? false : disable });
+      editorRef.current.updateOptions({ readOnly: !getSourceCodeIdFromUrl() ? false : disable });
   }
 
   function colorHighlight() {
@@ -219,7 +219,7 @@ const MonacoEditor: React.FC<IProps> = ({
   function handleSaveDeveloperCode() {
     onHandleLoading(true);
     let me = Api.getCurrentUser();
-    const id = getIdFromUrl();
+    const id = getSourceCodeIdFromUrl();
     if (id) {
       if (sourceCode === fetchedSourceCode) {
         onHandleLoading();

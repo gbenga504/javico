@@ -6,7 +6,7 @@ import { useStyles } from './styles';
 import { useStyles as commonUseStyles } from '../../Css';
 import { Typography, withNotificationBanner, ButtonWithLoading } from '../../atoms';
 import MarDownRenderer from '../MarkDownRenderer';
-import { getIdFromUrl, getSourcecodeUrl, getBaseUrl } from '../../utils/UrlUtils';
+import { getSourceCodeIdFromUrl, getSourcecodeUrl, getBaseUrl } from '../../utils/UrlUtils';
 import { withApi } from '../../utils/ApiConnector';
 import SignInViaGithubModal from '../SignInViaGithubModal';
 import SourceCodeService from '../../services/SourceCodeServices';
@@ -87,7 +87,7 @@ const Console: React.FC<{
       setIsSignInModalVisible(true);
       return;
     }
-    const id = getIdFromUrl();
+    const id = getSourceCodeIdFromUrl();
     SourceCodeService.saveSourceCode({
       data: { readme: readMe },
       params: { ID: id },

@@ -15,7 +15,7 @@ import { withNotificationBanner } from '../../atoms';
 import { withApi } from '../../utils/ApiConnector';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import ShareIcon from './ShareIcon';
-import { getIdFromUrl } from '../../utils/UrlUtils';
+import { getSourceCodeIdFromUrl } from '../../utils/UrlUtils';
 
 interface IProps {
   Api: any;
@@ -164,7 +164,7 @@ const MenuBar: React.FC<IProps> = ({ Api, onSetNotificationSettings }) => {
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
       {iconList(fullScreenMode).map(el => {
-        if (el.text === 'Share code' && !getIdFromUrl()) return null;
+        if (el.text === 'Share code' && !getSourceCodeIdFromUrl()) return null;
         if (el.text === 'Sign in' && !!currentUser === true) return null;
         const IconComponent = el.icon;
 
