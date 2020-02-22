@@ -21,6 +21,7 @@ interface IProps {
   updateSourcecode: (id: string, data: any) => void;
   sourceCode: string;
   ownerId: string;
+  readme: string;
   user: any;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
 }
@@ -33,6 +34,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
   updateSourcecode,
   onHandleLoading,
   ownerId,
+  readme,
   user,
   sourceCode,
 }) => {
@@ -112,6 +114,20 @@ const SourceCodeHeading: React.FC<IProps> = ({
         }
       }
     }
+  }
+
+  function forkSourcecode(e: any) {
+    let data = {
+      sourceCode,
+      readme,
+      title: renameTitleValue,
+      tags: [],
+      fork: {
+        ownerId,
+        sourcecodeId: getSourceCodeIdFromUrl(),
+      },
+    };
+    saveNewSourcecode(data);
   }
 
   function saveSourceCode() {
@@ -215,7 +231,10 @@ const SourceCodeHeading: React.FC<IProps> = ({
       </div>
       <div className={`${classes.createSourcecode} ${commonCss.flexRow}`}>
         <Tooltip title="Fork project" leaveDelay={100} placement="bottom" enterDelay={100}>
-          <IconButton color="secondary" classes={{ root: classes.createSourcecodeButton }}>
+          <IconButton
+            onClick={e => forkSourcecode(e)}
+            color="secondary"
+            classes={{ root: classes.createSourcecodeButton }}>
             <DeviceHubIcon className={classes.createSourcecodeIcon} />
           </IconButton>
         </Tooltip>

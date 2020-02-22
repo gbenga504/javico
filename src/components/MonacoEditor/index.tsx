@@ -21,15 +21,18 @@ interface IProps {
   theme?: 'light' | 'dark' | 'ace' | 'night-dark';
   language?: string;
   onHandleLoading: any;
-  fetchedSourceCode: string;
-  sourceCodeTitle: string;
+  fetchedSourceCode: {
+    sourceCode: string;
+    ownerId: string;
+    title: string;
+    sourceCodeId: string;
+    readme: string;
+  };
   onSetSourcecodeOwner: any;
-  ownerId: string;
   isFetchingSourcecode: boolean;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
   Api: any;
   user: any;
-  sourceCodeId: string;
   currentSection: 'comments' | 'console';
   onChangeCurrentSection: () => void;
   fetchSourceCode: (cb: any) => void;
@@ -41,18 +44,22 @@ const MonacoEditor: React.FC<IProps> = ({
   theme = 'vs-dark',
   onHandleLoading,
   language = 'javascript',
-  fetchedSourceCode,
   onSetNotificationSettings,
-  sourceCodeTitle,
   onSetSourcecodeOwner,
   isFetchingSourcecode,
   user: _user,
-  ownerId,
   Api,
-  sourceCodeId,
   currentSection,
   onChangeCurrentSection,
   fetchSourceCode,
+
+  fetchedSourceCode: {
+    sourceCode: fetchedSourceCode,
+    ownerId,
+    title: sourceCodeTitle,
+    sourceCodeId,
+    readme,
+  },
 }) => {
   const [shouldDisplayCommentBox, setShouldDisplayCommentBox] = useState<boolean>(false);
   const [shouldDisplayCommentIcon, setShouldDisplayCommentIcon] = useState<boolean>(false);
@@ -351,6 +358,7 @@ const MonacoEditor: React.FC<IProps> = ({
           isFetchingSourcecode={isFetchingSourcecode}
           onSetSourcecodeOwner={onSetSourcecodeOwner}
           sourceCode={sourceCode}
+          readme={readme}
           onHandleOpenSignInModal={handleOpenSignInModal}
           user={user}
           ownerId={ownerId}
