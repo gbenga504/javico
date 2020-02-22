@@ -218,9 +218,11 @@ const Console: React.FC<{
 
   function renderTerminalBasedActions() {
     return (
-      <div className={classes.consoleTerminalBasedActionsContainer}>
-        <ClearIcon className={classes.consoleTerminalClearIcon} onClick={handleClearConsole} />
-      </div>
+      currentTab === 0 && (
+        <div className={classes.consoleTerminalBasedActionsContainer}>
+          <ClearIcon className={classes.consoleTerminalClearIcon} onClick={handleClearConsole} />
+        </div>
+      )
     );
   }
 
