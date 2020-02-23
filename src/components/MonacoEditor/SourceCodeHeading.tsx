@@ -42,7 +42,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
   const [isRenameTitle, setIsRenameTitle] = useState<boolean>(false);
   const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
   const [renameTitleValue, setRenameTitleValue] = useState<string>(sourceCodeTitle);
-  const [activeAction, setActiveAction] = useState<'' | 'fork'>('');
+  const [activeAction, setActiveAction] = useState<'' | 'fork' | 'create'>('');
   const classes = useStyles();
   const commonCss = commonUseStyles();
   const isOwner = user ? user.uid === ownerId : false;
@@ -92,13 +92,12 @@ const SourceCodeHeading: React.FC<IProps> = ({
   function saveRenameTitle(e: any) {
     if (e.keyCode === 13) {
       e.preventDefault();
-      onHandleLoading(true);
       const id = getSourceCodeIdFromUrl();
       if (!renameTitleValue) {
         onSetNotificationSettings("Sourcecode title can't be empty", 'danger', 'long');
-        onHandleLoading();
         return;
       }
+      onHandleLoading(true);
       if (id) {
         if (renameTitleValue === sourceCodeTitle) {
           onHandleLoading();
@@ -137,6 +136,21 @@ const SourceCodeHeading: React.FC<IProps> = ({
     saveNewSourcecode(data);
   }
 
+  function createNewSourcecode() {
+    if (!user) {
+      setIsSignInModalVisible(true);
+      setActiveAction('create');
+      return;
+    }
+    let data = {
+      sourceCode: '',
+      readme: '',
+      title: 'Untitled',
+      tags: [],
+    };
+    saveNewSourcecode(data);
+  }
+
   function saveSourceCode() {
     let data;
     if (activeAction === 'fork') {
@@ -150,7 +164,15 @@ const SourceCodeHeading: React.FC<IProps> = ({
           sourcecodeId: getSourceCodeIdFromUrl(),
         },
       };
-      setActiveAction('fork');
+      setActiveAction('');
+    } else if (activeAction === 'create') {
+      data = {
+        sourceCode: '',
+        readme: '',
+        title: 'Untitled',
+        tags: [],
+      };
+      setActiveAction('');
     } else {
       data = {
         sourceCode,
@@ -263,7 +285,10 @@ const SourceCodeHeading: React.FC<IProps> = ({
           </Tooltip>
         )}
         <Tooltip title="Create new project" leaveDelay={100} placement="bottom" enterDelay={100}>
-          <IconButton color="secondary" classes={{ root: classes.createSourcecodeButton }}>
+          <IconButton
+            onClick={createNewSourcecode}
+            color="secondary"
+            classes={{ root: classes.createSourcecodeButton }}>
             <NoteAddIcon className={classes.createSourcecodeIcon} />
           </IconButton>
         </Tooltip>
