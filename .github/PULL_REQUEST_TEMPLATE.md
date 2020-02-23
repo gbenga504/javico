@@ -40,4 +40,3 @@ Reference link to the issue if any
 ### Reviewer Checklist
 
 - [ ] I understand _why_ and _how_.
-- [ ] I have read the code review guide at https://www.notion.so/f9labs/Code-Review-Guide-2de31a969bbb4207992a9cb07d6273e3
