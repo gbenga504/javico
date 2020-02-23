@@ -42,8 +42,10 @@ const SourceCodeHeading: React.FC<IProps> = ({
   const [isRenameTitle, setIsRenameTitle] = useState<boolean>(false);
   const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
   const [renameTitleValue, setRenameTitleValue] = useState<string>(sourceCodeTitle);
+  const [activeAction, setActiveAction] = useState<'' | 'fork'>('');
   const classes = useStyles();
   const commonCss = commonUseStyles();
+  const isOwner = user ? user.uid === ownerId : false;
 
   useEffect(() => {
     setRenameTitleValue(sourceCodeTitle);
@@ -116,7 +118,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
     }
   }
 
-  function forkSourcecode(e: any) {
+  function forkSourcecode() {
     let data = {
       sourceCode,
       readme,
@@ -127,16 +129,37 @@ const SourceCodeHeading: React.FC<IProps> = ({
         sourcecodeId: getSourceCodeIdFromUrl(),
       },
     };
+    if (!user) {
+      setIsSignInModalVisible(true);
+      setActiveAction('fork');
+      return;
+    }
     saveNewSourcecode(data);
   }
 
   function saveSourceCode() {
-    let data = {
-      sourceCode,
-      readme: '',
-      title: renameTitleValue,
-      tags: [],
-    };
+    let data;
+    if (activeAction === 'fork') {
+      data = {
+        sourceCode,
+        readme,
+        title: renameTitleValue,
+        tags: [],
+        fork: {
+          ownerId,
+          sourcecodeId: getSourceCodeIdFromUrl(),
+        },
+      };
+      setActiveAction('fork');
+    } else {
+      data = {
+        sourceCode,
+        readme: '',
+        title: renameTitleValue,
+        tags: [],
+      };
+    }
+
     saveNewSourcecode(data);
   }
 
@@ -174,7 +197,6 @@ const SourceCodeHeading: React.FC<IProps> = ({
   }
 
   function renderSourcecodeTitle() {
-    const isOwner = user ? user.uid === ownerId : false;
     return (
       <>
         {!isRenameTitle ? (
@@ -190,7 +212,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
                 </span>
                 {(isOwner ||
                   !getSourceCodeIdFromUrl() ||
-                  (!user === true && !ownerId === true)) && (
+                  (!user === true && !ownerId === true && !!ownerId)) && (
                   <MoreVertIcon
                     className={`${classes.commentTitleMenuIcon} comment__hide-title-menu-icon`}
                     onClick={e => handleShowOptions(e)}
@@ -230,14 +252,16 @@ const SourceCodeHeading: React.FC<IProps> = ({
         {renderTitleMenuOptions()}
       </div>
       <div className={`${classes.createSourcecode} ${commonCss.flexRow}`}>
-        <Tooltip title="Fork project" leaveDelay={100} placement="bottom" enterDelay={100}>
-          <IconButton
-            onClick={e => forkSourcecode(e)}
-            color="secondary"
-            classes={{ root: classes.createSourcecodeButton }}>
-            <DeviceHubIcon className={classes.createSourcecodeIcon} />
-          </IconButton>
-        </Tooltip>
+        {!!ownerId && !isOwner && (
+          <Tooltip title="Fork project" leaveDelay={100} placement="bottom" enterDelay={100}>
+            <IconButton
+              onClick={forkSourcecode}
+              color="secondary"
+              classes={{ root: classes.createSourcecodeButton }}>
+              <DeviceHubIcon className={classes.createSourcecodeIcon} />
+            </IconButton>
+          </Tooltip>
+        )}
         <Tooltip title="Create new project" leaveDelay={100} placement="bottom" enterDelay={100}>
           <IconButton color="secondary" classes={{ root: classes.createSourcecodeButton }}>
             <NoteAddIcon className={classes.createSourcecodeIcon} />

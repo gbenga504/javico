@@ -363,7 +363,6 @@ const MonacoEditor: React.FC<IProps> = ({
           user={user}
           ownerId={ownerId}
           fetchSourceCode={fetchSourceCode}
-          isOwner={user ? user.uid === ownerId : false}
         />
         {renderLoading()}
         <div
