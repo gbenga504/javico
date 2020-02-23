@@ -20,7 +20,10 @@ interface IProps {
 }
 
 const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
-  const [terminalExecutableCode, setTerminalExecutableCode] = useState('');
+  const [terminalExecutableCode, setTerminalExecutableCode] = useState<{
+    sourceCode: string;
+    sourceCodeHash: null | number;
+  }>({ sourceCode: '', sourceCodeHash: null });
   const [currentSection, setCurrentSection] = useState<'comments' | 'console'>('console');
   const [user, setUser] = useState<any>(null);
   const [isLoading, setisLoading] = useState<boolean>(false);
@@ -149,7 +152,8 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
               }`}>
               <Console
                 ownerId={fetchedSourceCode.ownerId}
-                sourceCode={terminalExecutableCode}
+                sourceCode={terminalExecutableCode.sourceCode}
+                sourceCodeHash={terminalExecutableCode.sourceCodeHash}
                 fetchedReadme={fetchedSourceCode.readme}
                 user={user}
               />

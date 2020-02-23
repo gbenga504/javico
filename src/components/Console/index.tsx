@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, Tab } from '@material-ui/core';
-import { Warning as WarningIcon, Error as ErrorIcon } from '@material-ui/icons';
+import {
+  Warning as WarningIcon,
+  Error as ErrorIcon,
+  NotInterested as ClearIcon,
+} from '@material-ui/icons';
 
 import { useStyles } from './styles';
 import { useStyles as commonUseStyles } from '../../Css';
@@ -29,12 +33,21 @@ type TerminalMessagesType = TerminalMessageType[];
 
 const Console: React.FC<{
   sourceCode: string;
+  sourceCodeHash: null | number;
   fetchedReadme: string;
   onSetNotificationSettings: any;
   ownerId: string;
   Api: any;
   user: any;
-}> = ({ sourceCode, ownerId, fetchedReadme, onSetNotificationSettings, Api, user }) => {
+}> = ({
+  sourceCode,
+  sourceCodeHash,
+  ownerId,
+  fetchedReadme,
+  onSetNotificationSettings,
+  Api,
+  user,
+}) => {
   const [currentTab, setCurrentTab] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
@@ -56,9 +69,11 @@ const Console: React.FC<{
   }, []);
 
   useEffect(() => {
-    setTerminalMessages([]);
-    workerRef.current.postMessage({ sourceCode });
-  }, [sourceCode]);
+    if (!!sourceCodeHash === true) {
+      setTerminalMessages([]);
+      workerRef.current.postMessage({ sourceCode });
+    }
+  }, [sourceCodeHash, sourceCode]);
 
   useEffect(() => {
     setReadMe(fetchedReadme);
@@ -78,6 +93,10 @@ const Console: React.FC<{
 
   function handleCloseSignInModal() {
     setIsSignInModalVisible(false);
+  }
+
+  function handleClearConsole() {
+    setTerminalMessages([]);
   }
 
   function submitReadme() {
@@ -104,7 +123,16 @@ const Console: React.FC<{
   function renderLogBasedMessages(message: string, index: number) {
     return (
       <div className={classes.consoleTerminalLogMessages} key={index}>
-        <Typography thickness="semi-bold">{message}</Typography>
+        <Typography thickness="regular">{message}</Typography>
+      </div>
+    );
+  }
+
+  function renderConsoleClearedMessage() {
+    return (
+      <div
+        className={`${classes.consoleTerminalLogMessages} ${classes.consoleTerminalClearMessage}`}>
+        <Typography thickness="regular">Console was cleared</Typography>
       </div>
     );
   }
@@ -115,7 +143,7 @@ const Console: React.FC<{
         <div>
           <WarningIcon className={classes.consoleTerminalWarningIcon} />
         </div>
-        <Typography color="warning" thickness="semi-bold">
+        <Typography color="warning" thickness="regular">
           {message}
         </Typography>
       </div>
@@ -128,7 +156,7 @@ const Console: React.FC<{
         <div>
           <ErrorIcon className={classes.consoleTerminalErrorIcon} />
         </div>
-        <Typography color="error" thickness="semi-bold">
+        <Typography color="error" thickness="regular">
           {message}
         </Typography>
       </div>
@@ -138,6 +166,7 @@ const Console: React.FC<{
   function renderTerminal() {
     return (
       <div className={classes.consoleSection}>
+        {renderConsoleClearedMessage()}
         {terminalMessages.map((terminalMessage: TerminalMessageType, i: number) => {
           if (terminalMessage.type === MessageType.LOG) {
             return renderLogBasedMessages(terminalMessage.message, i);
@@ -187,13 +216,26 @@ const Console: React.FC<{
     );
   }
 
+  function renderTerminalBasedActions() {
+    return (
+      currentTab === 0 && (
+        <div className={classes.consoleTerminalBasedActionsContainer}>
+          <ClearIcon className={classes.consoleTerminalClearIcon} onClick={handleClearConsole} />
+        </div>
+      )
+    );
+  }
+
   return (
     <section className={classes.console}>
-      <Tabs value={currentTab} onChange={handleTabChange} aria-label="console tabs">
-        <Tab label="TERMINAL" {...a11yProps(0)} />
-        {isAuthorize && <Tab label="READ ME" {...a11yProps(1)} />}
-        <Tab label={isAuthorize ? 'PREVIEW' : 'READ ME'} {...a11yProps(2)} />
-      </Tabs>
+      <div>
+        <Tabs value={currentTab} onChange={handleTabChange} aria-label="console tabs">
+          <Tab label="TERMINAL" {...a11yProps(0)} />
+          {isAuthorize && <Tab label="READ ME" {...a11yProps(1)} />}
+          <Tab label={isAuthorize ? 'PREVIEW' : 'READ ME'} {...a11yProps(2)} />
+        </Tabs>
+        {renderTerminalBasedActions()}
+      </div>
       {currentTab === 0 && renderTerminal()}
       {currentTab === 1 && isAuthorize ? renderReadMe() : renderPreview()}
       {currentTab === 2 && renderPreview()}
