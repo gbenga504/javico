@@ -133,12 +133,9 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
             onHandleLoading={toggleIsLoading}
             onRunSourceCode={setTerminalExecutableCode}
             onChangeCurrentSection={handleToggleView}
-            fetchedSourceCode={fetchedSourceCode.sourceCode}
-            ownerId={fetchedSourceCode.ownerId}
-            sourceCodeTitle={fetchedSourceCode.title}
+            fetchedSourceCode={fetchedSourceCode}
             onSetSourcecodeOwner={setSourcecodeOwner}
             user={user}
-            sourceCodeId={fetchedSourceCode.sourceCodeId}
             currentSection={currentSection}
             isFetchingSourcecode={isLoading}
             fetchSourceCode={fetchSourceCode}

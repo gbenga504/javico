@@ -27,15 +27,18 @@ interface IProps {
   theme?: 'light' | 'dark' | 'ace' | 'night-dark';
   language?: string;
   onHandleLoading: any;
-  fetchedSourceCode: string;
-  sourceCodeTitle: string;
+  fetchedSourceCode: {
+    sourceCode: string;
+    ownerId: string;
+    title: string;
+    sourceCodeId: string;
+    readme: string;
+  };
   onSetSourcecodeOwner: any;
-  ownerId: string;
   isFetchingSourcecode: boolean;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
   Api: any;
   user: any;
-  sourceCodeId: string;
   currentSection: 'comments' | 'console';
   onChangeCurrentSection: () => void;
   fetchSourceCode: (cb: any) => void;
@@ -47,18 +50,22 @@ const MonacoEditor: React.FC<IProps> = ({
   theme = 'vs-dark',
   onHandleLoading,
   language = 'javascript',
-  fetchedSourceCode,
   onSetNotificationSettings,
-  sourceCodeTitle,
   onSetSourcecodeOwner,
   isFetchingSourcecode,
   user: _user,
-  ownerId,
   Api,
-  sourceCodeId,
   currentSection,
   onChangeCurrentSection,
   fetchSourceCode,
+
+  fetchedSourceCode: {
+    sourceCode: fetchedSourceCode,
+    ownerId,
+    title: sourceCodeTitle,
+    sourceCodeId,
+    readme,
+  },
 }) => {
   const [shouldDisplayCommentBox, setShouldDisplayCommentBox] = useState<boolean>(false);
   const [shouldDisplayCommentIcon, setShouldDisplayCommentIcon] = useState<boolean>(false);
@@ -222,50 +229,61 @@ const MonacoEditor: React.FC<IProps> = ({
     }
   }
 
-  function handleSaveDeveloperCode() {
-    onHandleLoading(true);
+  function updateSourcecode(id: string, data: any) {
+    SourceCodeService.saveSourceCode({
+      data,
+      params: { ID: id },
+    })
+      .then((res: any) => {
+        fetchSourceCode(onHandleLoading());
+      })
+      .catch((error: any) => {
+        onHandleLoading();
+        onSetNotificationSettings(error.message, 'danger', 'long');
+      });
+  }
+
+  function saveNewSourcecode(data: any) {
     let me = Api.getCurrentUser();
+    onHandleLoading(true);
+    SourceCodeService.saveSourceCode({
+      data: {
+        ownerId: me.uid,
+        ...data,
+      },
+    })
+      .then(res => {
+        onHandleLoading();
+        onSetSourcecodeOwner({
+          sourceCode,
+          ownerId: me.uid,
+          sourceCodeId: res.id,
+        });
+        updateUrl(res, me.uid);
+      })
+      .catch((error: any) => {
+        onHandleLoading();
+        onSetNotificationSettings(error.message, 'danger', 'long');
+      });
+  }
+
+  function handleSaveDeveloperCode() {
     const id = getSourceCodeIdFromUrl();
     if (id) {
       if (sourceCode === fetchedSourceCode) {
-        onHandleLoading();
         onSetNotificationSettings('Your code is up to date', 'info', 'long');
         return;
       }
-      SourceCodeService.saveSourceCode({
-        data: { sourceCode },
-        params: { ID: id },
-      })
-        .then((res: any) => {
-          onHandleLoading();
-        })
-        .catch((error: any) => {
-          onHandleLoading();
-          onSetNotificationSettings(error.message, 'danger', 'long');
-        });
+      onHandleLoading(true);
+      updateSourcecode(id, { sourceCode });
     } else {
-      SourceCodeService.saveSourceCode({
-        data: {
-          ownerId: me.uid,
-          sourceCode,
-          readme: '',
-          title: 'Untitled',
-          tags: [],
-        },
-      })
-        .then(res => {
-          onHandleLoading();
-          onSetSourcecodeOwner({
-            sourceCode,
-            ownerId: me.uid,
-            sourceCodeId: res.id,
-          });
-          updateUrl(res, me.uid);
-        })
-        .catch((error: any) => {
-          onHandleLoading();
-          onSetNotificationSettings(error.message, 'danger', 'long');
-        });
+      const data = {
+        sourceCode,
+        readme: '',
+        title: 'Untitled',
+        tags: [],
+      };
+      saveNewSourcecode(data);
     }
   }
 
@@ -340,14 +358,16 @@ const MonacoEditor: React.FC<IProps> = ({
         <SourceCodeHeading
           sourceCodeTitle={sourceCodeTitle}
           onHandleLoading={onHandleLoading}
+          saveNewSourcecode={saveNewSourcecode}
+          updateSourcecode={updateSourcecode}
           isFetchingSourcecode={isFetchingSourcecode}
           onSetSourcecodeOwner={onSetSourcecodeOwner}
           sourceCode={sourceCode}
+          readme={readme}
           onHandleOpenSignInModal={handleOpenSignInModal}
           user={user}
           ownerId={ownerId}
           fetchSourceCode={fetchSourceCode}
-          isOwner={user ? user.uid === ownerId : false}
         />
         {renderLoading()}
         <div

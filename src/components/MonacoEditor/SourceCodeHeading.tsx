@@ -1,22 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { makeStyles, MenuItem, Menu } from '@material-ui/core';
-import { MoreVert as MoreVertIcon, Close as CloseIcon } from '@material-ui/icons';
+import { makeStyles, MenuItem, Menu, IconButton, Tooltip } from '@material-ui/core';
+import {
+  MoreVert as MoreVertIcon,
+  Close as CloseIcon,
+  DeviceHub as ForkIcon,
+  NoteAdd as AddNewSourceCodeIcon,
+} from '@material-ui/icons';
 
-import { color } from '../../Css';
+import { useStyles as commonUseStyles, color } from '../../Css';
 import { withNotificationBanner } from '../../atoms';
-import { getSourceCodeIdFromUrl, updateUrl } from '../../utils/UrlUtils';
-import SourceCodeService from '../../services/SourceCodeServices';
+import { getSourceCodeIdFromUrl } from '../../utils/UrlUtils';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import SignInViaGithubModal from '../SignInViaGithubModal';
 
 interface IProps {
   sourceCodeTitle: string;
   isFetchingSourcecode: boolean;
-  onSetSourcecodeOwner: any;
   onHandleLoading: (isLoading?: boolean) => void;
-  fetchSourceCode: (cb: any) => void;
+  saveNewSourcecode: (data: any) => void;
+  updateSourcecode: (id: string, data: any) => void;
   sourceCode: string;
   ownerId: string;
+  readme: string;
   user: any;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
 }
@@ -24,11 +29,12 @@ interface IProps {
 const SourceCodeHeading: React.FC<IProps> = ({
   onSetNotificationSettings,
   sourceCodeTitle,
-  onSetSourcecodeOwner,
   isFetchingSourcecode,
-  fetchSourceCode,
+  saveNewSourcecode,
+  updateSourcecode,
   onHandleLoading,
   ownerId,
+  readme,
   user,
   sourceCode,
 }) => {
@@ -36,7 +42,10 @@ const SourceCodeHeading: React.FC<IProps> = ({
   const [isRenameTitle, setIsRenameTitle] = useState<boolean>(false);
   const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
   const [renameTitleValue, setRenameTitleValue] = useState<string>(sourceCodeTitle);
+  const [activeAction, setActiveAction] = useState<'' | 'fork' | 'create'>('');
   const classes = useStyles();
+  const commonCss = commonUseStyles();
+  const isOwner = user ? user.uid === ownerId : false;
 
   useEffect(() => {
     setRenameTitleValue(sourceCodeTitle);
@@ -83,13 +92,12 @@ const SourceCodeHeading: React.FC<IProps> = ({
   function saveRenameTitle(e: any) {
     if (e.keyCode === 13) {
       e.preventDefault();
-      onHandleLoading(true);
       const id = getSourceCodeIdFromUrl();
       if (!renameTitleValue) {
         onSetNotificationSettings("Sourcecode title can't be empty", 'danger', 'long');
-        onHandleLoading();
         return;
       }
+      onHandleLoading(true);
       if (id) {
         if (renameTitleValue === sourceCodeTitle) {
           onHandleLoading();
@@ -97,10 +105,10 @@ const SourceCodeHeading: React.FC<IProps> = ({
           return;
         }
         let data = { title: renameTitleValue, sourceCode };
-        updateSourcecode(data, id);
+        updateSourcecode(id, data);
       } else {
         if (!!user) {
-          saveSourceCode(user);
+          saveSourceCode();
         } else {
           onHandleLoading();
           setIsSignInModalVisible(true);
@@ -109,45 +117,72 @@ const SourceCodeHeading: React.FC<IProps> = ({
     }
   }
 
-  function saveSourceCode(user: any) {
+  function forkSourcecode() {
     let data = {
-      ownerId: user.uid,
       sourceCode,
-      readme: '',
+      readme,
       title: renameTitleValue,
       tags: [],
+      fork: {
+        ownerId,
+        sourcecodeId: getSourceCodeIdFromUrl(),
+      },
     };
-    SourceCodeService.saveSourceCode({
-      data,
-    })
-      .then(res => {
-        onSetSourcecodeOwner({
-          sourceCode,
-          ownerId: user.uid,
-          sourceCodeId: res.id,
-        });
-        updateUrl(res, user.uid);
-        fetchSourceCode(onHandleLoading());
-      })
-      .catch((error: any) => {
-        onHandleLoading();
-        onSetNotificationSettings(error.message, 'danger', 'long');
-      });
+    if (!user) {
+      setIsSignInModalVisible(true);
+      setActiveAction('fork');
+      return;
+    }
+    saveNewSourcecode(data);
   }
 
-  function updateSourcecode(data: any, id: any) {
-    SourceCodeService.saveSourceCode({
-      data,
-      params: { ID: id },
-    })
-      .then((res: any) => {
-        fetchSourceCode(onHandleLoading());
-      })
-      .catch((error: any) => {
-        onHandleLoading();
-        setRenameTitleValue(sourceCodeTitle);
-        onSetNotificationSettings(error.message, 'danger', 'long');
-      });
+  function createNewSourcecode() {
+    if (!user) {
+      setIsSignInModalVisible(true);
+      setActiveAction('create');
+      return;
+    }
+    let data = {
+      sourceCode: '',
+      readme: '',
+      title: 'Untitled',
+      tags: [],
+    };
+    saveNewSourcecode(data);
+  }
+
+  function saveSourceCode() {
+    let data;
+    if (activeAction === 'fork') {
+      data = {
+        sourceCode,
+        readme,
+        title: renameTitleValue,
+        tags: [],
+        fork: {
+          ownerId,
+          sourcecodeId: getSourceCodeIdFromUrl(),
+        },
+      };
+      setActiveAction('');
+    } else if (activeAction === 'create') {
+      data = {
+        sourceCode: '',
+        readme: '',
+        title: 'Untitled',
+        tags: [],
+      };
+      setActiveAction('');
+    } else {
+      data = {
+        sourceCode,
+        readme: '',
+        title: renameTitleValue,
+        tags: [],
+      };
+    }
+
+    saveNewSourcecode(data);
   }
 
   function handleRenameTitleInputKeydown(event: any) {
@@ -183,51 +218,81 @@ const SourceCodeHeading: React.FC<IProps> = ({
     );
   }
 
-  const isOwner = user ? user.uid === ownerId : false;
+  function renderSourcecodeTitle() {
+    return (
+      <>
+        {!isRenameTitle ? (
+          <>
+            {(!isFetchingSourcecode || getSourceCodeIdFromUrl()) && (
+              <span className={classes.monacoEditorTitle}>
+                <span style={{ fontSize: 14, padding: 5 }}>
+                  {!!sourceCodeTitle
+                    ? `${sourceCodeTitle}.js`
+                    : getSourceCodeIdFromUrl()
+                    ? ''
+                    : 'Untitled.js'}
+                </span>
+                {(isOwner ||
+                  !getSourceCodeIdFromUrl() ||
+                  (!user === true && !ownerId === true && !!ownerId)) && (
+                  <MoreVertIcon
+                    className={`${classes.commentTitleMenuIcon} comment__hide-title-menu-icon`}
+                    onClick={e => handleShowOptions(e)}
+                  />
+                )}
+              </span>
+            )}
+          </>
+        ) : (
+          <span
+            className={classes.monacoEditorTitle}
+            style={{ border: `1px solid ${color.themeBlue}` }}>
+            <input
+              onKeyDown={handleRenameTitleInputKeydown}
+              onChange={handleRenameTitleChange}
+              className={classes.monacoEditorRenameTitleInput}
+              value={renameTitleValue}
+              autoFocus
+            />
+            <CloseIcon
+              className={classes.commentTitleMenuIcon}
+              onClick={closeRenameTitle}
+              style={{
+                fontSize: 14,
+              }}
+            />
+          </span>
+        )}
+      </>
+    );
+  }
 
   return (
     <div className={classes.monacoEditorTitleHead}>
-      {!isRenameTitle ? (
-        <>
-          {(!isFetchingSourcecode || getSourceCodeIdFromUrl()) && (
-            <span className={classes.monacoEditorTitle}>
-              <span style={{ fontSize: 14, padding: 5 }}>
-                {!!sourceCodeTitle
-                  ? `${sourceCodeTitle}.js`
-                  : getSourceCodeIdFromUrl()
-                  ? ''
-                  : 'Untitled.js'}
-              </span>
-              {(isOwner || !getSourceCodeIdFromUrl() || (!user === true && !ownerId === true)) && (
-                <MoreVertIcon
-                  className={`${classes.commentTitleMenuIcon} comment__hide-title-menu-icon`}
-                  onClick={e => handleShowOptions(e)}
-                />
-              )}
-            </span>
-          )}
-        </>
-      ) : (
-        <span
-          className={classes.monacoEditorTitle}
-          style={{ border: `1px solid ${color.themeBlue}` }}>
-          <input
-            onKeyDown={handleRenameTitleInputKeydown}
-            onChange={handleRenameTitleChange}
-            className={classes.monacoEditorRenameTitleInput}
-            value={renameTitleValue}
-            autoFocus
-          />
-          <CloseIcon
-            className={classes.commentTitleMenuIcon}
-            onClick={closeRenameTitle}
-            style={{
-              fontSize: 14,
-            }}
-          />
-        </span>
-      )}
-      {renderTitleMenuOptions()}
+      <div style={{ display: 'flex', flex: 0.9, height: '100%' }}>
+        {renderSourcecodeTitle()}
+        {renderTitleMenuOptions()}
+      </div>
+      <div className={`${classes.createSourcecode} ${commonCss.flexRow}`}>
+        {!!ownerId && !isOwner && (
+          <Tooltip title="Fork project" leaveDelay={100} placement="bottom" enterDelay={100}>
+            <IconButton
+              onClick={forkSourcecode}
+              color="secondary"
+              classes={{ root: classes.createSourcecodeButton }}>
+              <ForkIcon className={classes.createSourcecodeIcon} />
+            </IconButton>
+          </Tooltip>
+        )}
+        <Tooltip title="Create new project" leaveDelay={100} placement="bottom" enterDelay={100}>
+          <IconButton
+            onClick={createNewSourcecode}
+            color="secondary"
+            classes={{ root: classes.createSourcecodeButton }}>
+            <AddNewSourceCodeIcon className={classes.createSourcecodeIcon} />
+          </IconButton>
+        </Tooltip>
+      </div>
       <SignInViaGithubModal
         visible={isSignInModalVisible}
         onRequestClose={handleCloseSignInModal}
@@ -244,6 +309,19 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     backgroundColor: color.darkThemeLightBorder,
   },
+  createSourcecode: {
+    flex: 0.1,
+  },
+  createSourcecodeButton: {
+    padding: '0 12px',
+  },
+  createSourcecodeIcon: {
+    color: color.white,
+    transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+    '&:hover': {
+      color: color.themeBlue,
+    },
+  },
   monacoEditorTitle: {
     color: 'white',
     display: 'flex',
@@ -255,9 +333,6 @@ const useStyles = makeStyles(theme => ({
     '& .comment__hide-title-menu-icon': {
       display: 'block',
     },
-    // '&:hover .comment__hide-title-menu-icon': {
-    //   display: 'block',
-    // },
   },
   commentTitleMenuIcon: {
     cursor: 'pointer',
