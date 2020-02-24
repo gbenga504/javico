@@ -31,38 +31,15 @@ export const useStyles = makeStyles(theme => ({
     position: 'relative',
     overflowY: 'scroll',
     borderTop: `1px solid ${color.darkThemeLightBorder}`,
-  },
-  consoleTerminalLogMessages: {
-    padding: '3px 15px',
-    borderBottom: `1px solid ${color.darkThemeLightBorder}`,
     fontSize: `${fontsize.terminal}px !important`,
   },
   consoleTerminalClearMessage: {
     fontStyle: 'italic',
   },
-  consoleTerminalWarningMessages: {
+  consoleTerminalLogMessages: {
     padding: '3px 15px',
-    borderBottom: `1px solid ${color.warningLight}`,
+    borderBottom: `1px solid ${color.darkThemeLightBorder}`,
     fontSize: `${fontsize.terminal}px !important`,
-    whiteSpace: 'pre-wrap',
-    background: color.warningDark,
-  },
-  consoleTerminalWarningIcon: {
-    fontSize: fontsize.small,
-    marginRight: 6,
-    color: color.warningLight,
-  },
-  consoleTerminalErrorMessages: {
-    padding: '3px 15px',
-    borderBottom: `1px solid ${color.errorLight}`,
-    fontSize: `${fontsize.terminal}px !important`,
-    whiteSpace: 'pre-wrap',
-    background: color.errorDark,
-  },
-  consoleTerminalErrorIcon: {
-    fontSize: fontsize.base,
-    marginRight: 6,
-    color: color.errorLight,
   },
   consoleReadMeTextarea: {
     width: '100%',

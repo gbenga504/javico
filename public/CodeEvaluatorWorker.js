@@ -10,32 +10,62 @@ const worker = self;
 const MessageType = {
   ERROR: `error`,
   LOG: `log`,
-  WARNING: `warning`,
+  WARN: `warning`,
+  INFO: `info`,
+  DEBUG: `debug`,
+  TABLE: `table`,
+  TIME: `time`,
+  ASSERT: `assert`,
+  COUNT: `count`,
 };
+
 const console = {
-  getMessage: function(arg) {
-    let str = '';
-    for (let i = 0; i < arg.length; i++) {
-      str += arg[i];
-    }
-    return `${str}\n`;
-  },
   log: function() {
     worker.postMessage({
-      type: MessageType.LOG,
-      message: console.getMessage(arguments),
+      method: MessageType.LOG,
+      data: [...arguments],
     });
   },
   error: function() {
     worker.postMessage({
-      type: MessageType.ERROR,
-      message: console.getMessage(arguments),
+      method: MessageType.ERROR,
+      data: [...arguments],
     });
   },
   warn: function() {
     worker.postMessage({
-      type: MessageType.WARNING,
-      message: console.getMessage(arguments),
+      method: MessageType.WARN,
+      data: [...arguments],
+    });
+  },
+  info: function() {
+    worker.postMessage({
+      method: MessageType.INFO,
+      data: [...arguments],
+    });
+  },
+  table: function() {
+    worker.postMessage({
+      method: MessageType.TABLE,
+      data: [...arguments],
+    });
+  },
+  time: function() {
+    worker.postMessage({
+      method: MessageType.TIME,
+      data: [...arguments],
+    });
+  },
+  assert: function() {
+    worker.postMessage({
+      method: MessageType.ASSERT,
+      data: [...arguments],
+    });
+  },
+  count: function() {
+    worker.postMessage({
+      method: MessageType.COUNT,
+      data: [...arguments],
     });
   },
 };
@@ -45,6 +75,6 @@ worker.addEventListener('message', function(e) {
   try {
     eval(sourceCode);
   } catch (error) {
-    worker.postMessage({ type: MessageType.ERROR, message: error.stack });
+    worker.postMessage({ method: MessageType.ERROR, data: [error.stack] });
   }
 });
