@@ -13,6 +13,7 @@
     "@types/react-helmet": "^5.0.15",
     "@types/react-share": "^3.0.3",
     "@types/react-syntax-highlighter": "^11.0.4",
+    "console-feed": "^2.8.11",
     "dayjs": "^1.8.20",
     "firebase": "^7.6.0",
     "monaco-editor": "^0.18.1",

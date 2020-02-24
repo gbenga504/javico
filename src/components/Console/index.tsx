@@ -1,25 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, Tab } from '@material-ui/core';
-import {
-  Warning as WarningIcon,
-  Error as ErrorIcon,
-  NotInterested as ClearIcon,
-} from '@material-ui/icons';
+import { NotInterested as ClearIcon } from '@material-ui/icons';
+import { Console as ConsoleFeeds } from 'console-feed';
 
 import { useStyles } from './styles';
-import { useStyles as commonUseStyles } from '../../Css';
 import { Typography, withNotificationBanner, ButtonWithLoading } from '../../atoms';
 import MarDownRenderer from '../MarkDownRenderer';
 import { getSourceCodeIdFromUrl, getSourcecodeUrl, getBaseUrl } from '../../utils/UrlUtils';
 import { withApi } from '../../utils/ApiConnector';
 import SignInViaGithubModal from '../SignInViaGithubModal';
 import SourceCodeService from '../../services/SourceCodeServices';
-
-const MessageType = {
-  ERROR: `error`,
-  LOG: `log`,
-  WARNING: `warning`,
-};
 
 function a11yProps(index: number) {
   return {
@@ -28,7 +18,8 @@ function a11yProps(index: number) {
   };
 }
 
-type TerminalMessageType = { type: string; message: string | any };
+type Methods = 'log' | 'warn' | 'error' | 'info' | 'debug' | 'time' | 'assert' | 'count' | 'table';
+type TerminalMessageType = { method: Methods; data: any[] };
 type TerminalMessagesType = TerminalMessageType[];
 
 const Console: React.FC<{
@@ -55,7 +46,6 @@ const Console: React.FC<{
   const [readMe, setReadMe] = useState<string>(fetchedReadme);
   const workerRef = useRef<any>(null);
   const classes = useStyles();
-  const commonCss = commonUseStyles();
   const isAuthorize = !!user ? user.uid === ownerId : false;
 
   useEffect(() => {
@@ -120,14 +110,6 @@ const Console: React.FC<{
       });
   }
 
-  function renderLogBasedMessages(message: string, index: number) {
-    return (
-      <div className={classes.consoleTerminalLogMessages} key={index}>
-        <Typography thickness="regular">{message}</Typography>
-      </div>
-    );
-  }
-
   function renderConsoleClearedMessage() {
     return (
       <div
@@ -137,44 +119,15 @@ const Console: React.FC<{
     );
   }
 
-  function renderWarningBasedMessages(message: string, index: number) {
-    return (
-      <div className={`${commonCss.flexRow} ${classes.consoleTerminalWarningMessages}`} key={index}>
-        <div>
-          <WarningIcon className={classes.consoleTerminalWarningIcon} />
-        </div>
-        <Typography color="warning" thickness="regular">
-          {message}
-        </Typography>
-      </div>
-    );
-  }
-
-  function renderErrorBasedMessages(message: string, index: number) {
-    return (
-      <div className={`${commonCss.flexRow} ${classes.consoleTerminalErrorMessages}`} key={index}>
-        <div>
-          <ErrorIcon className={classes.consoleTerminalErrorIcon} />
-        </div>
-        <Typography color="error" thickness="regular">
-          {message}
-        </Typography>
-      </div>
-    );
-  }
-
   function renderTerminal() {
     return (
       <div className={classes.consoleSection}>
         {renderConsoleClearedMessage()}
-        {terminalMessages.map((terminalMessage: TerminalMessageType, i: number) => {
-          if (terminalMessage.type === MessageType.LOG) {
-            return renderLogBasedMessages(terminalMessage.message, i);
-          } else if (terminalMessage.type === MessageType.WARNING) {
-            return renderWarningBasedMessages(terminalMessage.message, i);
-          }
-          return renderErrorBasedMessages(terminalMessage.message, i);
-        })}
+        <ConsoleFeeds
+          logs={terminalMessages}
+          variant="dark"
+          styles={{ BASE_FONT_FAMILY: 'Eina regular', BASE_FONT_SIZE: '12.5px' }}
+        />
       </div>
     );
   }
