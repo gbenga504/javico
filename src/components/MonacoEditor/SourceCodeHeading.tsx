@@ -3,8 +3,8 @@ import { makeStyles, MenuItem, Menu, IconButton, Tooltip } from '@material-ui/co
 import {
   MoreVert as MoreVertIcon,
   Close as CloseIcon,
-  DeviceHub as DeviceHubIcon,
-  NoteAdd as NoteAddIcon,
+  DeviceHub as ForkIcon,
+  NoteAdd as AddNewSourceCodeIcon,
 } from '@material-ui/icons';
 
 import { useStyles as commonUseStyles, color } from '../../Css';
@@ -280,7 +280,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
               onClick={forkSourcecode}
               color="secondary"
               classes={{ root: classes.createSourcecodeButton }}>
-              <DeviceHubIcon className={classes.createSourcecodeIcon} />
+              <ForkIcon className={classes.createSourcecodeIcon} />
             </IconButton>
           </Tooltip>
         )}
@@ -289,7 +289,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
             onClick={createNewSourcecode}
             color="secondary"
             classes={{ root: classes.createSourcecodeButton }}>
-            <NoteAddIcon className={classes.createSourcecodeIcon} />
+            <AddNewSourceCodeIcon className={classes.createSourcecodeIcon} />
           </IconButton>
         </Tooltip>
       </div>
