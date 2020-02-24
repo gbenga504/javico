@@ -254,7 +254,6 @@ const MonacoEditor: React.FC<IProps> = ({
           sourceCodeId: res.id,
         });
         updateUrl(res, me.uid);
-        fetchSourceCode(onHandleLoading());
       })
       .catch((error: any) => {
         onHandleLoading();
