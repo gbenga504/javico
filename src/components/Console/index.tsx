@@ -3,13 +3,14 @@ import { Tabs, Tab } from '@material-ui/core';
 import { NotInterested as ClearIcon } from '@material-ui/icons';
 
 import { useStyles } from './styles';
-import { withNotificationBanner, ButtonWithLoading } from '../../atoms';
+import { withNotificationBanner } from '../../atoms';
 import MarDownRenderer from '../MarkDownRenderer';
 import { getSourceCodeIdFromUrl, getSourcecodeUrl, getBaseUrl } from '../../utils/UrlUtils';
 import { withApi } from '../../utils/ApiConnector';
 import SignInViaGithubModal from '../SignInViaGithubModal';
 import SourceCodeService from '../../services/SourceCodeServices';
 import Terminal from './Terminal';
+import Readme from './Readme';
 
 function a11yProps(index: number) {
   return {
@@ -110,29 +111,6 @@ const Console: React.FC<{
       });
   }
 
-  function renderReadMe() {
-    return (
-      <div className={classes.consoleSection}>
-        <textarea
-          onChange={handleReadMeTextChange}
-          required={true}
-          className={classes.consoleReadMeTextarea}
-          value={readMe}
-          autoFocus={true}
-          rows={7}
-          placeholder="Add a ReadMe (Helps others understand your code. Markdown is supported)"></textarea>
-        <ButtonWithLoading
-          variant="contained"
-          onClick={submitReadme}
-          loading={isLoading}
-          className={classes.saveReadmeButton}
-          color="primary">
-          save
-        </ButtonWithLoading>
-      </div>
-    );
-  }
-
   function renderPreview() {
     let isInCleanSlate = getSourcecodeUrl() === `${getBaseUrl()}/`;
     let optionalMessage = isInCleanSlate
@@ -168,7 +146,16 @@ const Console: React.FC<{
         {renderTerminalBasedActions()}
       </div>
       {currentTab === 0 && <Terminal terminalMessages={terminalMessages} />}
-      {currentTab === 1 && isAuthorize ? renderReadMe() : renderPreview()}
+      {currentTab === 1 && isAuthorize ? (
+        <Readme
+          readMe={readMe}
+          onSubmitReadme={submitReadme}
+          isLoading={isLoading}
+          onHandleReadMeTextChange={handleReadMeTextChange}
+        />
+      ) : (
+        renderPreview()
+      )}
       {currentTab === 2 && renderPreview()}
       <SignInViaGithubModal
         visible={isSignInModalVisible}

@@ -33,28 +33,11 @@ export const useStyles = makeStyles(theme => ({
   consoleTab: {
     color: color.white,
   },
-  consoleReadMeTextarea: {
-    width: '100%',
-    height: '100%',
-    fontSize: fontsize.base,
-    resize: 'none',
-    background: 'transparent',
-    outline: 'none',
-    color: color.white,
-    padding: theme.spacing(2),
-  },
   consolePreview: {
     padding: theme.spacing(2),
     color: color.white,
     width: '100%',
     height: '100%',
     fontSize: fontsize.base,
-  },
-  saveReadmeButton: {
-    margin: theme.spacing(1),
-    fontSize: fontsize.xsmall,
-    position: 'absolute',
-    bottom: 10,
-    right: 10,
   },
 }));
