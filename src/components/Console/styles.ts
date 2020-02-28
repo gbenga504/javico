@@ -33,11 +33,4 @@ export const useStyles = makeStyles(theme => ({
   consoleTab: {
     color: color.white,
   },
-  consolePreview: {
-    padding: theme.spacing(2),
-    color: color.white,
-    width: '100%',
-    height: '100%',
-    fontSize: fontsize.base,
-  },
 }));

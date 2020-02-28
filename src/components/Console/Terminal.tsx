@@ -12,7 +12,7 @@ type TerminalMessagesType = TerminalMessageType[];
 const Terminal: React.FC<{ terminalMessages: TerminalMessagesType }> = ({ terminalMessages }) => {
   const classes = useStyles();
   return (
-    <div className={classes.consoleSection}>
+    <>
       <div
         className={`${classes.consoleTerminalLogMessages} ${classes.consoleTerminalClearMessage}`}>
         <Typography thickness="regular">Console was cleared</Typography>
@@ -22,19 +22,11 @@ const Terminal: React.FC<{ terminalMessages: TerminalMessagesType }> = ({ termin
         variant="dark"
         styles={{ BASE_FONT_FAMILY: 'Eina regular', BASE_FONT_SIZE: '12.5px' }}
       />
-    </div>
+    </>
   );
 };
 
 const useStyles = makeStyles(theme => ({
-  consoleSection: {
-    width: '100%',
-    height: 'calc(100% - 48px)',
-    position: 'relative',
-    overflowY: 'scroll',
-    borderTop: `1px solid ${color.darkThemeLightBorder}`,
-    fontSize: `${fontsize.terminal}px !important`,
-  },
   consoleTerminalClearMessage: {
     fontStyle: 'italic',
   },

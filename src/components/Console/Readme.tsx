@@ -12,7 +12,7 @@ const Readme: React.FC<{
 }> = ({ onHandleReadMeTextChange, onSubmitReadme, isLoading, readMe }) => {
   const classes = useStyles();
   return (
-    <div className={classes.consoleSection}>
+    <>
       <textarea
         onChange={onHandleReadMeTextChange}
         required={true}
@@ -29,19 +29,11 @@ const Readme: React.FC<{
         color="primary">
         save
       </ButtonWithLoading>
-    </div>
+    </>
   );
 };
 
 const useStyles = makeStyles(theme => ({
-  consoleSection: {
-    width: '100%',
-    height: 'calc(100% - 48px)',
-    position: 'relative',
-    overflowY: 'scroll',
-    borderTop: `1px solid ${color.darkThemeLightBorder}`,
-    fontSize: `${fontsize.terminal}px !important`,
-  },
   saveReadmeButton: {
     margin: theme.spacing(1),
     fontSize: fontsize.xsmall,
