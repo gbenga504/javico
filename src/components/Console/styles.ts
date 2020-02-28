@@ -22,9 +22,6 @@ export const useStyles = makeStyles(theme => ({
     fontSize: 16,
     cursor: 'pointer',
   },
-  consoleTab: {
-    color: color.white,
-  },
   consoleSection: {
     width: '100%',
     height: 'calc(100% - 48px)',
@@ -33,13 +30,8 @@ export const useStyles = makeStyles(theme => ({
     borderTop: `1px solid ${color.darkThemeLightBorder}`,
     fontSize: `${fontsize.terminal}px !important`,
   },
-  consoleTerminalClearMessage: {
-    fontStyle: 'italic',
-  },
-  consoleTerminalLogMessages: {
-    padding: '3px 15px',
-    borderBottom: `1px solid ${color.darkThemeLightBorder}`,
-    fontSize: `${fontsize.terminal}px !important`,
+  consoleTab: {
+    color: color.white,
   },
   consoleReadMeTextarea: {
     width: '100%',

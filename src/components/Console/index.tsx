@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, Tab } from '@material-ui/core';
 import { NotInterested as ClearIcon } from '@material-ui/icons';
-import { Console as ConsoleFeeds } from 'console-feed';
 
 import { useStyles } from './styles';
-import { Typography, withNotificationBanner, ButtonWithLoading } from '../../atoms';
+import { withNotificationBanner, ButtonWithLoading } from '../../atoms';
 import MarDownRenderer from '../MarkDownRenderer';
 import { getSourceCodeIdFromUrl, getSourcecodeUrl, getBaseUrl } from '../../utils/UrlUtils';
 import { withApi } from '../../utils/ApiConnector';
 import SignInViaGithubModal from '../SignInViaGithubModal';
 import SourceCodeService from '../../services/SourceCodeServices';
+import Terminal from './Terminal';
 
 function a11yProps(index: number) {
   return {
@@ -110,28 +110,6 @@ const Console: React.FC<{
       });
   }
 
-  function renderConsoleClearedMessage() {
-    return (
-      <div
-        className={`${classes.consoleTerminalLogMessages} ${classes.consoleTerminalClearMessage}`}>
-        <Typography thickness="regular">Console was cleared</Typography>
-      </div>
-    );
-  }
-
-  function renderTerminal() {
-    return (
-      <div className={classes.consoleSection}>
-        {renderConsoleClearedMessage()}
-        <ConsoleFeeds
-          logs={terminalMessages}
-          variant="dark"
-          styles={{ BASE_FONT_FAMILY: 'Eina regular', BASE_FONT_SIZE: '12.5px' }}
-        />
-      </div>
-    );
-  }
-
   function renderReadMe() {
     return (
       <div className={classes.consoleSection}>
@@ -189,7 +167,7 @@ const Console: React.FC<{
         </Tabs>
         {renderTerminalBasedActions()}
       </div>
-      {currentTab === 0 && renderTerminal()}
+      {currentTab === 0 && <Terminal terminalMessages={terminalMessages} />}
       {currentTab === 1 && isAuthorize ? renderReadMe() : renderPreview()}
       {currentTab === 2 && renderPreview()}
       <SignInViaGithubModal
