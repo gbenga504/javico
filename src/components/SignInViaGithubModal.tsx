@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogActions, DialogTitle, Button } from '@material-ui/core';
-import { withApi } from '../utils/ApiConnector';
+import { Apis } from '../utils/Apis';
 import { IBannerStyle, IDuration } from '../atoms/NotificationBanner';
 import { withNotificationBanner } from '../atoms';
 import { useStyles } from '../Css';
@@ -9,21 +9,20 @@ interface IProps {
   visible: boolean;
   onRequestClose: () => null;
   onSignInSuccess: (user: any) => null;
-  Api: any;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
 }
 
 const SignInViaGithubModal: React.FC<IProps> = ({
   visible,
   onRequestClose,
-  Api,
   onSetNotificationSettings,
   onSignInSuccess,
 }) => {
   const commonCss = useStyles();
 
   function handleSignInWithGithub() {
-    Api.signInWithGithub()
+    Apis.users
+      .signInWithGithub()
       .then(function(result: any) {
         onRequestClose();
         onSignInSuccess(result.user);
@@ -53,4 +52,4 @@ const SignInViaGithubModal: React.FC<IProps> = ({
   );
 };
 
-export default React.memo(withNotificationBanner(withApi(SignInViaGithubModal)));
+export default React.memo(withNotificationBanner(SignInViaGithubModal));

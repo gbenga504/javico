@@ -7,9 +7,8 @@ import { useStyles } from './styles';
 import { Typography, withNotificationBanner, ButtonWithLoading } from '../../atoms';
 import MarDownRenderer from '../MarkDownRenderer';
 import { getSourceCodeIdFromUrl, getSourcecodeUrl, getBaseUrl } from '../../utils/UrlUtils';
-import { withApi } from '../../utils/ApiConnector';
+import { Apis } from '../../utils/Apis';
 import SignInViaGithubModal from '../SignInViaGithubModal';
-import SourceCodeService from '../../services/SourceCodeServices';
 
 function a11yProps(index: number) {
   return {
@@ -28,17 +27,8 @@ const Console: React.FC<{
   fetchedReadme: string;
   onSetNotificationSettings: any;
   ownerId: string;
-  Api: any;
   user: any;
-}> = ({
-  sourceCode,
-  sourceCodeHash,
-  ownerId,
-  fetchedReadme,
-  onSetNotificationSettings,
-  Api,
-  user,
-}) => {
+}> = ({ sourceCode, sourceCodeHash, ownerId, fetchedReadme, onSetNotificationSettings, user }) => {
   const [currentTab, setCurrentTab] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
@@ -91,16 +81,17 @@ const Console: React.FC<{
 
   function submitReadme() {
     toggleIsLoading(true);
-    let me = Api.getCurrentUser();
+    let me = Apis.users.getCurrentUser();
     if (!me) {
       setIsSignInModalVisible(true);
       return;
     }
     const id = getSourceCodeIdFromUrl();
-    SourceCodeService.saveSourceCode({
-      data: { readme: readMe },
-      params: { ID: id },
-    })
+    Apis.sourceCodes
+      .saveSourceCode({
+        data: { readme: readMe },
+        params: { ID: id },
+      })
       .then((res: any) => {
         toggleIsLoading();
       })
@@ -201,4 +192,4 @@ const Console: React.FC<{
   );
 };
 
-export default withNotificationBanner(withApi(Console));
+export default React.memo(withNotificationBanner(Console));

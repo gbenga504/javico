@@ -1,8 +1,3 @@
-/**
- * @classdesc This service enhances the Api to carry out reply based operations
- */
-import Api from '../utils/ApiConnector';
-
 interface IPayload {
   data?: {
     commentId: string;
@@ -23,33 +18,31 @@ interface IPayload {
   };
 }
 
-export interface IReply {
-  commentId: string;
-  author: {
-    name: string;
-    photoURL: string;
-    id: string;
-  };
-  text: string;
-  id: string;
-  createdAt: number;
-  updatedAt?: string;
-  clientTimestamp?: number;
+interface Configuration {
+  app: any;
 }
 
-export default class CommentReplyService {
-  static createReply = (payload: IPayload): Promise<any> => {
+export class RepliesServiceApi {
+  private app: any;
+  private firestore: any;
+
+  constructor(configuration: Configuration) {
+    this.app = configuration.app;
+    this.firestore = configuration.app.firestore();
+  }
+
+  public createReply = (payload: IPayload): Promise<any> => {
     const { params, data } = payload;
-    const repliesRef = Api.firestore
+    const repliesRef = this.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments/${params.commentID}/replies`)
       .doc();
-    const commentRef = Api.firestore
+    const commentRef = this.firestore
       .collection(`source-codes`)
       .doc(params.sourceCodeID)
       .collection('comments')
       .doc(params.commentID);
 
-    return Api.firestore.runTransaction((transaction: any) => {
+    return this.firestore.runTransaction((transaction: any) => {
       return transaction.get(commentRef).then((res: any) => {
         if (!res.exists) {
           throw new Error('Document does not exist!');
@@ -57,29 +50,29 @@ export default class CommentReplyService {
         const numReplies = res.data().numReplies;
         transaction.update(commentRef, {
           numReplies: numReplies ? numReplies + 1 : 1,
-          updatedAt: Api.app.firestore.FieldValue.serverTimestamp(),
+          updatedAt: this.app.firestore.FieldValue.serverTimestamp(),
         });
         transaction.set(repliesRef, {
           ...data,
           clientTimestamp: Date.now(),
-          createdAt: Api.app.firestore.FieldValue.serverTimestamp(),
+          createdAt: this.app.firestore.FieldValue.serverTimestamp(),
         });
       });
     });
   };
 
-  static deleteReply = (payload: IPayload): Promise<any> => {
+  public deleteReply = (payload: IPayload): Promise<any> => {
     const { params } = payload;
-    const replyRef = Api.firestore
+    const replyRef = this.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments/${params.commentID}/replies`)
       .doc(params.ID);
-    const commentRef = Api.firestore
+    const commentRef = this.firestore
       .collection(`source-codes`)
       .doc(params.sourceCodeID)
       .collection('comments')
       .doc(params.commentID);
 
-    return Api.firestore.runTransaction((transaction: any) => {
+    return this.firestore.runTransaction((transaction: any) => {
       return transaction.get(commentRef).then((res: any) => {
         if (!res.exists) {
           throw new Error('Document does not exist!');
@@ -93,17 +86,20 @@ export default class CommentReplyService {
     });
   };
 
-  static updateReply = (payload: any): Promise<any> => {
+  public updateReply = (payload: any): Promise<any> => {
     const { params, data } = payload;
-    return Api.firestore
+    return this.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments/${params.commentID}/replies`)
       .doc(params.ID)
-      .set({ ...data, updatedAt: Api.app.firestore.FieldValue.serverTimestamp() }, { merge: true });
+      .set(
+        { ...data, updatedAt: this.app.firestore.FieldValue.serverTimestamp() },
+        { merge: true },
+      );
   };
 
-  static fetchMoreReply = (payload: IPayload): Promise<any> => {
+  public fetchMoreReplies = (payload: IPayload): Promise<any> => {
     const { params } = payload;
-    return Api.firestore
+    return this.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments/${params.commentID}/replies`)
       .orderBy('clientTimestamp', 'asc')
       .startAfter(params.after)
@@ -111,14 +107,14 @@ export default class CommentReplyService {
       .get();
   };
 
-  static onSnapshotChanged = (
+  public onSnapshotChanged = (
     payload: IPayload,
     handleDataChanged: Function,
     handleError: Function,
   ) => {
     //This static method returns the replies in descending order during initial load then listens to any addition or updates to the colletion or documents in the collection
     const { params } = payload;
-    Api.firestore
+    this.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments/${params.commentID}/replies`)
       .orderBy('clientTimestamp', 'asc')
       .limit(params.limit || 10)

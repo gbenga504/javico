@@ -6,29 +6,20 @@ import { useStyles } from './styles';
 import { useStyles as commonUseStyles } from '../../Css';
 import { Typography, withNotificationBanner } from '../../atoms';
 import Comment from './Comment';
-import CommentService, { IComment } from '../../services/CommentsServices';
+import { Apis, IComment } from '../../utils/Apis';
 import ContentLoader from '../../atoms/ContentLoader';
-import { withApi } from '../../utils/ApiConnector';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import CommentUtils from '../../utils/CommentUtils';
 import { getReadableDate } from '../../utils/TimeUtils';
-import CommentReplyService from '../../services/CommentReplyServices';
 
 interface IProps {
-  Api: any;
   visible: boolean;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
   sourceCodeId: string;
   user: any;
 }
 
-const Comments: React.FC<IProps> = ({
-  visible,
-  onSetNotificationSettings,
-  Api,
-  sourceCodeId,
-  user,
-}) => {
+const Comments: React.FC<IProps> = ({ visible, onSetNotificationSettings, sourceCodeId, user }) => {
   const [quotedComment, setQuotedComment] = useState<string>('');
   const [idOfQuotedComment, setIdOfQuotedComment] = useState<string>('');
   const [newMessage, setNewMessage] = useState<string>('');
@@ -49,7 +40,7 @@ const Comments: React.FC<IProps> = ({
          * also focus last comment after successful load
          */
         setIsLoadingComments(true);
-        CommentService.onSnapshotChanged(
+        Apis.comments.onSnapshotChanged(
           { params: { sourceCodeID: sourceCodeId, limit: 15 } },
           function(querySnapshot: Array<any>) {
             const { comments, next } = CommentUtils.parseComments(querySnapshot);
@@ -83,14 +74,16 @@ const Comments: React.FC<IProps> = ({
          * and set isLoadingMoreComments = true
          */
         setIsLoadingComments(true);
-        CommentService.fetchMoreComments({
-          params: { sourceCodeID: sourceCodeId, after: comments[0].clientTimestamp, limit: 15 },
-        }).then(function(querySnapshot: Array<any>) {
-          const { comments, next } = CommentUtils.parseComments(querySnapshot, 'fetchMore');
-          setNextCursor(next);
-          setIsLoadingComments(false);
-          setComments(comments);
-        });
+        Apis.comments
+          .fetchMoreComments({
+            params: { sourceCodeID: sourceCodeId, after: comments[0].clientTimestamp, limit: 15 },
+          })
+          .then(function(querySnapshot: Array<any>) {
+            const { comments, next } = CommentUtils.parseComments(querySnapshot, 'fetchMore');
+            setNextCursor(next);
+            setIsLoadingComments(false);
+            setComments(comments);
+          });
       }
     }
 
@@ -149,7 +142,7 @@ const Comments: React.FC<IProps> = ({
 
   function handleSendComment() {
     if (newMessage.trim().length > 0) {
-      const user = Api.getCurrentUser();
+      const user = Apis.users.getCurrentUser();
 
       if (!!user === false) {
         onSetNotificationSettings('Please login to add a review', 'danger', 'long');
@@ -160,20 +153,22 @@ const Comments: React.FC<IProps> = ({
           'long',
         );
       } else {
-        CommentService.createComment({
-          data: {
-            sourceCodeId,
-            author: {
-              id: user.uid,
-              name: user.displayName,
-              photoURL: user.photoURL,
+        Apis.comments
+          .createComment({
+            data: {
+              sourceCodeId,
+              author: {
+                id: user.uid,
+                name: user.displayName,
+                photoURL: user.photoURL,
+              },
+              text: newMessage,
             },
-            text: newMessage,
-          },
-          params: {
-            sourceCodeID: sourceCodeId,
-          },
-        }).catch(err => onSetNotificationSettings(err, 'danger', 'long'));
+            params: {
+              sourceCodeID: sourceCodeId,
+            },
+          })
+          .catch(err => onSetNotificationSettings(err, 'danger', 'long'));
         setNewMessage('');
       }
     }
@@ -181,28 +176,30 @@ const Comments: React.FC<IProps> = ({
 
   function handleSendReply() {
     if (newMessage.trim().length > 0) {
-      const user = Api.getCurrentUser();
+      const user = Apis.users.getCurrentUser();
 
       if (!!user === false) {
         onSetNotificationSettings('Please login to add a review', 'danger', 'long');
       } else if (!!sourceCodeId === false) {
         onSetNotificationSettings('Cannot make reply on an unsaved source code', 'danger', 'long');
       } else {
-        CommentReplyService.createReply({
-          data: {
-            author: {
-              id: user.uid,
-              name: user.displayName,
-              photoURL: user.photoURL,
+        Apis.replies
+          .createReply({
+            data: {
+              author: {
+                id: user.uid,
+                name: user.displayName,
+                photoURL: user.photoURL,
+              },
+              text: newMessage,
+              commentId: idOfQuotedComment,
             },
-            text: newMessage,
-            commentId: idOfQuotedComment,
-          },
-          params: {
-            sourceCodeID: sourceCodeId,
-            commentID: idOfQuotedComment,
-          },
-        }).catch(err => onSetNotificationSettings(err, 'danger', 'long'));
+            params: {
+              sourceCodeID: sourceCodeId,
+              commentID: idOfQuotedComment,
+            },
+          })
+          .catch(err => onSetNotificationSettings(err, 'danger', 'long'));
         setNewMessage('');
         setQuotedComment('');
         setIdOfQuotedComment('');
@@ -318,4 +315,4 @@ const Comments: React.FC<IProps> = ({
   );
 };
 
-export default withNotificationBanner(withApi(React.memo(Comments)));
+export default withNotificationBanner(React.memo(Comments));

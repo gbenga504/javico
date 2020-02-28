@@ -8,7 +8,7 @@ import DeleteMessageModal from '../DeleteMessageModal';
 import EditMessagePanel from '../EditMessagePanel';
 import { getRelativeTime } from '../../utils/TimeUtils';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
-import CommentReplyService from '../../services/CommentReplyServices';
+import { Apis } from '../../utils/Apis';
 import MarkdownRenderer from '../MarkDownRenderer';
 
 interface IProps {
@@ -62,12 +62,14 @@ const Reply: React.FC<IProps> = ({
 
   function handleDeleteReply() {
     setIsDeleteReplyLoading(true);
-    CommentReplyService.deleteReply({
-      params: { sourceCodeID: sourceCodeId, commentID: commentId, ID: id },
-    }).then(res => {
-      setIsDeleteReplyLoading(false);
-      setIsConfirmDeleteModalVisible(false);
-    });
+    Apis.replies
+      .deleteReply({
+        params: { sourceCodeID: sourceCodeId, commentID: commentId, ID: id },
+      })
+      .then(res => {
+        setIsDeleteReplyLoading(false);
+        setIsConfirmDeleteModalVisible(false);
+      });
   }
 
   function handleReplyChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -89,10 +91,11 @@ const Reply: React.FC<IProps> = ({
       return;
     }
     setIsEditingReply(true);
-    CommentReplyService.updateReply({
-      data: { text: editableReply.trim() },
-      params: { sourceCodeID: sourceCodeId, commentID: commentId, ID: id },
-    })
+    Apis.replies
+      .updateReply({
+        data: { text: editableReply.trim() },
+        params: { sourceCodeID: sourceCodeId, commentID: commentId, ID: id },
+      })
       .then(res => {
         setIsEditingReply(false);
         setIsEditMessagePanelVisible(false);
