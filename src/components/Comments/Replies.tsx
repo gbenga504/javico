@@ -7,7 +7,7 @@ import {
 } from '@material-ui/icons';
 
 import { Typography } from '../../atoms';
-import CommentReplyService, { IReply } from '../../services/CommentReplyServices';
+import { Apis, IReply } from '../../utils/Apis';
 import Reply from './Reply';
 import CommentUtils from '../../utils/CommentUtils';
 import { color, fontsize } from '../../Css';
@@ -57,18 +57,20 @@ const Replies: React.FC<IProps> = ({
      * setReplies and setIsRepliesLoading function
      */
     setIsRepliesLoading(true);
-    CommentReplyService.fetchMoreReply({
-      params: {
-        sourceCodeID: sourceCodeId,
-        after: replies[replies.length - 1].clientTimestamp,
-        limit: 10,
-        commentID: commentId,
-      },
-    }).then(function(querySnapshot: Array<any>) {
-      const { replies } = CommentUtils.parseReplies(querySnapshot, commentId);
-      setIsRepliesLoading(false);
-      setReplies(replies);
-    });
+    Apis.replies
+      .fetchMoreReplies({
+        params: {
+          sourceCodeID: sourceCodeId,
+          after: replies[replies.length - 1].clientTimestamp,
+          limit: 10,
+          commentID: commentId,
+        },
+      })
+      .then(function(querySnapshot: Array<any>) {
+        const { replies } = CommentUtils.parseReplies(querySnapshot, commentId);
+        setIsRepliesLoading(false);
+        setReplies(replies);
+      });
   }
 
   function renderShowMoreRepliesButton() {

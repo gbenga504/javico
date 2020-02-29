@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { MuiThemeProvider } from '@material-ui/core';
 
 import Home from './views/Home';
-import Api, { ApiContext } from './utils/ApiConnector';
 import { NotificationProvider } from './atoms';
 import { theme } from './Css';
 import NotOptimizedForMobile from './components/NotOptimizedForMobile';
@@ -28,13 +27,11 @@ const App: React.FC = () => {
     <>
       <div
         style={{ width: '100%', height: '100%', display: isUIVisible === true ? 'block' : 'none' }}>
-        <ApiContext.Provider value={Api}>
-          <MuiThemeProvider theme={theme}>
-            <NotificationProvider>
-              <Home />
-            </NotificationProvider>
-          </MuiThemeProvider>
-        </ApiContext.Provider>
+        <MuiThemeProvider theme={theme}>
+          <NotificationProvider>
+            <Home />
+          </NotificationProvider>
+        </MuiThemeProvider>
       </div>
       {isUIVisible === false && <NotOptimizedForMobile />}
     </>

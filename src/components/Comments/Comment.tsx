@@ -8,9 +8,8 @@ import SyntaxHighlighter from '../SyntaxHighlighter';
 import DeleteMessageModal from '../DeleteMessageModal';
 import EditMessagePanel from '../EditMessagePanel';
 import { parseTime } from '../../utils/TimeUtils';
-import CommentReplyService, { IReply } from '../../services/CommentReplyServices';
+import { Apis, IReply } from '../../utils/Apis';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
-import CommentService from '../../services/CommentsServices';
 import CommentUtils from '../../utils/CommentUtils';
 import MarkdownRenderer from '../MarkDownRenderer';
 import Replies from './Replies';
@@ -62,7 +61,7 @@ const Comment: React.FC<IProps> = ({
        * Fetch the initial replies and setIsRepliesLoading and setReplies
        */
       setIsRepliesLoading(true);
-      CommentReplyService.onSnapshotChanged(
+      Apis.replies.onSnapshotChanged(
         {
           params: { sourceCodeID: sourceCodeId, limit: 10, commentID: id },
         },
@@ -107,7 +106,8 @@ const Comment: React.FC<IProps> = ({
 
   function handleDeleteComment() {
     setIsDeleteCommentLoading(true);
-    CommentService.deleteComment({ params: { sourceCodeID: sourceCodeId, ID: id } })
+    Apis.comments
+      .deleteComment({ params: { sourceCodeID: sourceCodeId, ID: id } })
       .then(res => {
         setIsDeleteCommentLoading(false);
         setIsConfirmDeleteModalVisible(false);
@@ -136,10 +136,11 @@ const Comment: React.FC<IProps> = ({
       return;
     }
     setIsEditingComment(true);
-    CommentService.updateComment({
-      data: { text: editableComment.trim() },
-      params: { sourceCodeID: sourceCodeId, ID: id },
-    })
+    Apis.comments
+      .updateComment({
+        data: { text: editableComment.trim() },
+        params: { sourceCodeID: sourceCodeId, ID: id },
+      })
       .then(res => {
         setIsEditingComment(false);
         setIsEditMessagePanelVisible(false);

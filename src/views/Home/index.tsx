@@ -7,19 +7,17 @@ import MonacoEditor from '../../components/MonacoEditor';
 import Console from '../../components/Console';
 import { color, useStyles as commonUseStyles, padding } from '../../Css';
 import { IndeterminateLinearProgress, withNotificationBanner, Seo } from '../../atoms';
-import { withApi } from '../../utils/ApiConnector';
+import { Apis } from '../../utils/Apis';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
-import SourceCodeService from '../../services/SourceCodeServices';
 import { getSourceCodeIdFromUrl, getBaseUrl } from '../../utils/UrlUtils';
 
 const Comments = lazy(() => import('../../components/Comments'));
 
 interface IProps {
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
-  Api: any;
 }
 
-const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
+const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
   const [terminalExecutableCode, setTerminalExecutableCode] = useState<{
     sourceCode: string;
     sourceCodeHash: null | number;
@@ -38,14 +36,14 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
   const commonCss = commonUseStyles();
 
   useEffect(() => {
-    Api.onAuthStateChanged(function(user: any) {
+    Apis.users.onAuthStateChanged(function(user: any) {
       if (user) {
         setUser(user);
       } else {
         setUser(null);
       }
     });
-  }, [Api]);
+  }, []);
 
   useEffect(() => {
     fetchSourceCode(toggleIsLoading(true));
@@ -54,9 +52,10 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings, Api }) => {
 
   function fetchSourceCode(cb: any) {
     if (getSourceCodeIdFromUrl()) {
-      SourceCodeService.fetchSourceCode({
-        params: { ID: getSourceCodeIdFromUrl() },
-      })
+      Apis.sourceCodes
+        .fetchSourceCode({
+          params: { ID: getSourceCodeIdFromUrl() },
+        })
         .then(res => {
           const { sourceCode, readme, ownerId, title } = res.data();
           toggleIsLoading();
@@ -246,4 +245,4 @@ const useStyles = makeStyles({
   },
 });
 
-export default withNotificationBanner(withApi(Home));
+export default React.memo(withNotificationBanner(Home));

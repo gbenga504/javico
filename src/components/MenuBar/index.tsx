@@ -12,13 +12,12 @@ import {
 import { useStyles } from './styles';
 import { useStyles as commonUseStyles, color } from '../../Css';
 import { withNotificationBanner } from '../../atoms';
-import { withApi } from '../../utils/ApiConnector';
+import { Apis } from '../../utils/Apis';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import ShareIcon from './ShareIcon';
 import { getSourceCodeIdFromUrl } from '../../utils/UrlUtils';
 
 interface IProps {
-  Api: any;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
 }
 
@@ -55,7 +54,7 @@ const shareOptionsList = [
   { name: 'copy', color: '#757575', text: 'Copy sourcecode link', iconName: 'ios-copy' },
 ];
 
-const MenuBar: React.FC<IProps> = ({ Api, onSetNotificationSettings }) => {
+const MenuBar: React.FC<IProps> = ({ onSetNotificationSettings }) => {
   const [fullScreenMode, setFullScreenMode] = useState<boolean>(!!fullScreenEnabled);
   const [showShareOptions, setShowShareOptions] = useState<boolean | null>(null);
   const [menuElement, setMenuElement] = React.useState<null | HTMLElement>(null);
@@ -69,20 +68,19 @@ const MenuBar: React.FC<IProps> = ({ Api, onSetNotificationSettings }) => {
         setFullScreenMode(false);
       }
     });
-    return () => {
-      window.removeEventListener('resize', () => null);
-    };
-  }, []);
 
-  useEffect(() => {
-    Api.onAuthStateChanged(function(user: any) {
+    Apis.users.onAuthStateChanged(function(user: any) {
       if (user) {
         setCurrentUser(user);
       } else {
         setCurrentUser(null);
       }
     });
-  }, [Api]);
+
+    return () => {
+      window.removeEventListener('resize', () => null);
+    };
+  }, []);
 
   function handleOpenMenu(event: React.MouseEvent<HTMLElement>) {
     setMenuElement(event.currentTarget);
@@ -103,7 +101,8 @@ const MenuBar: React.FC<IProps> = ({ Api, onSetNotificationSettings }) => {
   }
 
   function handleSignInWithGithub() {
-    Api.signInWithGithub()
+    Apis.users
+      .signInWithGithub()
       .then(function(result: any) {
         /**
          * @todo
@@ -116,7 +115,8 @@ const MenuBar: React.FC<IProps> = ({ Api, onSetNotificationSettings }) => {
   }
 
   function handleLogout() {
-    Api.logout()
+    Apis.users
+      .logout()
       .then(function() {
         setCurrentUser(null);
         handleCloseMenu();
@@ -201,4 +201,4 @@ const MenuBar: React.FC<IProps> = ({ Api, onSetNotificationSettings }) => {
   );
 };
 
-export default React.memo(withNotificationBanner(withApi(MenuBar)));
+export default React.memo(withNotificationBanner(MenuBar));

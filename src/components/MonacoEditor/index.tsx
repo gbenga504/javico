@@ -6,13 +6,12 @@ import { useStyles } from './styles';
 import { useStyles as commonUseStyles, color } from '../../Css';
 import MonacoIntegrator from '../../utils/MonacoIntegrator';
 import MonacoThemes from '../../utils/MonacoThemes';
-import { withApi } from '../../utils/ApiConnector';
+import { Apis } from '../../utils/Apis';
 import { AnimatedCircularLoader, withNotificationBanner } from '../../atoms';
 import SignInViaGithubModal from '../SignInViaGithubModal';
 import InlineCodeComment from '../InlineCodeComment';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import { getSourceCodeIdFromUrl, updateUrl } from '../../utils/UrlUtils';
-import SourceCodeService from '../../services/SourceCodeServices';
 import SourceCodeHeading from './SourceCodeHeading';
 
 interface IProps {
@@ -37,7 +36,6 @@ interface IProps {
   onSetSourcecodeOwner: any;
   isFetchingSourcecode: boolean;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
-  Api: any;
   user: any;
   currentSection: 'comments' | 'console';
   onChangeCurrentSection: () => void;
@@ -54,7 +52,6 @@ const MonacoEditor: React.FC<IProps> = ({
   onSetSourcecodeOwner,
   isFetchingSourcecode,
   user: _user,
-  Api,
   currentSection,
   onChangeCurrentSection,
   fetchSourceCode,
@@ -230,10 +227,11 @@ const MonacoEditor: React.FC<IProps> = ({
   }
 
   function updateSourcecode(id: string, data: any) {
-    SourceCodeService.saveSourceCode({
-      data,
-      params: { ID: id },
-    })
+    Apis.sourceCodes
+      .saveSourceCode({
+        data,
+        params: { ID: id },
+      })
       .then((res: any) => {
         fetchSourceCode(onHandleLoading());
       })
@@ -244,14 +242,15 @@ const MonacoEditor: React.FC<IProps> = ({
   }
 
   function saveNewSourcecode(data: any) {
-    let me = Api.getCurrentUser();
+    let me = Apis.users.getCurrentUser();
     onHandleLoading(true);
-    SourceCodeService.saveSourceCode({
-      data: {
-        ownerId: me.uid,
-        ...data,
-      },
-    })
+    Apis.sourceCodes
+      .saveSourceCode({
+        data: {
+          ownerId: me.uid,
+          ...data,
+        },
+      })
       .then(res => {
         onHandleLoading();
         onSetSourcecodeOwner({
@@ -305,7 +304,7 @@ const MonacoEditor: React.FC<IProps> = ({
     if ((event.ctrlKey === true || event.metaKey === true) && event.keyCode === 83) {
       event.preventDefault();
 
-      let me = Api.getCurrentUser();
+      let me = Apis.users.getCurrentUser();
       if (!!me && me.email) {
         handleSaveDeveloperCode();
       } else {
@@ -407,4 +406,4 @@ const MonacoEditor: React.FC<IProps> = ({
   );
 };
 
-export default React.memo(withNotificationBanner(withApi(MonacoEditor)));
+export default React.memo(withNotificationBanner(MonacoEditor));

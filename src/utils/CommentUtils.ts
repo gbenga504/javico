@@ -1,5 +1,4 @@
-import { IComment } from '../services/CommentsServices';
-import { IReply } from '../services/CommentReplyServices';
+import { IComment, IReply } from './Apis';
 
 interface ICommentStore {
   [key: string]: IComment;

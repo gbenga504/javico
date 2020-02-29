@@ -7,7 +7,7 @@ import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import { withNotificationBanner, Typography, ButtonWithLoading } from '../../atoms';
 import { useStyles as commonUseStyles, color, fontsize } from '../../Css';
 import MarkdownRenderer from '../MarkDownRenderer';
-import CommentService from '../../services/CommentsServices';
+import { Apis } from '../../utils/Apis';
 
 interface IProps {
   user: any;
@@ -85,21 +85,22 @@ const InlineCodeComment: React.FC<IProps> = ({
       onOpenSignInModal();
     } else {
       setIsCreatingComment(true);
-      CommentService.createComment({
-        data: {
-          sourceCodeId,
-          author: {
-            id: user.uid,
-            name: user.displayName,
-            photoURL: user.photoURL,
+      Apis.comments
+        .createComment({
+          data: {
+            sourceCodeId,
+            author: {
+              id: user.uid,
+              name: user.displayName,
+              photoURL: user.photoURL,
+            },
+            text: comment,
+            codeReference,
           },
-          text: comment,
-          codeReference,
-        },
-        params: {
-          sourceCodeID: sourceCodeId,
-        },
-      })
+          params: {
+            sourceCodeID: sourceCodeId,
+          },
+        })
         .then(res => {
           setIsCreatingComment(false);
           onHideCommentBox();
