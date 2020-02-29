@@ -133,16 +133,18 @@ const Console: React.FC<{
       </div>
       <div className={classes.consoleSection}>
         {currentTab === 0 && <Terminal terminalMessages={terminalMessages} />}
-        {currentTab === 1 && isAuthorize ? (
-          <Readme
-            readMe={readMe}
-            onSubmitReadme={submitReadme}
-            isLoading={isLoading}
-            onHandleReadMeTextChange={handleReadMeTextChange}
-          />
-        ) : (
-          <Preview readMe={readMe} />
-        )}
+        {currentTab === 1 ? (
+          isAuthorize ? (
+            <Readme
+              readMe={readMe}
+              onSubmitReadme={submitReadme}
+              isLoading={isLoading}
+              onHandleReadMeTextChange={handleReadMeTextChange}
+            />
+          ) : (
+            <Preview readMe={readMe} />
+          )
+        ) : null}
         {currentTab === 2 && <Preview readMe={readMe} />}
       </div>
       <SignInViaGithubModal
