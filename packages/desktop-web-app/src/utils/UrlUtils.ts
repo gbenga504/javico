@@ -1,6 +1,6 @@
 export const getSourceCodeIdFromUrl = () => {
   const route = window.location.href;
-  const routeArr = route.split("/");
+  const routeArr = route.split('/');
   return routeArr[routeArr.length - 1];
 };
 

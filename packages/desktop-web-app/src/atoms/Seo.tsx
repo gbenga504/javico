@@ -1,5 +1,5 @@
-import React from "react";
-import Helmet from "react-helmet";
+import React from 'react';
+import Helmet from 'react-helmet';
 
 interface IProps {
   title: string;
@@ -22,7 +22,7 @@ const Seo: React.FC<IProps> = ({
   ogUrl,
   twitterDescription,
   twitterTitle,
-  twitterImage
+  twitterImage,
 }) => {
   return (
     <Helmet>
@@ -37,10 +37,7 @@ const Seo: React.FC<IProps> = ({
       <meta name="og:type" content="website" />
       {/* Twitter Card tags */}
       <meta name="twitter:title" content={twitterTitle || ogTitle} />
-      <meta
-        name="twitter:description"
-        content={twitterDescription || ogDescription}
-      />
+      <meta name="twitter:description" content={twitterDescription || ogDescription} />
       <meta name="twitter:image" content={twitterImage || ogImage} />
       <meta name="twitter:card" content="summary" />
     </Helmet>

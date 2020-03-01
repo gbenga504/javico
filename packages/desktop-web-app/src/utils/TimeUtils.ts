@@ -1,5 +1,5 @@
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(relativeTime);
 
@@ -18,16 +18,16 @@ function getNthDate(date: number): string {
 
 export function parseTime(time: number): string {
   let date = new Date(time);
-  return date.toLocaleString("default", {
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true
+  return date.toLocaleString('default', {
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true,
   });
 }
 
 export function getReadableDate(time: number): string {
   let date = new Date(time);
-  const month = date.toLocaleString("default", { month: "long" });
+  const month = date.toLocaleString('default', { month: 'long' });
   return `${month} ${getNthDate(date.getDate())}, ${date.getFullYear()}`;
 }
 

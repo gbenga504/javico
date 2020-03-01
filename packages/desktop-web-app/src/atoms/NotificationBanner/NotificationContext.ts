@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface INotificationContext {
   notificationSettings: any;
@@ -7,7 +7,7 @@ interface INotificationContext {
 
 const NotificationContext = React.createContext({
   notificationSettings: null,
-  onSetNotificationSettings: () => null
+  onSetNotificationSettings: () => null,
 } as INotificationContext);
 
 export default NotificationContext;

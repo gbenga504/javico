@@ -1,28 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { Tooltip, Menu, MenuItem, Button } from "@material-ui/core";
+import React, { useState, useEffect } from 'react';
+import { Tooltip, Menu, MenuItem, Button } from '@material-ui/core';
 import {
   Search as SearchIcon,
   Share as ShareoptionIcon,
   GitHub as GitHubIcon,
   WbIncandescent as WbIncandescentIcon,
   Fullscreen as FullscreenIcon,
-  FullscreenExit as FullscreenExitIcon
-} from "@material-ui/icons";
+  FullscreenExit as FullscreenExitIcon,
+} from '@material-ui/icons';
 
-import { useStyles } from "./styles";
-import { useStyles as commonUseStyles, color } from "../../Css";
-import { withNotificationBanner } from "../../atoms";
-import { Apis } from "../../utils/Apis";
-import { IBannerStyle, IDuration } from "../../atoms/NotificationBanner";
-import ShareIcon from "./ShareIcon";
-import { getSourceCodeIdFromUrl } from "../../utils/UrlUtils";
+import { useStyles } from './styles';
+import { useStyles as commonUseStyles, color } from '../../Css';
+import { withNotificationBanner } from '../../atoms';
+import { Apis } from '../../utils/Apis';
+import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
+import ShareIcon from './ShareIcon';
+import { getSourceCodeIdFromUrl } from '../../utils/UrlUtils';
 
 interface IProps {
-  onSetNotificationSettings: (
-    text: string,
-    style?: IBannerStyle,
-    duration?: IDuration
-  ) => null;
+  onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
 }
 
 const doc: any = window.document;
@@ -34,10 +30,7 @@ const requestFullScreen =
   docEl.webkitRequestFullScreen ||
   docEl.msRequestFullscreen;
 const cancelFullScreen =
-  doc.exitFullscreen ||
-  doc.mozCancelFullScreen ||
-  doc.webkitExitFullscreen ||
-  doc.msExitFullscreen;
+  doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
 const fullScreenEnabled =
   doc.fullscreenElement ||
   doc.mozFullscreenElement ||
@@ -45,48 +38,42 @@ const fullScreenEnabled =
   doc.msFullscreenElement;
 
 const iconList = (fullScreenMode: boolean) => [
-  { text: "Search file", action: "", icon: SearchIcon },
+  { text: 'Search file', action: '', icon: SearchIcon },
   {
-    text: fullScreenMode === false ? "Make full screen" : "Resize screen",
-    action: "toggleFullScreen",
-    icon: fullScreenMode === false ? FullscreenIcon : FullscreenExitIcon
+    text: fullScreenMode === false ? 'Make full screen' : 'Resize screen',
+    action: 'toggleFullScreen',
+    icon: fullScreenMode === false ? FullscreenIcon : FullscreenExitIcon,
   },
-  { text: "Share code", action: "toggleCodeOptions", icon: ShareoptionIcon },
-  { text: "Sign in", action: "signInWithGithub", icon: GitHubIcon },
-  { text: "Light theme", action: "", icon: WbIncandescentIcon }
+  { text: 'Share code', action: 'toggleCodeOptions', icon: ShareoptionIcon },
+  { text: 'Sign in', action: 'signInWithGithub', icon: GitHubIcon },
+  { text: 'Light theme', action: '', icon: WbIncandescentIcon },
 ];
 
 const shareOptionsList = [
   {
-    name: "twitter",
+    name: 'twitter',
     color: color.themeBlue,
-    text: "Share to twitter",
-    iconName: "logo-twitter"
+    text: 'Share to twitter',
+    iconName: 'logo-twitter',
   },
   {
-    name: "copy",
-    color: "#757575",
-    text: "Copy sourcecode link",
-    iconName: "ios-copy"
-  }
+    name: 'copy',
+    color: '#757575',
+    text: 'Copy sourcecode link',
+    iconName: 'ios-copy',
+  },
 ];
 
 const MenuBar: React.FC<IProps> = ({ onSetNotificationSettings }) => {
-  const [fullScreenMode, setFullScreenMode] = useState<boolean>(
-    !!fullScreenEnabled
-  );
-  const [showShareOptions, setShowShareOptions] = useState<boolean | null>(
-    null
-  );
-  const [menuElement, setMenuElement] = React.useState<null | HTMLElement>(
-    null
-  );
+  const [fullScreenMode, setFullScreenMode] = useState<boolean>(!!fullScreenEnabled);
+  const [showShareOptions, setShowShareOptions] = useState<boolean | null>(null);
+  const [menuElement, setMenuElement] = React.useState<null | HTMLElement>(null);
   const [currentUser, setCurrentUser] = React.useState<any>(null);
   const classes = useStyles();
   const commonCss = commonUseStyles();
 
   useEffect(() => {
-    window.addEventListener("resize", function() {
+    window.addEventListener('resize', function() {
       if (window.screen.height !== window.innerHeight) {
         setFullScreenMode(false);
       }
@@ -101,7 +88,7 @@ const MenuBar: React.FC<IProps> = ({ onSetNotificationSettings }) => {
     });
 
     return () => {
-      window.removeEventListener("resize", () => null);
+      window.removeEventListener('resize', () => null);
     };
   }, []);
 
@@ -133,7 +120,7 @@ const MenuBar: React.FC<IProps> = ({ onSetNotificationSettings }) => {
          */
       })
       .catch(function(error: any) {
-        onSetNotificationSettings(error.message, "danger", "long");
+        onSetNotificationSettings(error.message, 'danger', 'long');
       });
   }
 
@@ -145,7 +132,7 @@ const MenuBar: React.FC<IProps> = ({ onSetNotificationSettings }) => {
         handleCloseMenu();
       })
       .catch(function(error: any) {
-        onSetNotificationSettings(error.message, "danger", "long");
+        onSetNotificationSettings(error.message, 'danger', 'long');
       });
   }
 
@@ -155,13 +142,13 @@ const MenuBar: React.FC<IProps> = ({ onSetNotificationSettings }) => {
 
   function triggerAction(action: string) {
     switch (action) {
-      case "toggleFullScreen":
+      case 'toggleFullScreen':
         handleToggleFullScreen();
         break;
-      case "signInWithGithub":
+      case 'signInWithGithub':
         handleSignInWithGithub();
         break;
-      case "toggleCodeOptions":
+      case 'toggleCodeOptions':
         handleShowShareOptions();
         break;
       default:
@@ -174,11 +161,7 @@ const MenuBar: React.FC<IProps> = ({ onSetNotificationSettings }) => {
       {!!currentUser === true && (
         <Button onClick={handleOpenMenu}>
           <div className={`${classes.menubarTitle} ${commonCss.flexColumn}`}>
-            <img
-              src={currentUser.photoURL}
-              alt="Current User"
-              className={classes.menubarUser}
-            />
+            <img src={currentUser.photoURL} alt="Current User" className={classes.menubarUser} />
           </div>
         </Button>
       )}
@@ -187,33 +170,26 @@ const MenuBar: React.FC<IProps> = ({ onSetNotificationSettings }) => {
         anchorEl={menuElement}
         keepMounted
         open={Boolean(menuElement)}
-        onClose={handleCloseMenu}
-      >
+        onClose={handleCloseMenu}>
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
       {iconList(fullScreenMode).map(el => {
-        if (el.text === "Share code" && !getSourceCodeIdFromUrl()) return null;
-        if (el.text === "Sign in" && !!currentUser === true) return null;
+        if (el.text === 'Share code' && !getSourceCodeIdFromUrl()) return null;
+        if (el.text === 'Sign in' && !!currentUser === true) return null;
         const IconComponent = el.icon;
 
         return (
-          <div key={el.text} style={{ position: "relative" }}>
+          <div key={el.text} style={{ position: 'relative' }}>
             <div
               className={`${commonCss.flexRow} ${commonCss.center} ${classes.menubarIcon}`}
-              onClick={() => triggerAction(el.action)}
-            >
-              <Tooltip
-                title={el.text}
-                leaveDelay={300}
-                placement="bottom"
-                enterDelay={100}
-              >
+              onClick={() => triggerAction(el.action)}>
+              <Tooltip title={el.text} leaveDelay={300} placement="bottom" enterDelay={100}>
                 <span className={commonCss.flexRow}>
                   <IconComponent />
                 </span>
               </Tooltip>
             </div>
-            {el.action === "toggleCodeOptions" &&
+            {el.action === 'toggleCodeOptions' &&
               shareOptionsList.map((el, i) => {
                 return (
                   <ShareIcon

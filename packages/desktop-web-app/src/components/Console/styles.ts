@@ -1,36 +1,36 @@
-import { makeStyles } from "@material-ui/core";
+import { makeStyles } from '@material-ui/core';
 
-import { color, fontsize } from "../../Css";
+import { color, fontsize } from '../../Css';
 
 export const useStyles = makeStyles(theme => ({
   console: {
-    height: "100vh",
+    height: '100vh',
     backgroundColor: color.darkThemeBlack,
-    "&>div:first-child": {
-      width: "100%",
-      display: "flex",
-      justifyContent: "space-between",
-      paddingRight: theme.spacing(25)
-    }
+    '&>div:first-child': {
+      width: '100%',
+      display: 'flex',
+      justifyContent: 'space-between',
+      paddingRight: theme.spacing(25),
+    },
   },
   consoleTerminalBasedActionsContainer: {
-    display: "flex",
-    alignItems: "center"
+    display: 'flex',
+    alignItems: 'center',
   },
   consoleTerminalClearIcon: {
     color: color.white,
     fontSize: 16,
-    cursor: "pointer"
+    cursor: 'pointer',
   },
   consoleSection: {
-    width: "100%",
-    height: "calc(100% - 48px)",
-    position: "relative",
-    overflowY: "scroll",
+    width: '100%',
+    height: 'calc(100% - 48px)',
+    position: 'relative',
+    overflowY: 'scroll',
     borderTop: `1px solid ${color.darkThemeLightBorder}`,
-    fontSize: `${fontsize.terminal}px !important`
+    fontSize: `${fontsize.terminal}px !important`,
   },
   consoleTab: {
-    color: color.white
-  }
+    color: color.white,
+  },
 }));

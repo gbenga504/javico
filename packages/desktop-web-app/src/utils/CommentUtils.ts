@@ -1,4 +1,4 @@
-import { IComment, IReply } from "./Apis";
+import { IComment, IReply } from './Apis';
 
 interface ICommentStore {
   [key: string]: IComment;
@@ -25,7 +25,7 @@ export default class CommentUtils {
 
   static parseComments(
     comments: any,
-    action?: "fetchMore" | null
+    action?: 'fetchMore' | null,
   ): { comments: IComment[]; next: null | undefined | number } {
     //This function parses and formats the comments
     //Comments are arranged based on the action performed i.e fetchMore or (Others|null)
@@ -39,15 +39,14 @@ export default class CommentUtils {
       temp.unshift({
         id: comment.id,
         ...comment.data(),
-        metadata: { ...comment.metadata }
+        metadata: { ...comment.metadata },
       });
     });
 
     temp.forEach((comment: any) => {
       if (comment.id in CommentUtils.__COMMENT_STORE === false) {
         let seconds =
-          (comment.createdAt && comment.createdAt.seconds * 1000) ||
-          new Date().getTime();
+          (comment.createdAt && comment.createdAt.seconds * 1000) || new Date().getTime();
         tempStore[comment.id] = { ...comment, createdAt: seconds };
         didStoreUpdate = true;
       } else if (
@@ -57,31 +56,30 @@ export default class CommentUtils {
         tempStore[comment.id] = {
           ...CommentUtils.__COMMENT_STORE[comment.id],
           text: comment.text,
-          updatedAt: comment.updatedAt || new Date().getTime()
+          updatedAt: comment.updatedAt || new Date().getTime(),
         };
         didStoreUpdate = true;
       } else if (
         comment.id in CommentUtils.__COMMENT_STORE === true &&
-        CommentUtils.__COMMENT_STORE[comment.id].numReplies !==
-          comment.numReplies
+        CommentUtils.__COMMENT_STORE[comment.id].numReplies !== comment.numReplies
       ) {
         tempStore[comment.id] = {
           ...CommentUtils.__COMMENT_STORE[comment.id],
-          numReplies: comment.numReplies
+          numReplies: comment.numReplies,
         };
         didStoreUpdate = true;
       }
     });
 
-    if (action === "fetchMore") {
+    if (action === 'fetchMore') {
       CommentUtils.__COMMENT_STORE = {
         ...tempStore,
-        ...CommentUtils.__COMMENT_STORE
+        ...CommentUtils.__COMMENT_STORE,
       };
     } else {
       CommentUtils.__COMMENT_STORE = {
         ...CommentUtils.__COMMENT_STORE,
-        ...tempStore
+        ...tempStore,
       };
     }
 
@@ -89,7 +87,7 @@ export default class CommentUtils {
     //Since its possible that we have a deletion instead
     if (didStoreUpdate === false) {
       comments.docChanges().forEach(function(change: any) {
-        if (change.type === "removed") {
+        if (change.type === 'removed') {
           delete CommentUtils.__COMMENT_STORE[change.doc.id];
         }
       });
@@ -98,17 +96,16 @@ export default class CommentUtils {
     //Use the clientTimestamp field of the first data as a next param for our cursor based pagination
     let firstComment = Object.values(CommentUtils.__COMMENT_STORE)[0];
     let next = (firstComment && firstComment.clientTimestamp) || null;
-    CommentUtils.next =
-      temp.length === 0 || CommentUtils.next === null ? null : next;
+    CommentUtils.next = temp.length === 0 || CommentUtils.next === null ? null : next;
     return {
       comments: Object.values(CommentUtils.__COMMENT_STORE),
-      next: CommentUtils.next
+      next: CommentUtils.next,
     };
   }
 
   static parseReplies(
     replies: any,
-    commentId: string
+    commentId: string,
   ): { replies: IReply[]; next: null | undefined | number } {
     //This function parses and formats the replies
     //__REPLY_STORE is also used to keep track of all the replies that has been loaded thus far on the app. This replies are scoped by comment using the commentId as a key
@@ -125,15 +122,13 @@ export default class CommentUtils {
       temp.push({
         id: reply.id,
         ...reply.data(),
-        metadata: { ...reply.metadata }
+        metadata: { ...reply.metadata },
       });
     });
 
     temp.forEach((reply: any) => {
       if (reply.id in (CommentUtils.__REPLY_STORE[commentId] || {}) === false) {
-        let seconds =
-          (reply.createdAt && reply.createdAt.seconds * 1000) ||
-          new Date().getTime();
+        let seconds = (reply.createdAt && reply.createdAt.seconds * 1000) || new Date().getTime();
         tempStore[reply.id] = { ...reply, createdAt: seconds };
         didStoreUpdate = true;
       } else if (
@@ -143,7 +138,7 @@ export default class CommentUtils {
         tempStore[reply.id] = {
           ...CommentUtils.__REPLY_STORE[commentId][reply.id],
           text: reply.text,
-          updatedAt: reply.updatedAt || new Date().getTime()
+          updatedAt: reply.updatedAt || new Date().getTime(),
         };
         didStoreUpdate = true;
       }
@@ -151,14 +146,14 @@ export default class CommentUtils {
 
     CommentUtils.__REPLY_STORE[commentId] = {
       ...CommentUtils.__REPLY_STORE[commentId],
-      ...tempStore
+      ...tempStore,
     };
 
     //Delete the document if no update occurs i.e there is no addition or update to the __REPLY_STORE
     //Since its possible that we have a deletion instead
     if (didStoreUpdate === false) {
       replies.docChanges().forEach(function(change: any) {
-        if (change.type === "removed") {
+        if (change.type === 'removed') {
           delete CommentUtils.__REPLY_STORE[commentId][change.doc.id];
         }
       });
@@ -172,12 +167,10 @@ export default class CommentUtils {
     let lastReply = allReplies[allReplies.length - 1];
     let next = (lastReply && lastReply.clientTimestamp) || null;
     CommentUtils.repliesNextCursor[commentId] =
-      temp.length === 0 || CommentUtils.repliesNextCursor[commentId] === null
-        ? null
-        : next;
+      temp.length === 0 || CommentUtils.repliesNextCursor[commentId] === null ? null : next;
     return {
       replies: allReplies,
-      next: CommentUtils.repliesNextCursor[commentId]
+      next: CommentUtils.repliesNextCursor[commentId],
     };
   }
 }

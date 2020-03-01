@@ -1,3 +1,3 @@
-export { default as NotificationProvider } from "./NotificationProvider";
-export { default as withNotificationBanner } from "./withNotificationBanner";
-export * from "./typeDefinition";
+export { default as NotificationProvider } from './NotificationProvider';
+export { default as withNotificationBanner } from './withNotificationBanner';
+export * from './typeDefinition';

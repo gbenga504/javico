@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { Snackbar } from "@material-ui/core";
-import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+import React, { useState, useEffect } from 'react';
+import { Snackbar } from '@material-ui/core';
+import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 
-import { INotificationBannerProps } from "./typeDefinition";
-import { usePrevious } from "../../hooks";
+import { INotificationBannerProps } from './typeDefinition';
+import { usePrevious } from '../../hooks';
 
 const Alert = (props: AlertProps) => {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -13,13 +13,13 @@ const DefaultNotificationView: React.FC<INotificationBannerProps> = ({
   style,
   text,
   id,
-  duration = "short"
+  duration = 'short',
 }) => {
   const [isBannerHidden, setIsBannerHidden] = useState<boolean>(true);
   const queueRef = React.useRef<INotificationBannerProps[]>([]);
-  const [messageInfo, setMessageInfo] = React.useState<
-    INotificationBannerProps | undefined
-  >(undefined);
+  const [messageInfo, setMessageInfo] = React.useState<INotificationBannerProps | undefined>(
+    undefined,
+  );
   const previousId = usePrevious(id);
 
   useEffect(() => {
@@ -28,7 +28,7 @@ const DefaultNotificationView: React.FC<INotificationBannerProps> = ({
         style,
         text,
         id,
-        duration
+        duration,
       });
     }
 
@@ -48,7 +48,7 @@ const DefaultNotificationView: React.FC<INotificationBannerProps> = ({
   }
 
   function handleCloseBanner(event?: React.SyntheticEvent, reason?: string) {
-    if (reason === "clickaway") {
+    if (reason === 'clickaway') {
       return;
     }
     setIsBannerHidden(true);
@@ -58,29 +58,21 @@ const DefaultNotificationView: React.FC<INotificationBannerProps> = ({
     processQueue();
   }
 
-  let snackbarDuration = messageInfo
-    ? messageInfo.duration === "short"
-      ? 1000
-      : 5000
-    : 1000;
+  let snackbarDuration = messageInfo ? (messageInfo.duration === 'short' ? 1000 : 5000) : 1000;
   return (
     <Snackbar
       key={messageInfo ? messageInfo.id : undefined}
       onExited={handleExited}
-      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       open={isBannerHidden === false}
       autoHideDuration={snackbarDuration}
-      onClose={handleCloseBanner}
-    >
+      onClose={handleCloseBanner}>
       {messageInfo && !!messageInfo.text === true ? (
         <Alert
           onClose={handleCloseBanner}
-          severity={
-            messageInfo.style === "danger" ? "error" : messageInfo.style
-          }
-        >
+          severity={messageInfo.style === 'danger' ? 'error' : messageInfo.style}>
           {messageInfo.text}
-          {messageInfo.style === "success" && "!"}
+          {messageInfo.style === 'success' && '!'}
         </Alert>
       ) : null}
     </Snackbar>

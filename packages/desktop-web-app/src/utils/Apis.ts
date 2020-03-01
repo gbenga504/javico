@@ -1,11 +1,11 @@
-import * as app from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore";
+import * as app from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
 
-import { CommentsServiceApi } from "../apis/comments";
-import { RepliesServiceApi } from "../apis/replies";
-import { UsersServiceApi } from "../apis/users";
-import { SourceCodeServiceApi } from "../apis/sourceCodes";
+import { CommentsServiceApi } from '../apis/comments';
+import { RepliesServiceApi } from '../apis/replies';
+import { UsersServiceApi } from '../apis/users';
+import { SourceCodeServiceApi } from '../apis/sourceCodes';
 
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -15,7 +15,7 @@ const config = {
   storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
   messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
   appId: process.env.REACT_APP_APP_ID,
-  measurementId: process.env.REACT_APP_MEASUREMENT_ID
+  measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 };
 
 app.initializeApp(config);

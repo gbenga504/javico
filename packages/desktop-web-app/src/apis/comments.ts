@@ -33,14 +33,12 @@ export class CommentsServiceApi {
 
   public createComment = (payload: IPayload): Promise<any> => {
     const { data, params } = payload;
-    return this.firestore
-      .collection(`source-codes/${params.sourceCodeID}/comments`)
-      .add({
-        ...data,
-        numReplies: 0,
-        createdAt: this.app.firestore.FieldValue.serverTimestamp(),
-        clientTimestamp: Date.now()
-      });
+    return this.firestore.collection(`source-codes/${params.sourceCodeID}/comments`).add({
+      ...data,
+      numReplies: 0,
+      createdAt: this.app.firestore.FieldValue.serverTimestamp(),
+      clientTimestamp: Date.now(),
+    });
   };
 
   public deleteComment = (payload: IPayload): Promise<any> => {
@@ -58,7 +56,7 @@ export class CommentsServiceApi {
       .doc(params.ID)
       .set(
         { ...data, updatedAt: this.app.firestore.FieldValue.serverTimestamp() },
-        { merge: true }
+        { merge: true },
       );
   };
 
@@ -66,7 +64,7 @@ export class CommentsServiceApi {
     const { params } = payload;
     return this.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments`)
-      .orderBy("clientTimestamp", "desc")
+      .orderBy('clientTimestamp', 'desc')
       .startAfter(params.after)
       .limit(params.limit || 15)
       .get();
@@ -75,13 +73,13 @@ export class CommentsServiceApi {
   public onSnapshotChanged = (
     payload: IPayload,
     handleDataChanged: Function,
-    handleError: Function
+    handleError: Function,
   ) => {
     //This static method returns the comments in descending order during initial load then listens to any addition or updates to the colletion or documents in the collection
     const { params } = payload;
     this.firestore
       .collection(`source-codes/${params.sourceCodeID}/comments`)
-      .orderBy("clientTimestamp", "desc")
+      .orderBy('clientTimestamp', 'desc')
       .limit(params.limit || 15)
       .onSnapshot(handleDataChanged, handleError);
   };

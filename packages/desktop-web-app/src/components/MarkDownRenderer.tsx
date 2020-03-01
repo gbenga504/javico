@@ -1,8 +1,8 @@
-import React from "react";
-import ReactMarkDown from "react-markdown";
-import { makeStyles } from "@material-ui/core";
+import React from 'react';
+import ReactMarkDown from 'react-markdown';
+import { makeStyles } from '@material-ui/core';
 
-import { color } from "../Css";
+import { color } from '../Css';
 
 interface IProps {
   source: string;
@@ -26,25 +26,22 @@ interface IMarkDownCode {
 
 const useStyles = makeStyles(theme => ({
   markdownLink: {
-    color: `${color.themeBlueDarker} !important`
+    color: `${color.themeBlueDarker} !important`,
   },
   markdownBlockquote: {
     borderLeft: `5px solid ${color.themeBlue}`,
     background: color.gray20,
     color: color.black,
-    padding: theme.spacing(2, 3)
+    padding: theme.spacing(2, 3),
   },
   markdownCode: {
     background: color.gray20,
     color: color.black,
-    padding: theme.spacing(1)
-  }
+    padding: theme.spacing(1),
+  },
 }));
 
-const MarkDownRenderer: React.FC<IProps> = ({
-  source,
-  linkTarget = "_blank"
-}) => {
+const MarkDownRenderer: React.FC<IProps> = ({ source, linkTarget = '_blank' }) => {
   const classes = useStyles();
 
   function customRenderers() {
@@ -55,9 +52,7 @@ const MarkDownRenderer: React.FC<IProps> = ({
         </a>
       ),
       blockquote: ({ children }: IMarkDownBlockQuote) => (
-        <blockquote className={classes.markdownBlockquote}>
-          {children}
-        </blockquote>
+        <blockquote className={classes.markdownBlockquote}>{children}</blockquote>
       ),
       inlineCode: ({ children }: IMarkDownCode) => (
         <code className={classes.markdownCode}>{children}</code>
@@ -66,17 +61,11 @@ const MarkDownRenderer: React.FC<IProps> = ({
         <pre className={classes.markdownCode}>
           <code>{value}</code>
         </pre>
-      )
+      ),
     };
   }
 
-  return (
-    <ReactMarkDown
-      source={source}
-      linkTarget={linkTarget}
-      renderers={customRenderers()}
-    />
-  );
+  return <ReactMarkDown source={source} linkTarget={linkTarget} renderers={customRenderers()} />;
 };
 
 export default React.memo(MarkDownRenderer);

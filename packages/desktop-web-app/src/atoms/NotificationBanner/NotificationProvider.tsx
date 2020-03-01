@@ -1,23 +1,15 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import NotificationContext from "./NotificationContext";
-import DefaultNotificationView from "./DefaultNotificationView";
-import {
-  IDuration,
-  IBannerStyle,
-  INotificationBannerProps
-} from "./typeDefinition";
+import NotificationContext from './NotificationContext';
+import DefaultNotificationView from './DefaultNotificationView';
+import { IDuration, IBannerStyle, INotificationBannerProps } from './typeDefinition';
 
 const NotificationProvider: React.FC = ({ children }) => {
-  const [notificationSettings, setNotificationSettings] = useState<
-    INotificationBannerProps | any
-  >({});
+  const [notificationSettings, setNotificationSettings] = useState<INotificationBannerProps | any>(
+    {},
+  );
 
-  function handleSetNotificationSettings(
-    text: string,
-    style?: IBannerStyle,
-    duration?: IDuration
-  ) {
+  function handleSetNotificationSettings(text: string, style?: IBannerStyle, duration?: IDuration) {
     setNotificationSettings({ id: Date.now(), text, style, duration });
   }
 
@@ -25,9 +17,8 @@ const NotificationProvider: React.FC = ({ children }) => {
     <NotificationContext.Provider
       value={{
         notificationSettings,
-        onSetNotificationSettings: handleSetNotificationSettings
-      }}
-    >
+        onSetNotificationSettings: handleSetNotificationSettings,
+      }}>
       <DefaultNotificationView
         id={notificationSettings.id}
         text={notificationSettings.text}

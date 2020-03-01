@@ -1,7 +1,7 @@
-import React from "react";
-import { withStyles, LinearProgress } from "@material-ui/core";
+import React from 'react';
+import { withStyles, LinearProgress } from '@material-ui/core';
 
-import { color } from "../Css";
+import { color } from '../Css';
 
 interface IProps {
   backgroundColor?: string;
@@ -12,18 +12,18 @@ interface IProps {
 const IndeterminateLinearProgress: React.FC<IProps> = ({
   backgroundColor = color.white,
   progressColor = color.themeBlue,
-  isVisible
+  isVisible,
 }) => {
   const ColorLinearProgress = withStyles({
     colorPrimary: {
-      backgroundColor
+      backgroundColor,
     },
     barColorPrimary: {
-      backgroundColor: progressColor
+      backgroundColor: progressColor,
     },
     root: {
-      height: 2
-    }
+      height: 2,
+    },
   })(LinearProgress);
 
   if (!isVisible) return null;

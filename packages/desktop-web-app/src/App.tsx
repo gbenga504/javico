@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { MuiThemeProvider } from "@material-ui/core";
+import React, { useEffect, useState } from 'react';
+import { MuiThemeProvider } from '@material-ui/core';
 
-import Home from "./views/Home";
-import { NotificationProvider } from "./atoms";
-import { theme } from "./Css";
-import NotOptimizedForMobile from "./components/NotOptimizedForMobile";
+import Home from './views/Home';
+import { NotificationProvider } from './atoms';
+import { theme } from './Css';
+import NotOptimizedForMobile from './components/NotOptimizedForMobile';
 
 const App: React.FC = () => {
-  const [isUIVisible, setIsUIVisible] = useState<boolean>(
-    window.innerWidth < 992 ? false : true
-  );
+  const [isUIVisible, setIsUIVisible] = useState<boolean>(window.innerWidth < 992 ? false : true);
 
   useEffect(() => {
     function resize() {
@@ -19,9 +17,9 @@ const App: React.FC = () => {
         setIsUIVisible(true);
       }
     }
-    window.addEventListener("resize", resize);
+    window.addEventListener('resize', resize);
     return () => {
-      window.removeEventListener("resize", resize);
+      window.removeEventListener('resize', resize);
     };
   }, [isUIVisible]);
 
@@ -29,11 +27,10 @@ const App: React.FC = () => {
     <>
       <div
         style={{
-          width: "100%",
-          height: "100%",
-          display: isUIVisible === true ? "block" : "none"
-        }}
-      >
+          width: '100%',
+          height: '100%',
+          display: isUIVisible === true ? 'block' : 'none',
+        }}>
         <MuiThemeProvider theme={theme}>
           <NotificationProvider>
             <Home />

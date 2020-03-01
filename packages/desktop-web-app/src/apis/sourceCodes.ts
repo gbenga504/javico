@@ -33,24 +33,22 @@ export class SourceCodeServiceApi {
         .set(
           {
             ...data,
-            updatedAt: this.app.firestore.FieldValue.serverTimestamp()
+            updatedAt: this.app.firestore.FieldValue.serverTimestamp(),
           },
-          { merge: true }
+          { merge: true },
         );
     }
-    return this.firestore
-      .collection("source-codes")
-      .add({
-        ...data,
-        createdAt: this.app.firestore.FieldValue.serverTimestamp()
-      });
+    return this.firestore.collection('source-codes').add({
+      ...data,
+      createdAt: this.app.firestore.FieldValue.serverTimestamp(),
+    });
   };
 
   public fetchSourceCode = (payload: IPayload): Promise<any> => {
     const { params } = payload;
     const _params = params || ({} as any);
     return this.firestore
-      .collection("source-codes")
+      .collection('source-codes')
       .doc(_params.ID)
       .get();
   };
