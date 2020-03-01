@@ -1,0 +1,70 @@
+{
+  "name": "gist",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "^4.8.3",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.42",
+    "@types/jest": "24.0.23",
+    "@types/node": "12.12.14",
+    "@types/react": "16.9.13",
+    "@types/react-dom": "16.9.4",
+    "@types/react-helmet": "^5.0.15",
+    "@types/react-share": "^3.0.3",
+    "@types/react-syntax-highlighter": "^11.0.4",
+    "console-feed": "^2.8.11",
+    "dayjs": "^1.8.20",
+    "firebase": "^7.6.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-helmet": "^5.2.1",
+    "react-markdown": "^4.2.2",
+    "react-scripts": "3.2.0",
+    "react-share": "^3.0.1",
+    "react-syntax-highlighter": "^12.2.1",
+    "typescript": "3.7.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "./build.sh",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "clean": "rm -rf ./build",
+    "format": "prettier --write \"src/**/*.{js,jsx,tsx,ts,json,css,md}\"",
+    "format:check": "prettier --list-different \"src/**/*.{js,jsx,json,tsx,ts,css,md}\"",
+    "analyze": "source-map-explorer 'build/static/js/*.js'"
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "husky": "^3.1.0",
+    "lint-staged": "^9.5.0",
+    "prettier": "^1.19.1",
+    "source-map-explorer": "^2.1.1"
+  }
+}
