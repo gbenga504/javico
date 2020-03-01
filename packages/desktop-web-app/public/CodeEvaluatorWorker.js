@@ -10,7 +10,7 @@ const worker = self;
 const MessageType = {
   ERROR: `error`,
   LOG: `log`,
-  WARN: `warning`,
+  WARN: `warn`,
   INFO: `info`,
   DEBUG: `debug`,
   TABLE: `table`,
