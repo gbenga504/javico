@@ -302,7 +302,13 @@ const MonacoEditor: React.FC<IProps> = ({
     setIsSignInModalVisible(true);
   }
 
-  function handleHideCommentIcon() {
+  function handleHideCommentIcon(e: any) {
+    if(shouldDisplayCommentBox){
+      if(e.keyCode === 27){
+        //  todo -> reset selected code e.t.cc
+        setShouldDisplayCommentBox(false);
+      }
+    }
     if (shouldDisplayCommentIcon === true) {
       setShouldDisplayCommentIcon(false);
     }
