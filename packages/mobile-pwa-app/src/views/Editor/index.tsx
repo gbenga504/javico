@@ -10,13 +10,13 @@ import {
 
 import UserImg from '../../assets/images/user.svg';
 import { color, useStyles as commonCss, fontsize } from '../../Css';
-import CommentContainer from './Comments';
+import Comments from './Comments';
+import Terminal from './Terminal';
 
 const MonacoEditor: React.FC<{ setIsSideBarVisible: () => void }> = ({ setIsSideBarVisible }) => {
   const [isScrollUp, setIsScrollUp] = useState<boolean>(true);
-  const [isTopNavVisible, setIsTopNavVisible] = useState<boolean>(true);
-  const [isBottomNavVisible, setisBottomNavVisible] = useState<boolean>(true);
   const [isCommentVisible, setIsCommentVisible] = useState<boolean>(false);
+  const [isTerminalVisible, setIsTerminalVisible] = useState<boolean>(false);
   const classes = useStyles();
   const commonClass = commonCss();
   const navRef = useRef<any>(null);
@@ -50,6 +50,10 @@ const MonacoEditor: React.FC<{ setIsSideBarVisible: () => void }> = ({ setIsSide
 
   function handleOpenComment() {
     setIsCommentVisible(true);
+  }
+
+  function handleSourceCodeExec() {
+    setIsTerminalVisible(true);
   }
 
   function renderNavBar() {
@@ -125,7 +129,8 @@ const MonacoEditor: React.FC<{ setIsSideBarVisible: () => void }> = ({ setIsSide
         }}>
         <IconButton
           style={{ backgroundColor: color.white }}
-          classes={{ root: classes.playIconBtn }}>
+          classes={{ root: classes.playIconBtn }}
+          onClick={handleSourceCodeExec}>
           <PlayArrowIcon style={{ color: color.themeBlue, fontSize: fontsize.large * 2 }} />
         </IconButton>
       </div>
@@ -149,9 +154,15 @@ const MonacoEditor: React.FC<{ setIsSideBarVisible: () => void }> = ({ setIsSide
         inventore tempora repellat amet ab deserunt tempore saepe. Quam expedita vero illo nesciunt
         eius illum quis?
       </div>
-      <CommentContainer
+      <Comments
+        isScrollUp={isScrollUp}
         isVisible={isCommentVisible}
         hideComponent={() => setIsCommentVisible(false)}
+      />
+      <Terminal
+        isScrollUp={isScrollUp}
+        isVisible={isTerminalVisible}
+        hideComponent={() => setIsTerminalVisible(false)}
       />
       {renderPlayBtn()}
       {renderBottomNavBar()}
