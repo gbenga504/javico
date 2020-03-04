@@ -6,10 +6,9 @@ import { color, useStyles as commonCss, fontsize } from '../Css';
 
 const DragableWrapper: React.FC<{
   isVisible: boolean;
-  isScrollUp: boolean;
   hideComponent: () => void;
   children: any;
-}> = ({ isVisible, hideComponent, children, isScrollUp }) => {
+}> = ({ isVisible, hideComponent, children }) => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [clientPos, setClientPos] = useState<number>(0);
   const [height, setHeight] = useState<number>(200);

@@ -35,6 +35,7 @@ const MonacoEditor: React.FC<{ setIsSideBarVisible: () => void }> = ({ setIsSide
       var b = 50;
 
       currentScrollTop = a;
+      clearTimeout(canceScrollupTimer);
 
       if (c < currentScrollTop && a > b) {
         setIsScrollUp(false);
@@ -50,6 +51,18 @@ const MonacoEditor: React.FC<{ setIsSideBarVisible: () => void }> = ({ setIsSide
       tempNavRef.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  useEffect(() => {
+    if (isScrollUp) {
+      setTimeout(cancelScrollUp, 3000);
+    }
+  }, [isScrollUp]);
+
+  function cancelScrollUp() {
+    setIsScrollUp(false);
+  }
+
+  const canceScrollupTimer = setTimeout(cancelScrollUp, 3000);
 
   function handleOpenComment() {
     setIsCommentVisible(true);
@@ -188,10 +201,15 @@ const MonacoEditor: React.FC<{ setIsSideBarVisible: () => void }> = ({ setIsSide
       <div
         className={`${classes.playBtnWrapper} ${
           isScrollUp ? classes.playBtnNavSlideDown : classes.playBtnNavSlideUp
-        }`}>
+        }`}
+        style={{
+          zIndex: isCommentVisible || isReadmeVisible ? 0 : 50,
+        }}>
         <IconButton
           style={{
             backgroundColor: hasWhiteBg ? color.themeBlue : color.white,
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1),0 12px 28px rgba(0,0,0,0.2)',
+            transition: 'transform .3s ease-out',
           }}
           classes={{ root: classes.playIconBtn }}
           onClick={handleSourceCodeExec}>
@@ -211,9 +229,10 @@ const MonacoEditor: React.FC<{ setIsSideBarVisible: () => void }> = ({ setIsSide
       {renderNavBar()}
       <div
         style={{
-          marginTop: 50,
+          marginTop: isScrollUp ? 50 : 0,
           height: '2000px',
           color: 'white',
+          transition: 'all .3s',
         }}>
         Lorem ipsum dolor sit amet consectetur, adipisicing elit. Natus vitae sapiente, labore ea
         eveniet explicabo esse. Aliquid beatae earum iusto. Minus cumque accusantium repellat veniam
@@ -227,21 +246,9 @@ const MonacoEditor: React.FC<{ setIsSideBarVisible: () => void }> = ({ setIsSide
         className={`${classes.navBar} ${classes.bottomNavBar} ${
           isScrollUp ? classes.bottomNavSlideDown : classes.bottomNavSlideUp
         } `}>
-        <Comments
-          isScrollUp={isScrollUp}
-          isVisible={isCommentVisible}
-          hideComponent={() => setIsCommentVisible(false)}
-        />
-        <Terminal
-          isScrollUp={isScrollUp}
-          isVisible={isTerminalVisible}
-          hideComponent={() => setIsTerminalVisible(false)}
-        />
-        <Readme
-          isScrollUp={isScrollUp}
-          isVisible={isReadmeVisible}
-          hideComponent={() => setIsReadmeVisible(false)}
-        />
+        <Comments isVisible={isCommentVisible} hideComponent={() => setIsCommentVisible(false)} />
+        <Terminal isVisible={isTerminalVisible} hideComponent={() => setIsTerminalVisible(false)} />
+        <Readme isVisible={isReadmeVisible} hideComponent={() => setIsReadmeVisible(false)} />
       </div>
       {renderPlayBtn()}
       {renderBottomNavBar()}
@@ -289,10 +296,8 @@ const useStyles = makeStyles(theme => ({
   },
   playBtnWrapper: {
     position: 'fixed',
-    zIndex: 50,
     bottom: 60,
     right: 10,
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
   },
   playIconBtn: { padding: 12 },
   topNavSlideUp: {
@@ -327,7 +332,8 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: color.darkThemeLightBorder,
     color: color.themeBlue,
     '&:hover': {
-      backgroundColor: color.deepBlue,
+      backgroundColor: color.themeBlue,
+      color: color.white,
     },
   },
 }));
