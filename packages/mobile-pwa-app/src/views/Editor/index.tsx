@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { makeStyles, IconButton } from '@material-ui/core';
+import { makeStyles, IconButton, Menu, MenuItem } from '@material-ui/core';
 import {
   Menu as MenuIcon,
   MoreVert as MoreVertIcon,
@@ -15,6 +15,7 @@ import Terminal from './Terminal';
 import Readme from './Readme';
 
 const MonacoEditor: React.FC<{ setIsSideBarVisible: () => void }> = ({ setIsSideBarVisible }) => {
+  const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | SVGSVGElement>(null);
   const [isScrollUp, setIsScrollUp] = useState<boolean>(true);
   const [isCommentVisible, setIsCommentVisible] = useState<boolean>(false);
   const [isTerminalVisible, setIsTerminalVisible] = useState<boolean>(false);
@@ -62,38 +63,94 @@ const MonacoEditor: React.FC<{ setIsSideBarVisible: () => void }> = ({ setIsSide
     setIsTerminalVisible(true);
   }
 
+  function handleShowOptions(event: React.MouseEvent<SVGSVGElement>) {
+    setOptionsAnchorEl(event.currentTarget);
+  }
+
+  function handleCloseOptions() {
+    setOptionsAnchorEl(null);
+  }
+
+  function renderSourcecodeOptions() {
+    return (
+      <Menu
+        anchorEl={optionsAnchorEl}
+        keepMounted
+        classes={{
+          paper: classes.optionsMenuPaper,
+        }}
+        open={Boolean(optionsAnchorEl)}
+        onClose={handleCloseOptions}>
+        <MenuItem
+          // onClick={handleRenameTitle}
+          classes={{
+            root: classes.titleMenuList,
+          }}>
+          Share code
+        </MenuItem>
+        <MenuItem
+          // onClick={handleRenameTitle}
+          classes={{
+            root: classes.titleMenuList,
+          }}>
+          Fork code
+        </MenuItem>
+        <MenuItem
+          // onClick={handleRenameTitle}
+          classes={{
+            root: classes.titleMenuList,
+          }}>
+          Rename code
+        </MenuItem>
+        <MenuItem
+          // onClick={handleRenameTitle}
+          classes={{
+            root: classes.titleMenuList,
+          }}>
+          Change theme
+        </MenuItem>
+      </Menu>
+    );
+  }
+
   function renderNavBar() {
     return (
-      <nav
-        className={`${classes.navBar} ${classes.topNavBar} ${
-          isScrollUp ? classes.topNavSlideDown : classes.topNavSlideUp
-        }`}>
-        <div
-          className={`${commonClass.flexRow}`}
-          style={{ alignItems: 'center', justifyContent: 'space-between' }}>
+      <>
+        <nav
+          className={`${classes.navBar} ${classes.topNavBar} ${
+            isScrollUp ? classes.topNavSlideDown : classes.topNavSlideUp
+          }`}>
           <div
             className={`${commonClass.flexRow}`}
-            style={{ alignItems: 'center', color: color.themeBlue }}>
-            <IconButton>
-              <MenuIcon onClick={setIsSideBarVisible} style={{ color: color.themeBlue }} />
-            </IconButton>
-            <img
-              alt="jdjjd"
-              src={UserImg}
-              style={{ height: 40, width: 40, borderRadius: 20, marginRight: 20 }}
-            />
-            <div className={`${commonClass.flexColumn}`} style={{ justifyContent: 'center' }}>
-              <p style={{ margin: 0, fontSize: fontsize.small, fontWeight: 600 }}>Untitled.js</p>
-              <p style={{ fontSize: fontsize.xsmall, margin: 0 }}>Anifowoshe gbenga</p>
+            style={{ alignItems: 'center', justifyContent: 'space-between' }}>
+            <div
+              className={`${commonClass.flexRow}`}
+              style={{ alignItems: 'center', color: color.themeBlue }}>
+              <IconButton>
+                <MenuIcon onClick={setIsSideBarVisible} style={{ color: color.themeBlue }} />
+              </IconButton>
+              <img
+                alt="jdjjd"
+                src={UserImg}
+                style={{ height: 40, width: 40, borderRadius: 20, marginRight: 20 }}
+              />
+              <div className={`${commonClass.flexColumn}`} style={{ justifyContent: 'center' }}>
+                <p style={{ margin: 0, fontSize: fontsize.small, fontWeight: 600 }}>Untitled.js</p>
+                <p style={{ fontSize: fontsize.xsmall, margin: 0 }}>Anifowoshe gbenga</p>
+              </div>
+            </div>
+            <div>
+              <IconButton>
+                <MoreVertIcon
+                  onClick={e => handleShowOptions(e)}
+                  style={{ color: color.themeBlue }}
+                />
+              </IconButton>
             </div>
           </div>
-          <div>
-            <IconButton>
-              <MoreVertIcon style={{ color: color.themeBlue }} />
-            </IconButton>
-          </div>
-        </div>
-      </nav>
+        </nav>
+        {renderSourcecodeOptions()}
+      </>
     );
   }
 
@@ -126,19 +183,24 @@ const MonacoEditor: React.FC<{ setIsSideBarVisible: () => void }> = ({ setIsSide
   }
 
   function renderPlayBtn() {
+    const hasWhiteBg = isReadmeVisible || isCommentVisible || isTerminalVisible;
     return (
       <div
-        className={`${isScrollUp ? classes.playBtnNavSlideDown : classes.playBtnNavSlideUp}`}
-        style={{
-          position: 'fixed',
-          bottom: 60,
-          right: 10,
-        }}>
+        className={`${classes.playBtnWrapper} ${
+          isScrollUp ? classes.playBtnNavSlideDown : classes.playBtnNavSlideUp
+        }`}>
         <IconButton
-          style={{ backgroundColor: color.white }}
+          style={{
+            backgroundColor: hasWhiteBg ? color.themeBlue : color.white,
+          }}
           classes={{ root: classes.playIconBtn }}
           onClick={handleSourceCodeExec}>
-          <PlayArrowIcon style={{ color: color.themeBlue, fontSize: fontsize.large * 2 }} />
+          <PlayArrowIcon
+            style={{
+              color: hasWhiteBg ? color.white : color.themeBlue,
+              fontSize: fontsize.large * 2,
+            }}
+          />
         </IconButton>
       </div>
     );
@@ -161,21 +223,26 @@ const MonacoEditor: React.FC<{ setIsSideBarVisible: () => void }> = ({ setIsSide
         inventore tempora repellat amet ab deserunt tempore saepe. Quam expedita vero illo nesciunt
         eius illum quis?
       </div>
-      <Comments
-        isScrollUp={isScrollUp}
-        isVisible={isCommentVisible}
-        hideComponent={() => setIsCommentVisible(false)}
-      />
-      <Terminal
-        isScrollUp={isScrollUp}
-        isVisible={isTerminalVisible}
-        hideComponent={() => setIsTerminalVisible(false)}
-      />
-      <Readme
-        isScrollUp={isScrollUp}
-        isVisible={isReadmeVisible}
-        hideComponent={() => setIsReadmeVisible(false)}
-      />
+      <div
+        className={`${classes.navBar} ${classes.bottomNavBar} ${
+          isScrollUp ? classes.bottomNavSlideDown : classes.bottomNavSlideUp
+        } `}>
+        <Comments
+          isScrollUp={isScrollUp}
+          isVisible={isCommentVisible}
+          hideComponent={() => setIsCommentVisible(false)}
+        />
+        <Terminal
+          isScrollUp={isScrollUp}
+          isVisible={isTerminalVisible}
+          hideComponent={() => setIsTerminalVisible(false)}
+        />
+        <Readme
+          isScrollUp={isScrollUp}
+          isVisible={isReadmeVisible}
+          hideComponent={() => setIsReadmeVisible(false)}
+        />
+      </div>
       {renderPlayBtn()}
       {renderBottomNavBar()}
     </div>
@@ -205,6 +272,7 @@ const useStyles = makeStyles(theme => ({
   },
   bottomNavBar: {
     height: '50px',
+    borderTop: '1px solid #ddd',
     bottom: 0,
     '& .bottom-nav__btn button': {
       border: 'none',
@@ -219,9 +287,14 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  playBtnWrapper: {
+    position: 'fixed',
+    zIndex: 50,
+    bottom: 60,
+    right: 10,
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+  },
   playIconBtn: { padding: 12 },
-  // forkIconBtn: { padding: 5 },
-  // createIconBtn: { padding: 5 },
   topNavSlideUp: {
     transform: 'translateY(-50px)',
     transition: 'transform .3s ease-out',
@@ -245,6 +318,17 @@ const useStyles = makeStyles(theme => ({
   playBtnNavSlideDown: {
     transform: 'translateY(0)',
     transition: 'transform .3s ease-out',
+  },
+  optionsMenuPaper: {
+    backgroundColor: color.white,
+    marginTop: 25,
+  },
+  titleMenuList: {
+    backgroundColor: color.darkThemeLightBorder,
+    color: color.themeBlue,
+    '&:hover': {
+      backgroundColor: color.deepBlue,
+    },
   },
 }));
 

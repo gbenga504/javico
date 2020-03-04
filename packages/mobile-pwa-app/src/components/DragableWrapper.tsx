@@ -57,7 +57,7 @@ const DragableWrapper: React.FC<{
           return;
         }
         tempRef.style.height = `${newHeight}px`;
-      }, 1000);
+      }, 500);
     }
   }
 
@@ -89,7 +89,7 @@ const DragableWrapper: React.FC<{
         onTouchEnd={handleTouchEnd}
         onTouchStart={handleTouchStart}
         className={`${commonClass.flexRow} ${commonClass.center} ${classes.dragableWrapperBtn}`}
-        style={{ height: 40, borderBottom: '1px solid #ddd' }}>
+        style={{ height: 40 }}>
         <DragHandleIcon style={{ color: '#ccc', fontSize: fontsize.xlarge * 2 }} />
       </button>
       {children}
