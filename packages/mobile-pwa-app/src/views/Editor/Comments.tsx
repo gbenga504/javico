@@ -9,7 +9,7 @@ const Comments: React.FC<{
 }> = ({ isVisible, isScrollUp, hideComponent }) => {
   return (
     <DragableWrapper isScrollUp={isScrollUp} isVisible={isVisible} hideComponent={hideComponent}>
-      <div></div>
+      <div>Comments</div>
     </DragableWrapper>
   );
 };

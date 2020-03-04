@@ -2,16 +2,16 @@ import React from 'react';
 
 import DragableWrapper from '../../components/DragableWrapper';
 
-const Terminal: React.FC<{
+const Readme: React.FC<{
   isScrollUp: boolean;
   isVisible: boolean;
   hideComponent: () => void;
 }> = ({ isVisible, isScrollUp, hideComponent }) => {
   return (
     <DragableWrapper isScrollUp={isScrollUp} isVisible={isVisible} hideComponent={hideComponent}>
-      <div>Terminal</div>
+      <div>Readme</div>
     </DragableWrapper>
   );
 };
 
-export default Terminal;
+export default Readme;

@@ -12,11 +12,13 @@ import UserImg from '../../assets/images/user.svg';
 import { color, useStyles as commonCss, fontsize } from '../../Css';
 import Comments from './Comments';
 import Terminal from './Terminal';
+import Readme from './Readme';
 
 const MonacoEditor: React.FC<{ setIsSideBarVisible: () => void }> = ({ setIsSideBarVisible }) => {
   const [isScrollUp, setIsScrollUp] = useState<boolean>(true);
   const [isCommentVisible, setIsCommentVisible] = useState<boolean>(false);
   const [isTerminalVisible, setIsTerminalVisible] = useState<boolean>(false);
+  const [isReadmeVisible, setIsReadmeVisible] = useState<boolean>(false);
   const classes = useStyles();
   const commonClass = commonCss();
   const navRef = useRef<any>(null);
@@ -50,6 +52,10 @@ const MonacoEditor: React.FC<{ setIsSideBarVisible: () => void }> = ({ setIsSide
 
   function handleOpenComment() {
     setIsCommentVisible(true);
+  }
+
+  function handleOpenReadme() {
+    setIsReadmeVisible(true);
   }
 
   function handleSourceCodeExec() {
@@ -109,6 +115,7 @@ const MonacoEditor: React.FC<{ setIsSideBarVisible: () => void }> = ({ setIsSide
           </button>
           <button
             className={commonClass.flexColumn}
+            onClick={handleOpenReadme}
             style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
             <MenuBookIcon style={{ fontSize: fontsize.base }} />
             <span style={{ fontSize: fontsize.base }}>Readme</span>
@@ -163,6 +170,11 @@ const MonacoEditor: React.FC<{ setIsSideBarVisible: () => void }> = ({ setIsSide
         isScrollUp={isScrollUp}
         isVisible={isTerminalVisible}
         hideComponent={() => setIsTerminalVisible(false)}
+      />
+      <Readme
+        isScrollUp={isScrollUp}
+        isVisible={isReadmeVisible}
+        hideComponent={() => setIsReadmeVisible(false)}
       />
       {renderPlayBtn()}
       {renderBottomNavBar()}
