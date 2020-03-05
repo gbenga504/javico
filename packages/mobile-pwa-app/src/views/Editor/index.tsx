@@ -35,7 +35,6 @@ const MonacoEditor: React.FC<{ setIsSideBarVisible: () => void }> = ({ setIsSide
       var b = 50;
 
       currentScrollTop = a;
-      clearTimeout(canceScrollupTimer);
 
       if (c < currentScrollTop && a > b) {
         setIsScrollUp(false);
@@ -54,7 +53,7 @@ const MonacoEditor: React.FC<{ setIsSideBarVisible: () => void }> = ({ setIsSide
 
   useEffect(() => {
     if (isScrollUp) {
-      setTimeout(cancelScrollUp, 3000);
+      setTimeout(cancelScrollUp, 5000);
     }
   }, [isScrollUp]);
 
@@ -62,18 +61,16 @@ const MonacoEditor: React.FC<{ setIsSideBarVisible: () => void }> = ({ setIsSide
     setIsScrollUp(false);
   }
 
-  const canceScrollupTimer = setTimeout(cancelScrollUp, 3000);
-
   function handleOpenComment() {
-    setIsCommentVisible(true);
+    if (!isCommentVisible) setIsCommentVisible(true);
   }
 
   function handleOpenReadme() {
-    setIsReadmeVisible(true);
+    if (!isReadmeVisible) setIsReadmeVisible(true);
   }
 
   function handleSourceCodeExec() {
-    setIsTerminalVisible(true);
+    if (!isTerminalVisible) setIsTerminalVisible(true);
   }
 
   function handleShowOptions(event: React.MouseEvent<SVGSVGElement>) {
@@ -175,7 +172,7 @@ const MonacoEditor: React.FC<{ setIsSideBarVisible: () => void }> = ({ setIsSide
         } `}>
         <div
           className={`${commonClass.flexRow} bottom-nav__btn`}
-          style={{ alignItems: 'center', height: 50, backgroundColor: color.white }}>
+          style={{ alignItems: 'center', height: 50 }}>
           <button
             className={commonClass.flexColumn}
             onClick={handleOpenComment}
@@ -280,6 +277,7 @@ const useStyles = makeStyles(theme => ({
   bottomNavBar: {
     height: '50px',
     borderTop: '1px solid #ddd',
+    backgroundColor: color.white,
     bottom: 0,
     '& .bottom-nav__btn button': {
       border: 'none',
