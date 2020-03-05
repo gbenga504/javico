@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Paper, Button, Tabs, Tab, withStyles } from '@material-ui/core';
 import { OpenInNew as OpenInNewIcon } from '@material-ui/icons';
+import { useSelector } from 'react-redux';
 
 import { useStyles } from './styles';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
@@ -8,9 +9,9 @@ import { withNotificationBanner, Typography, ButtonWithLoading } from '../../ato
 import { useStyles as commonUseStyles, color, fontsize } from '../../Css';
 import MarkdownRenderer from '../MarkDownRenderer';
 import { Apis } from '../../utils/Apis';
+import { getCurrentUserState } from '../../redux/auth/reducers';
 
 interface IProps {
-  user: any;
   onHideCommentBox: any;
   mousePosition: any;
   onOpenSignInModal: () => null;
@@ -54,7 +55,6 @@ function a11yProps(index: number) {
 }
 
 const InlineCodeComment: React.FC<IProps> = ({
-  user,
   onOpenSignInModal,
   onHideCommentBox,
   mousePosition,
@@ -68,6 +68,7 @@ const InlineCodeComment: React.FC<IProps> = ({
   const [currentTab, setCurrentTab] = useState(0);
   const [isCreatingComment, setIsCreatingComment] = useState<boolean>(false);
   const [isCommentBoxFocused, setIsCommentBoxFocused] = useState(true);
+  const user = useSelector(getCurrentUserState);
   const commentRef = useRef<any>(null);
   const commonCss = commonUseStyles();
   const classes = useStyles();
@@ -91,7 +92,7 @@ const InlineCodeComment: React.FC<IProps> = ({
             sourceCodeId,
             author: {
               id: user.uid,
-              name: user.displayName,
+              name: user.username,
               photoURL: user.photoURL,
             },
             text: comment,
@@ -103,9 +104,8 @@ const InlineCodeComment: React.FC<IProps> = ({
         })
         .then(res => {
           setIsCreatingComment(false);
-          onHideCommentBox();
-          handleCancelComment(res);
           currentSection !== 'comments' && onChangeCurrentSection();
+          handleCancelComment(res);
         })
         .catch(err => {
           setIsCreatingComment(false);

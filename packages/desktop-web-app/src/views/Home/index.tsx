@@ -1,6 +1,7 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { Tooltip, makeStyles, Button } from '@material-ui/core';
 import { InsertComment as InsertCommentIcon, Code as CodeIcon } from '@material-ui/icons';
+import { useSelector } from 'react-redux'
 
 import MenuBar from '../../components/MenuBar';
 import MonacoEditor from '../../components/MonacoEditor';
@@ -10,6 +11,7 @@ import { IndeterminateLinearProgress, withNotificationBanner, Seo } from '../../
 import { Apis } from '../../utils/Apis';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import { getSourceCodeIdFromUrl, getBaseUrl } from '../../utils/UrlUtils';
+import { getCurrentUserState } from '../../redux/auth/reducers';
 
 const Comments = lazy(() => import('../../components/Comments'));
 
@@ -22,8 +24,9 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
     sourceCode: string;
     sourceCodeHash: null | number;
   }>({ sourceCode: '', sourceCodeHash: null });
+  const firebaseRef = useRef<any>(null);
   const [currentSection, setCurrentSection] = useState<'comments' | 'console'>('console');
-  const [user, setUser] = useState<any>(null);
+  const currentUser = useSelector(getCurrentUserState);
   const [isLoading, setisLoading] = useState<boolean>(false);
   const [fetchedSourceCode, setFetchedSourceCode] = useState({
     sourceCode: '',
@@ -36,14 +39,20 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
   const commonCss = commonUseStyles();
 
   useEffect(() => {
-    Apis.users.onAuthStateChanged(function(user: any) {
-      if (user) {
-        setUser(user);
-      } else {
-        setUser(null);
+    /**
+     * @todo 
+     * This should not execute if the user just logs in as a performance optimization
+     */
+    firebaseRef.current = Apis.users.onAuthStateChanged(function (user: any) {
+      if (user && currentUser === null) {
+        Apis.users.fetchUserFromDB({ params: { ID: user.uid } })
       }
     });
-  }, []);
+
+    return (() => {
+      firebaseRef.current()
+    })
+  }, [currentUser]);
 
   useEffect(() => {
     fetchSourceCode(toggleIsLoading(true));
@@ -115,14 +124,14 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
     <>
       <Seo
         title={`${!!fetchedSourceCode.ownerId ? fetchedSourceCode.title : 'Untitled'}.js by ${
-          !!user && !!user.displayName ? user.displayName : 'Anonymous'
-        }`}
+          !!currentUser && !!currentUser.displayName ? currentUser.displayName : 'Anonymous'
+          }`}
         description={
           !!fetchedSourceCode.readme === true
             ? `${fetchedSourceCode.readme.substring(0, 60)}...`
             : 'Review my source code'
         }
-        ogImage={!!user ? user.photoURL : `${getBaseUrl()}/favicon.png`}
+        ogImage={!!currentUser ? currentUser.photoURL : `${getBaseUrl()}/favicon.png`}
         ogUrl={getBaseUrl()}
       />
       <div className={`${classes.relative} ${commonCss.flexRow}`}>
@@ -137,7 +146,6 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
             onChangeCurrentSection={handleToggleView}
             fetchedSourceCode={fetchedSourceCode}
             onSetSourcecodeOwner={setSourcecodeOwner}
-            user={user}
             currentSection={currentSection}
             isFetchingSourcecode={isLoading}
             fetchSourceCode={fetchSourceCode}
@@ -148,13 +156,12 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
                 currentSection === 'console'
                   ? classes.showRightSubSection
                   : classes.hideRightSubSection
-              }`}>
+                }`}>
               <Console
                 ownerId={fetchedSourceCode.ownerId}
                 sourceCode={terminalExecutableCode.sourceCode}
                 sourceCodeHash={terminalExecutableCode.sourceCodeHash}
                 fetchedReadme={fetchedSourceCode.readme}
-                user={user}
               />
             </div>
             <div
@@ -162,12 +169,11 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
                 currentSection === 'comments'
                   ? classes.showRightSubSection
                   : classes.hideRightSubSection
-              }`}>
+                }`}>
               <Suspense fallback={null}>
                 <Comments
                   visible={currentSection === 'comments'}
                   sourceCodeId={fetchedSourceCode.sourceCodeId}
-                  user={user}
                 />
               </Suspense>
             </div>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Fab, Tooltip } from '@material-ui/core';
 import { ModeComment as ModeCommentIcon, PlayArrow as PlayArrowIcon } from '@material-ui/icons';
+import { useSelector } from 'react-redux';
 
 import { useStyles } from './styles';
 import { useStyles as commonUseStyles, color } from '../../Css';
@@ -13,6 +14,7 @@ import InlineCodeComment from '../InlineCodeComment';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import { getSourceCodeIdFromUrl, updateUrl } from '../../utils/UrlUtils';
 import SourceCodeHeading from './SourceCodeHeading';
+import { getCurrentUserState } from '../../redux/auth/reducers';
 
 interface IProps {
   value?: string;
@@ -36,7 +38,6 @@ interface IProps {
   onSetSourcecodeOwner: any;
   isFetchingSourcecode: boolean;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
-  user: any;
   currentSection: 'comments' | 'console';
   onChangeCurrentSection: () => void;
   fetchSourceCode: (cb: any) => void;
@@ -51,11 +52,9 @@ const MonacoEditor: React.FC<IProps> = ({
   onSetNotificationSettings,
   onSetSourcecodeOwner,
   isFetchingSourcecode,
-  user: _user,
   currentSection,
   onChangeCurrentSection,
   fetchSourceCode,
-
   fetchedSourceCode: {
     sourceCode: fetchedSourceCode,
     ownerId,
@@ -71,9 +70,9 @@ const MonacoEditor: React.FC<IProps> = ({
   const [isEditorReady, setIsEditorReady] = useState<boolean>(false);
   const [selectionRange, setSelectionRange] = useState<any>(null);
   const [selectionValue, setSelectionValue] = useState<string>('');
-  const [user, setUser] = useState<any>(_user);
   const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
   const [sourceCode, setSourceCode] = useState('');
+  const user = useSelector(getCurrentUserState);
   const monacoRef = useRef<any>(null);
   const editorRef = useRef<any>(null);
   const subscriptionRef = useRef<any>(null);
@@ -125,14 +124,12 @@ const MonacoEditor: React.FC<IProps> = ({
   }, [fetchedSourceCode]);
 
   useEffect(() => {
-    if (_user) {
-      setUser(_user);
-      disableEditor(_user.uid !== ownerId);
+    if (user) {
+      disableEditor(user.uid !== ownerId);
     } else {
-      setUser(null);
       disableEditor(true);
     }
-  }, [_user, ownerId]);
+  }, [user, ownerId]);
 
   useEffect(() => {
     isMonacoReady === true && isEditorReady === false && createEditor();
@@ -388,7 +385,6 @@ const MonacoEditor: React.FC<IProps> = ({
           <InlineCodeComment
             onHideCommentBox={handleHideCommentBox}
             onOpenSignInModal={handleOpenSignInModal}
-            user={user}
             mousePosition={mousePosition}
             sourceCodeId={sourceCodeId}
             codeReference={selectionValue}

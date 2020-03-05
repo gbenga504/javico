@@ -11,8 +11,10 @@
     "@types/react": "16.9.13",
     "@types/react-dom": "16.9.4",
     "@types/react-helmet": "^5.0.15",
+    "@types/react-redux": "^7.1.7",
     "@types/react-share": "^3.0.3",
     "@types/react-syntax-highlighter": "^11.0.4",
+    "@types/redux-logger": "^3.0.7",
     "console-feed": "^2.8.11",
     "dayjs": "^1.8.20",
     "firebase": "^7.6.0",
@@ -20,9 +22,12 @@
     "react-dom": "^16.12.0",
     "react-helmet": "^5.2.1",
     "react-markdown": "^4.2.2",
+    "react-redux": "^7.2.0",
     "react-scripts": "3.2.0",
     "react-share": "^3.0.1",
     "react-syntax-highlighter": "^12.2.1",
+    "redux": "^4.0.5",
+    "redux-logger": "^3.0.6",
     "typescript": "3.7.2"
   },
   "scripts": {

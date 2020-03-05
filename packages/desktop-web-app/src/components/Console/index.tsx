@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, Tab } from '@material-ui/core';
 import { NotInterested as ClearIcon } from '@material-ui/icons';
+import { useSelector } from 'react-redux';
 
 import { useStyles } from './styles';
 import { withNotificationBanner } from '../../atoms';
@@ -10,6 +11,7 @@ import SignInViaGithubModal from '../SignInViaGithubModal';
 import Terminal from './Terminal';
 import Readme from './Readme';
 import Preview from './Preview';
+import { getCurrentUserState } from '../../redux/auth/reducers';
 
 function a11yProps(index: number) {
   return {
@@ -28,8 +30,7 @@ const Console: React.FC<{
   fetchedReadme: string;
   onSetNotificationSettings: any;
   ownerId: string;
-  user: any;
-}> = ({ sourceCode, sourceCodeHash, ownerId, fetchedReadme, onSetNotificationSettings, user }) => {
+}> = ({ sourceCode, sourceCodeHash, ownerId, fetchedReadme, onSetNotificationSettings }) => {
   const [currentTab, setCurrentTab] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
@@ -37,11 +38,12 @@ const Console: React.FC<{
   const [readMe, setReadMe] = useState<string>(fetchedReadme);
   const workerRef = useRef<any>(null);
   const classes = useStyles();
+  const user = useSelector(getCurrentUserState);
   const isAuthorize = !!user ? user.uid === ownerId : false;
 
   useEffect(() => {
     workerRef.current = new Worker(`${window.location.origin}/CodeEvaluatorWorker.js`);
-    workerRef.current.addEventListener('message', function(e: { data: TerminalMessageType }) {
+    workerRef.current.addEventListener('message', function (e: { data: TerminalMessageType }) {
       setTerminalMessages((prevTerminalMessages: TerminalMessagesType) => [
         ...prevTerminalMessages,
         e.data,
@@ -133,8 +135,8 @@ const Console: React.FC<{
               onHandleReadMeTextChange={handleReadMeTextChange}
             />
           ) : (
-            <Preview readMe={readMe} />
-          )
+              <Preview readMe={readMe} />
+            )
         ) : null}
         {currentTab === 2 && <Preview readMe={readMe} />}
       </div>

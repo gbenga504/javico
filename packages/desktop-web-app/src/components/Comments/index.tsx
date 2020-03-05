@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { TextareaAutosize } from '@material-ui/core';
 import { Send as SendIcon } from '@material-ui/icons';
+import { useSelector } from 'react-redux'
 
 import { useStyles } from './styles';
 import { useStyles as commonUseStyles } from '../../Css';
@@ -11,21 +12,22 @@ import ContentLoader from '../../atoms/ContentLoader';
 import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
 import CommentUtils from '../../utils/CommentUtils';
 import { getReadableDate } from '../../utils/TimeUtils';
+import { getCurrentUserState } from '../../redux/auth/reducers';
 
 interface IProps {
   visible: boolean;
   onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
   sourceCodeId: string;
-  user: any;
 }
 
-const Comments: React.FC<IProps> = ({ visible, onSetNotificationSettings, sourceCodeId, user }) => {
+const Comments: React.FC<IProps> = ({ visible, onSetNotificationSettings, sourceCodeId }) => {
   const [quotedComment, setQuotedComment] = useState<string>('');
   const [idOfQuotedComment, setIdOfQuotedComment] = useState<string>('');
   const [newMessage, setNewMessage] = useState<string>('');
   const [isLoadingComments, setIsLoadingComments] = useState<boolean>(false);
   const [nextCursor, setNextCursor] = useState<null | undefined | number>(null);
   const [comments, setComments] = useState<Array<IComment>>([]);
+  const user = useSelector(getCurrentUserState);
   const classes = useStyles();
   const commonCss = commonUseStyles();
   const commentInputRef = useRef<any>(null);
@@ -146,8 +148,6 @@ const Comments: React.FC<IProps> = ({ visible, onSetNotificationSettings, source
 
   function handleSendComment() {
     if (newMessage.trim().length > 0) {
-      const user = Apis.users.getCurrentUser();
-
       if (!!user === false) {
         onSetNotificationSettings('Please login to add a review', 'danger', 'long');
       } else if (!!sourceCodeId === false) {
@@ -163,7 +163,7 @@ const Comments: React.FC<IProps> = ({ visible, onSetNotificationSettings, source
               sourceCodeId,
               author: {
                 id: user.uid,
-                name: user.displayName,
+                name: user.username,
                 photoURL: user.photoURL,
               },
               text: newMessage,
@@ -180,8 +180,6 @@ const Comments: React.FC<IProps> = ({ visible, onSetNotificationSettings, source
 
   function handleSendReply() {
     if (newMessage.trim().length > 0) {
-      const user = Apis.users.getCurrentUser();
-
       if (!!user === false) {
         onSetNotificationSettings('Please login to add a review', 'danger', 'long');
       } else if (!!sourceCodeId === false) {
@@ -192,7 +190,7 @@ const Comments: React.FC<IProps> = ({ visible, onSetNotificationSettings, source
             data: {
               author: {
                 id: user.uid,
-                name: user.displayName,
+                name: user.username,
                 photoURL: user.photoURL,
               },
               text: newMessage,
