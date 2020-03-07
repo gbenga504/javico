@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { MuiThemeProvider } from '@material-ui/core';
+import { Provider } from 'react-redux';
 
 import Home from './views/Home';
 import { NotificationProvider } from './atoms';
 import { theme } from './Css';
 import NotOptimizedForMobile from './components/NotOptimizedForMobile';
+import store from './redux/store';
 
 const App: React.FC = () => {
   const [isUIVisible, setIsUIVisible] = useState<boolean>(window.innerWidth < 992 ? false : true);
@@ -24,7 +26,7 @@ const App: React.FC = () => {
   }, [isUIVisible]);
 
   return (
-    <>
+    <Provider store={store}>
       <div
         style={{
           width: '100%',
@@ -38,7 +40,7 @@ const App: React.FC = () => {
         </MuiThemeProvider>
       </div>
       {isUIVisible === false && <NotOptimizedForMobile />}
-    </>
+    </Provider>
   );
 };
 
