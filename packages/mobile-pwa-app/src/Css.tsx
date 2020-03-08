@@ -59,13 +59,13 @@ export const theme = createMuiTheme({
   overrides: {
     MuiTabs: {
       indicator: {
-        backgroundColor: color.white,
+        backgroundColor: color.themeBlue,
         height: 1,
       },
     },
     MuiTab: {
       root: {
-        color: `${color.white} !important`,
+        color: `${color.themeBlue} !important`,
         fontSize: `11px !important`,
         fontFamily: `${fonts.semiBold} !important`,
       },

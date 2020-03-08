@@ -12,21 +12,21 @@ import { useStyles as commonUseStyles, color } from '../../Css';
 import Typography from '../../atoms/Typography';
 import ActionsModal from '../ActionsModal';
 
-type menus = 'editor' | 'comment' | 'readme' | 'action';
+type Menus = 'editor' | 'comment' | 'readme' | 'action';
 const menuList = [
   { text: 'Editor', action: 'editor', icon: CodeIcon },
   { text: 'Comment', action: 'comment', icon: CommentIcon },
   { text: 'ReadMe', action: 'readme', icon: ReadMeIcon },
   { text: 'Action', action: 'action', icon: CallToActionIcon },
-] as Array<{ text: string; action: menus; icon: any }>;
+] as Array<{ text: string; action: Menus; icon: any }>;
 
 const TabNavigator: React.FC = () => {
-  const [activeMenu, setActiveMenu] = useState<menus>('editor');
+  const [activeMenu, setActiveMenu] = useState<Menus>('editor');
   const [isActionsModalVisible, setIsActionsModalVisible] = useState<boolean>(false);
   const classes = useStyles();
   const commonCss = commonUseStyles();
 
-  function handleSetActiveMenu(activeMenu: menus) {
+  function handleSetActiveMenu(activeMenu: Menus) {
     setActiveMenu(activeMenu);
     handleActions(activeMenu);
   }
@@ -35,7 +35,7 @@ const TabNavigator: React.FC = () => {
     setIsActionsModalVisible(!isActionsModalVisible);
   }
 
-  function handleActions(action: menus) {
+  function handleActions(action: Menus) {
     switch (action) {
       case 'action':
         handleToggleActionsModal();

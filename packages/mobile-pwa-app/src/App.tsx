@@ -4,6 +4,7 @@ import { MuiThemeProvider } from '@material-ui/core';
 import { theme } from './Css';
 import AppBar from './components/AppBar';
 import TabNavigator from './components/TabNavigator';
+import ReadMe from './views/ReadMe';
 import Editor from './views/Editor';
 import MenuDrawer from './components/MenuDrawer';
 
@@ -21,6 +22,9 @@ const App: React.FC = () => {
           height: '100%',
         }}>
         <AppBar />
+        <div style={{ flex: 1 }}>
+          <ReadMe />
+        </div>
         <TabNavigator />
       </div>
     </MuiThemeProvider>

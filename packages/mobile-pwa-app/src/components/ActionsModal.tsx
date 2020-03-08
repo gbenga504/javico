@@ -11,14 +11,14 @@ import DraggableListener from '../atoms/DraggableListener';
 import { useStyles as commonUseStyles, color, fontsize } from '../Css';
 import Typography from '../atoms/Typography';
 
-type action = 'changeTitle' | 'share' | 'forkCode' | 'addNew';
+type Action = 'changeTitle' | 'share' | 'forkCode' | 'addNew';
 interface IProps {
   onRequestClose: () => void;
   isVisible: boolean;
 }
 interface IAction {
   text: string;
-  action: action;
+  action: Action;
   icon: any;
 }
 
