@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  Dialog,
-  DialogContent as MuiDialogContent,
-  makeStyles,
-  withStyles,
-  ButtonBase,
-  Slide,
-} from '@material-ui/core';
-import { TransitionProps } from '@material-ui/core/transitions';
+import { makeStyles, withStyles, ButtonBase, Popover as MuiPopover } from '@material-ui/core';
 import {
   Close as CloseIcon,
   WbIncandescent as ThemeIcon,
@@ -20,19 +12,25 @@ import Typography from '../atoms/Typography';
 interface IProps {
   isVisible: boolean;
   onRequestClose: () => void;
+  id: string | undefined;
+  anchorElement: HTMLElement | null;
 }
 
-const DialogContent = withStyles(theme => ({
+const Popover = withStyles({
   root: {
-    padding: 0,
+    background: 'rgba(0,0,0,0.5)',
   },
-}))(MuiDialogContent);
+  paper: {
+    width: '100%',
+  },
+})(MuiPopover);
 
-const Transition = React.forwardRef<unknown, TransitionProps>(function Transition(props, ref) {
-  return <Slide direction="down" ref={ref} {...props} />;
-});
-
-const ProfilePreviewModal: React.FC<IProps> = ({ isVisible, onRequestClose }) => {
+const ProfilePreviewModal: React.FC<IProps> = ({
+  isVisible,
+  onRequestClose,
+  id,
+  anchorElement,
+}) => {
   const classes = useStyles();
   const commonCss = commonUseStyles();
 
@@ -41,49 +39,54 @@ const ProfilePreviewModal: React.FC<IProps> = ({ isVisible, onRequestClose }) =>
   }
 
   return (
-    <Dialog
+    <Popover
+      id={id}
       open={isVisible}
+      anchorEl={anchorElement}
       onClose={onRequestClose}
-      TransitionComponent={Transition}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description">
-      <DialogContent>
-        <div className={`${classes.addPadding} ${commonCss.flexRow}`}>
-          <CloseIcon className={classes.icon} onClick={onRequestClose} />
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'right',
+      }}
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}>
+      <div className={`${classes.addPadding} ${commonCss.flexRow}`}>
+        <CloseIcon className={classes.icon} onClick={onRequestClose} />
+      </div>
+      <div className={`${classes.addPadding} ${commonCss.flexRow}`}>
+        {renderAvatar()}
+        <div style={{ marginLeft: 8 }} className={commonCss.flexColumn}>
+          <Typography thickness="semi-bold" className={classes.text}>
+            Gbenga504
+          </Typography>
+          <Typography className={`${classes.text} ${classes.email}`}>
+            daveanifowoshe@gmail.com
+          </Typography>
         </div>
-        <div className={`${classes.addPadding} ${commonCss.flexRow}`}>
-          {renderAvatar()}
-          <div style={{ marginLeft: 8 }} className={commonCss.flexColumn}>
-            <Typography thickness="semi-bold" className={classes.text}>
-              Gbenga504
-            </Typography>
-            <Typography className={`${classes.text} ${classes.email}`}>
-              daveanifowoshe@gmail.com
-            </Typography>
-          </div>
-        </div>
-        <div className={classes.seperator} />
-        <ButtonBase className={`${classes.addPadding} ${commonCss.flexRow} ${classes.button}`}>
-          <ThemeIcon className={classes.icon} />
-          <Typography thickness="semi-bold" className={`${classes.text} ${classes.buttonText}`}>
-            Change Theme
-          </Typography>
-        </ButtonBase>
-        <ButtonBase className={`${classes.addPadding} ${commonCss.flexRow} ${classes.button}`}>
-          <LogoutIcon className={classes.icon} />
-          <Typography thickness="semi-bold" className={`${classes.text} ${classes.buttonText}`}>
-            Logout
-          </Typography>
-        </ButtonBase>
-        <div className={classes.seperator} />
-        <ButtonBase className={`${classes.addPadding} ${commonCss.flexRow} ${classes.button}`}>
-          <SettingsIcon className={classes.icon} />
-          <Typography thickness="semi-bold" className={`${classes.text} ${classes.buttonText}`}>
-            Settings
-          </Typography>
-        </ButtonBase>
-      </DialogContent>
-    </Dialog>
+      </div>
+      <div className={classes.seperator} />
+      <ButtonBase className={`${classes.addPadding} ${commonCss.flexRow} ${classes.button}`}>
+        <ThemeIcon className={classes.icon} />
+        <Typography thickness="semi-bold" className={`${classes.text} ${classes.buttonText}`}>
+          Change Theme
+        </Typography>
+      </ButtonBase>
+      <ButtonBase className={`${classes.addPadding} ${commonCss.flexRow} ${classes.button}`}>
+        <LogoutIcon className={classes.icon} />
+        <Typography thickness="semi-bold" className={`${classes.text} ${classes.buttonText}`}>
+          Logout
+        </Typography>
+      </ButtonBase>
+      <div className={classes.seperator} />
+      <ButtonBase className={`${classes.addPadding} ${commonCss.flexRow} ${classes.button}`}>
+        <SettingsIcon className={classes.icon} />
+        <Typography thickness="semi-bold" className={`${classes.text} ${classes.buttonText}`}>
+          Settings
+        </Typography>
+      </ButtonBase>
+    </Popover>
   );
 };
 
