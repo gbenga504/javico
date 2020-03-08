@@ -1,0 +1,18 @@
+import { makeStyles } from '@material-ui/core';
+
+import { color } from '../../Css';
+
+export const useStyles = makeStyles(theme => ({
+  container: {
+    background: color.white,
+    width: '100%',
+    padding: theme.spacing(0, 4),
+    boxShadow: '0px -2px 3px -2.5px #bdbdbd',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  menuButton: {
+    display: 'block',
+    padding: theme.spacing(2),
+  },
+}));

@@ -20,6 +20,7 @@ export const color = {
   gray20: '#eee', // Google gray color 200
   gray60: '#757575', //Google gray color 600,
   focused: '#80dbff',
+  imageBackground: "#757575"
 };
 
 export const fontsize = {
