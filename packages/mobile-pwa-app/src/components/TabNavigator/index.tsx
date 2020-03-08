@@ -10,6 +10,7 @@ import { ButtonBase } from '@material-ui/core';
 import { useStyles } from './styles';
 import { useStyles as commonUseStyles, color } from '../../Css';
 import Typography from '../../atoms/Typography';
+import ActionsModal from '../ActionsModal';
 
 type menus = 'editor' | 'comment' | 'readme' | 'action';
 const menuList = [
@@ -21,35 +22,54 @@ const menuList = [
 
 const TabNavigator: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState<menus>('editor');
+  const [isActionsModalVisible, setIsActionsModalVisible] = useState<boolean>(false);
   const classes = useStyles();
   const commonCss = commonUseStyles();
 
   function handleSetActiveMenu(activeMenu: menus) {
     setActiveMenu(activeMenu);
+    handleActions(activeMenu);
+  }
+
+  function handleToggleActionsModal() {
+    setIsActionsModalVisible(!isActionsModalVisible);
+  }
+
+  function handleActions(action: menus) {
+    switch (action) {
+      case 'action':
+        handleToggleActionsModal();
+        break;
+      default:
+        break;
+    }
   }
 
   return (
-    <div className={`${classes.container} ${commonCss.flexRow}`}>
-      {menuList.map((menu, index) => {
-        let Icon = menu.icon;
-        let isMenuActive = activeMenu === menu.action;
-        return (
-          <ButtonBase
-            key={index}
-            className={classes.menuButton}
-            onClick={() => handleSetActiveMenu(menu.action)}>
-            <Icon style={{ color: isMenuActive ? color.themeBlue : '#5F6368' }} />
-            {isMenuActive && (
-              <p style={{ margin: 0 }}>
-                <Typography style={{ color: color.themeBlue, marginTop: 2 }}>
-                  {menu.text}
-                </Typography>
-              </p>
-            )}
-          </ButtonBase>
-        );
-      })}
-    </div>
+    <>
+      <div className={`${classes.container} ${commonCss.flexRow}`}>
+        {menuList.map((menu, index) => {
+          let Icon = menu.icon;
+          let isMenuActive = activeMenu === menu.action;
+          return (
+            <ButtonBase
+              key={index}
+              className={classes.menuButton}
+              onClick={() => handleSetActiveMenu(menu.action)}>
+              <Icon style={{ color: isMenuActive ? color.themeBlue : '#5F6368' }} />
+              {isMenuActive && (
+                <p style={{ margin: 0 }}>
+                  <Typography style={{ color: color.themeBlue, marginTop: 2 }}>
+                    {menu.text}
+                  </Typography>
+                </p>
+              )}
+            </ButtonBase>
+          );
+        })}
+      </div>
+      <ActionsModal onRequestClose={handleToggleActionsModal} isVisible={isActionsModalVisible} />
+    </>
   );
 };
 
