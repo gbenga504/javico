@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core';
 import ReactDOM from 'react-dom';
 
@@ -10,6 +10,7 @@ interface IProps {
   isVisible: boolean;
   onRequestClose: () => void;
   className?: string;
+  children: React.ReactNode;
 }
 
 const DraggableListener: React.FC<IProps> = ({
@@ -19,6 +20,11 @@ const DraggableListener: React.FC<IProps> = ({
   children,
 }) => {
   const elementRef = useRef<HTMLElement | null>(null);
+  const draggableContainerRef = useRef<HTMLDivElement | null>(null);
+  const isActive = useRef<null | boolean>(null);
+  const [height, setHeight] = useState<string>('300px');
+  const [shouldTransition, setShouldTransition] = useState<boolean>(true);
+  const currentYCoordinate = useRef<number>(0);
   const classes = useStyles();
 
   function getElement() {
@@ -31,10 +37,52 @@ const DraggableListener: React.FC<IProps> = ({
   useEffect(() => {
     let element = getElement();
     draggableRoot.appendChild(element);
+    const tempRef = draggableContainerRef.current;
+
+    if (tempRef) {
+      tempRef.addEventListener('touchstart', dragStart);
+      tempRef.addEventListener('touchmove', dragMove);
+      tempRef.addEventListener('touchend', dragEnd);
+    }
     return () => {
       draggableRoot.removeChild(element);
+      if (tempRef) {
+        tempRef.removeEventListener('touchstart', dragStart);
+        tempRef.removeEventListener('touchmove', dragMove);
+        tempRef.removeEventListener('touchend', dragEnd);
+      }
     };
+    // eslint-disable-next-line
   }, []);
+
+  function dragStart(e: any) {
+    currentYCoordinate.current = e.touches[0].clientY;
+  }
+
+  function dragMove(e: any) {
+    !isActive.current && (isActive.current = true);
+    shouldTransition === true && setShouldTransition(false);
+    currentYCoordinate.current = e.touches[0].clientY;
+    setHeight(`calc(100% - ${e.touches[0].clientY}px)`);
+  }
+
+  function dragEnd(e: any) {
+    if (isActive.current === true) {
+      e.preventDefault();
+      const windowHeight = document.body.getBoundingClientRect().height;
+      if (currentYCoordinate.current <= windowHeight - 300) {
+        setShouldTransition(true);
+        setTimeout(() => setHeight(`300px`), 50);
+      } else {
+        setShouldTransition(true);
+        setTimeout(() => {
+          onRequestClose();
+          setHeight(`300px`);
+        }, 50);
+      }
+      isActive.current = false;
+    }
+  }
 
   function renderChildren() {
     return (
@@ -42,7 +90,9 @@ const DraggableListener: React.FC<IProps> = ({
         <div onClick={onRequestClose} className={classes.overlay} />
         <div
           className={`${classes.draggableContainer} ${className} ${isVisible &&
-            classes.draggableContainerVisible}`}>
+            classes.draggableContainerVisible}`}
+          ref={draggableContainerRef}
+          style={{ height, transition: shouldTransition === true ? 'all 0.5s' : 'none' }}>
           {children}
         </div>
       </div>
@@ -75,10 +125,8 @@ const useStyles = makeStyles({
   draggableContainer: {
     background: color.white,
     width: '100vw',
-    height: 300,
     position: 'absolute',
     bottom: -300,
-    transition: 'all 0.8s',
     zIndex: 1,
   },
   draggableContainerVisible: {
@@ -86,4 +134,4 @@ const useStyles = makeStyles({
   },
 });
 
-export default DraggableListener;
+export default React.memo(DraggableListener);

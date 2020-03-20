@@ -15,7 +15,7 @@ const App: React.FC = () => {
     <MuiThemeProvider theme={theme}>
       {/* <MenuDrawer onBlur={() => setIsSideBarVisible(false)} isSideBarVisible={isSideBarVisible} /> */}
       {/* <Editor setIsSideBarVisible={() => setIsSideBarVisible(true)} /> */}
-      {/* <div
+      <div
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -27,8 +27,8 @@ const App: React.FC = () => {
           <ReadMe />
         </div>
         <TabNavigator />
-      </div> */}
-      <Settings />
+      </div>
+      {/* <Settings /> */}
     </MuiThemeProvider>
   );
 };

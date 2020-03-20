@@ -32,7 +32,7 @@ const TabNavigator: React.FC = () => {
   }
 
   function handleToggleActionsModal() {
-    setIsActionsModalVisible(!isActionsModalVisible);
+    setIsActionsModalVisible(prevState => !prevState);
   }
 
   function handleActions(action: Menus) {
