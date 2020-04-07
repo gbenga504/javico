@@ -2,15 +2,19 @@
     "name": "gist",
     "version": "0.1.0",
     "private": true,
+    "workspaces": [
+        "packages/*"
+    ],
     "dependencies": {
-        "lerna": "^3.20.2",
         "typescript": "3.7.2"
     },
     "scripts": {
         "clean": "rm -rf ./build",
         "format": "prettier --write \"src/**/*.{js,jsx,tsx,ts,json,css,md}\"",
         "format:check": "prettier --list-different \"src/**/*.{js,jsx,json,tsx,ts,css,md}\"",
-        "analyze": "source-map-explorer 'build/static/js/*.js'"
+        "analyze": "source-map-explorer 'build/static/js/*.js'",
+        "start": "lerna run start --scope @javico/common --parallel",
+        "storybook": "lerna run storybook --scope=@javico/common --stream"
     },
     "lint-staged": {
         "*.{js,ts,tsx,md}": [
@@ -37,6 +41,7 @@
     },
     "devDependencies": {
         "husky": "^3.1.0",
+        "lerna": "^3.20.2",
         "lint-staged": "^9.5.0",
         "prettier": "^1.19.1",
         "source-map-explorer": "^2.1.1"
