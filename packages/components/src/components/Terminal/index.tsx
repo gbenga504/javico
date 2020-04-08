@@ -13,7 +13,8 @@ type Methods =
   | "time"
   | "assert"
   | "count"
-  | "table";
+  | "table"
+  | string;
 type TerminalMessageType = { method: Methods; data: any[] };
 type TerminalMessagesType = TerminalMessageType[];
 

@@ -7,17 +7,20 @@ import {
   Button
 } from "@material-ui/core";
 import { useStyles } from "@javico/common/lib/design-language/Css";
+import { ButtonWithLoading } from "@javico/common/lib/components";
 
 interface IProps {
   visible: boolean;
-  onRequestClose: () => null;
-  onOk: () => null;
+  onRequestClose: () => void;
+  onOk: () => void;
+  loading: boolean;
 }
 
 const SignInViaGithubModal: React.FC<IProps> = ({
   visible,
   onRequestClose,
-  onOk
+  onOk,
+  loading
 }) => {
   const commonCss = useStyles();
 
@@ -36,9 +39,15 @@ const SignInViaGithubModal: React.FC<IProps> = ({
         <Button className={commonCss.cancelButton} onClick={onRequestClose}>
           Cancel
         </Button>
-        <Button color="primary" variant="contained" onClick={onOk} autoFocus>
+        <ButtonWithLoading
+          color="primary"
+          loading={loading}
+          variant="contained"
+          onClick={onOk}
+          autoFocus
+        >
           Sign In
-        </Button>
+        </ButtonWithLoading>
       </DialogActions>
     </Dialog>
   );

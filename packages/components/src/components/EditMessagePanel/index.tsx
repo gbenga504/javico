@@ -1,14 +1,13 @@
 import React, { useRef, useEffect } from "react";
 import { makeStyles, TextareaAutosize, Button } from "@material-ui/core";
 import { KeyboardReturn as KeyboardReturnIcon } from "@material-ui/icons";
-
 import {
   color,
   fontsize,
   useStyles as commonUseStyles,
   margin
 } from "@javico/common/lib/design-language/Css";
-import { ButtonWithLoading } from "@javico/common/lib/components/ButtonWithLoading";
+import { ButtonWithLoading } from "@javico/common/lib/components";
 
 interface IProps {
   visible: boolean;
@@ -17,6 +16,8 @@ interface IProps {
   onOk: () => void;
   onRequestClose: () => void;
   loading: boolean;
+  inputClassName?: string;
+  cancelButtonClassName?: string;
 }
 
 const EditMessagePanel: React.FC<IProps> = ({
@@ -25,7 +26,9 @@ const EditMessagePanel: React.FC<IProps> = ({
   value,
   onOk,
   onRequestClose,
-  loading
+  loading,
+  inputClassName,
+  cancelButtonClassName
 }) => {
   const messageInputRef = useRef<any>(null);
   const classes = useStyles();
@@ -41,10 +44,10 @@ const EditMessagePanel: React.FC<IProps> = ({
   }, [visible]);
 
   return visible === true ? (
-    <div className={`${commonCss.flexColumn} ${commonCss.fullWidth}`}>
+    <div className={`${commonCss.flexColumn}`}>
       <TextareaAutosize
         aria-label="Drop a review"
-        className={classes.inputField}
+        className={`${classes.inputField} ${inputClassName}`}
         placeholder="Edit Message"
         rowsMax={6}
         rows={1}
@@ -55,7 +58,7 @@ const EditMessagePanel: React.FC<IProps> = ({
       />
       <div className={commonCss.flexRow} style={{ ...margin(4, "t") }}>
         <Button
-          className={`${classes.button} ${classes.cancelButton}`}
+          className={`${classes.button} ${classes.cancelButton} ${cancelButtonClassName}`}
           variant="outlined"
           onClick={onRequestClose}
         >
@@ -78,8 +81,6 @@ const EditMessagePanel: React.FC<IProps> = ({
 
 const useStyles = makeStyles(theme => ({
   inputField: {
-    color: color.white,
-    width: "100%",
     border: "1px solid #818385",
     backgroundColor: "transparent",
     fontSize: fontsize.small + 0.5,
@@ -100,8 +101,7 @@ const useStyles = makeStyles(theme => ({
     width: "auto"
   },
   cancelButton: {
-    border: `1px solid ${color.darkThemeLightBorder}`,
-    color: color.white
+    border: `1px solid ${color.darkThemeLightBorder}`
   },
   editButton: {
     margin: theme.spacing(0, 2),

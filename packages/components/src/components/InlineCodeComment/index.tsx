@@ -139,41 +139,33 @@ const InlineCodeComment: React.FC<IProps> = ({
   return visible === true ? (
     <div
       className={`${classes.commentBoxContainer} ${commonCss.fullHeightAndWidth}`}
+      style={{
+        top: anchorEl === null ? 0 : anchorEl.getBoundingClientRect().top + 20
+      }}
     >
-      <Paper
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        className={classes.commentBox}
-        style={{
-          top: anchorEl === null ? 0 : anchorEl.getBoundingClientRect().top + 20
-        }}
+      <form
+        ref={commentRef}
+        onSubmit={e => e.preventDefault()}
+        className={`${commonCss.flexRow} ${classes.commentForm}`}
       >
-        <form
-          ref={commentRef}
-          onSubmit={e => e.preventDefault()}
-          className={commonCss.flexRow}
+        <div
+          className={`${classes.inlineCommentContainer} ${
+            commonCss.relative
+          } ${isCommentBoxFocused && commonCss.focused}`}
         >
-          <div className={commonCss.fullWidth}>
-            <div
-              className={`${classes.inlineCommentContainer} ${
-                commonCss.relative
-              } ${isCommentBoxFocused && commonCss.focused}`}
+          <div className="inline-comment__header">
+            <MuiTabs
+              value={currentTab}
+              onChange={handleTabChange}
+              aria-label="inline comment tabs"
             >
-              <div className="inline-comment__header">
-                <MuiTabs
-                  value={currentTab}
-                  onChange={handleTabChange}
-                  aria-label="inline comment tabs"
-                >
-                  <MuiTab label="Write" {...a11yProps(0)} />
-                  <MuiTab label="Preview" {...a11yProps(1)} />
-                </MuiTabs>
-              </div>
-              {currentTab === 0 ? renderWriteComment() : renderPreviewComment()}
-            </div>
+              <MuiTab label="Write" {...a11yProps(0)} />
+              <MuiTab label="Preview" {...a11yProps(1)} />
+            </MuiTabs>
           </div>
-        </form>
-      </Paper>
+          {currentTab === 0 ? renderWriteComment() : renderPreviewComment()}
+        </div>
+      </form>
     </div>
   ) : null;
 };

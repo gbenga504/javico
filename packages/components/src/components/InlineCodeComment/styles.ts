@@ -3,6 +3,19 @@ import { makeStyles } from "@material-ui/core";
 import { color, fontsize, fonts } from "@javico/common/lib/design-language/Css";
 
 export const useStyles = makeStyles(theme => ({
+  commentBoxContainer: {
+    position: "absolute",
+    background: "transparent",
+    zIndex: 2,
+    width: "100%",
+    left: 0
+  },
+  commentForm: {
+    position: "relative",
+    backgroundColor: color.gray20,
+    padding: theme.spacing(3),
+    borderRadius: 5
+  },
   inlineCommentContainer: {
     backgroundColor: color.white,
     borderRadius: 5,
@@ -43,24 +56,6 @@ export const useStyles = makeStyles(theme => ({
     textDecoration: "none",
     display: "flex",
     alignItems: "center"
-  },
-  commentBoxContainer: {
-    position: "absolute",
-    background: "transparent",
-    zIndex: 2,
-    top: 0,
-    "& form": {
-      margin: theme.spacing(3)
-    }
-  },
-  commentBox: {
-    position: "absolute",
-    left: 60,
-    width: "calc(100% - 100px)",
-    backgroundColor: color.gray20
-  },
-  commentDialogContent: {
-    fontSize: 15
   },
   openInNewIcon: {
     fontSize: 16,
