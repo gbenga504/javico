@@ -1,7 +1,6 @@
 {
   "name": "gist",
   "version": "0.1.0",
-  "private": true,
   "dependencies": {
     "@material-ui/core": "^4.8.3",
     "@material-ui/icons": "^4.9.1",
@@ -16,8 +15,7 @@
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-scripts": "3.2.0",
-    "react-share": "^3.0.1",
-    "typescript": "3.7.2"
+    "react-share": "^3.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -25,20 +23,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "clean": "rm -rf ./build",
-    "format": "prettier --write \"src/**/*.{js,jsx,tsx,ts,json,css,md}\"",
-    "format:check": "prettier --list-different \"src/**/*.{js,jsx,json,tsx,ts,css,md}\"",
     "analyze": "source-map-explorer 'build/static/js/*.js'"
-  },
-  "lint-staged": {
-    "*.{js,ts,tsx,md}": [
-      "prettier --write",
-      "git add"
-    ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -59,6 +44,8 @@
     "husky": "^3.1.0",
     "lint-staged": "^9.5.0",
     "prettier": "^1.19.1",
-    "source-map-explorer": "^2.1.1"
+    "rimraf": "^3.0.2",
+    "source-map-explorer": "^2.1.1",
+    "typescript": "^3.8.3"
   }
 }
