@@ -13,9 +13,8 @@ type Methods =
   | "time"
   | "assert"
   | "count"
-  | "table"
-  | string;
-type TerminalMessageType = { method: Methods; data: any[] };
+  | "table";
+type TerminalMessageType = { method: Methods; data: any[]; id: string };
 type TerminalMessagesType = TerminalMessageType[];
 
 const Terminal: React.FC<{ terminalMessages: TerminalMessagesType }> = ({

@@ -1,12 +1,11 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Tooltip } from "@material-ui/core";
+import { Tooltip, CircularProgress } from "@material-ui/core";
 import { ModeComment as ModeCommentIcon } from "@material-ui/icons";
 import {
   useStyles as commonUseStyles,
   color,
   fontsize
 } from "@javico/common/lib/design-language/Css";
-import { AnimatedCircularLoader } from "@javico/common/lib/components";
 
 import { useStyles } from "./styles";
 import MonacoIntegrator from "../../utils/MonacoIntegrator";
@@ -213,7 +212,7 @@ const MonacoEditor: React.FC<IProps> = ({
           background: color.darkThemeBlack
         }}
       >
-        <AnimatedCircularLoader />
+        <CircularProgress color="primary" />
       </div>
     ) : null;
   }

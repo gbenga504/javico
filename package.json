@@ -10,6 +10,7 @@
     },
     "scripts": {
         "clean": "rm -rf ./build",
+        "build": "lerna run build --scope @javico/common --scope @javico/components",
         "format": "prettier --write \"src/**/*.{js,jsx,tsx,ts,json,css,md}\"",
         "format:check": "prettier --list-different \"src/**/*.{js,jsx,json,tsx,ts,css,md}\"",
         "analyze": "source-map-explorer 'build/static/js/*.js'",

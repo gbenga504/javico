@@ -15,7 +15,8 @@
         "module": "esnext",
         "moduleResolution": "node",
         "resolveJsonModule": true,
-        "noEmit": true,
+        "declaration": true,
+        "outDir": "./lib",
         "jsx": "react",
         "isolatedModules": true
     },
