@@ -1,24 +1,32 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Tabs, Tab } from '@material-ui/core';
-import { NotInterested as ClearIcon } from '@material-ui/icons';
+import React, { useState, useEffect, useRef } from "react";
+import { Tabs, Tab } from "@material-ui/core";
+import { NotInterested as ClearIcon } from "@material-ui/icons";
+import { withNotificationBanner } from "@javico/common/lib/components/NotificationBanner";
+import { getSourceCodeIdFromUrl, Apis } from "@javico/common/lib/utils";
 
-import { useStyles } from './styles';
-import { withNotificationBanner } from '../../atoms';
-import { getSourceCodeIdFromUrl } from '../../utils/UrlUtils';
-import { Apis } from '../../utils/Apis';
-import SignInViaGithubModal from '../SignInViaGithubModal';
-import Terminal from './Terminal';
-import Readme from './Readme';
-import Preview from './Preview';
+import { useStyles } from "./styles";
+import SignInViaGithubModal from "../SignInViaGithubModal";
+import Terminal from "./Terminal";
+import Readme from "./Readme";
+import Preview from "./Preview";
 
 function a11yProps(index: number) {
   return {
     id: `console-tab-${index}`,
-    'aria-controls': `console-tabpanel-${index}`,
+    "aria-controls": `console-tabpanel-${index}`
   };
 }
 
-type Methods = 'log' | 'warn' | 'error' | 'info' | 'debug' | 'time' | 'assert' | 'count' | 'table';
+type Methods =
+  | "log"
+  | "warn"
+  | "error"
+  | "info"
+  | "debug"
+  | "time"
+  | "assert"
+  | "count"
+  | "table";
 type TerminalMessageType = { method: Methods; data: any[] };
 type TerminalMessagesType = TerminalMessageType[];
 
@@ -29,22 +37,37 @@ const Console: React.FC<{
   onSetNotificationSettings: any;
   ownerId: string;
   user: any;
-}> = ({ sourceCode, sourceCodeHash, ownerId, fetchedReadme, onSetNotificationSettings, user }) => {
+}> = ({
+  sourceCode,
+  sourceCodeHash,
+  ownerId,
+  fetchedReadme,
+  onSetNotificationSettings,
+  user
+}) => {
   const [currentTab, setCurrentTab] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
-  const [terminalMessages, setTerminalMessages] = useState<TerminalMessagesType>([]);
+  const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(
+    false
+  );
+  const [terminalMessages, setTerminalMessages] = useState<
+    TerminalMessagesType
+  >([]);
   const [readMe, setReadMe] = useState<string>(fetchedReadme);
   const workerRef = useRef<any>(null);
   const classes = useStyles();
   const isAuthorize = !!user ? user.uid === ownerId : false;
 
   useEffect(() => {
-    workerRef.current = new Worker(`${window.location.origin}/CodeEvaluatorWorker.js`);
-    workerRef.current.addEventListener('message', function(e: { data: TerminalMessageType }) {
+    workerRef.current = new Worker(
+      `${window.location.origin}/CodeEvaluatorWorker.js`
+    );
+    workerRef.current.addEventListener("message", function(e: {
+      data: TerminalMessageType;
+    }) {
       setTerminalMessages((prevTerminalMessages: TerminalMessagesType) => [
         ...prevTerminalMessages,
-        e.data,
+        e.data
       ]);
     });
   }, []);
@@ -91,14 +114,14 @@ const Console: React.FC<{
     Apis.sourceCodes
       .saveSourceCode({
         data: { readme: readMe },
-        params: { ID: id },
+        params: { ID: id }
       })
       .then((res: any) => {
         toggleIsLoading();
       })
       .catch((error: any) => {
         toggleIsLoading();
-        onSetNotificationSettings(error.message, 'danger', 'long');
+        onSetNotificationSettings(error.message, "danger", "long");
       });
   }
 
@@ -106,7 +129,10 @@ const Console: React.FC<{
     return (
       currentTab === 0 && (
         <div className={classes.consoleTerminalBasedActionsContainer}>
-          <ClearIcon className={classes.consoleTerminalClearIcon} onClick={handleClearConsole} />
+          <ClearIcon
+            className={classes.consoleTerminalClearIcon}
+            onClick={handleClearConsole}
+          />
         </div>
       )
     );
@@ -115,10 +141,14 @@ const Console: React.FC<{
   return (
     <section className={classes.console}>
       <div>
-        <Tabs value={currentTab} onChange={handleTabChange} aria-label="console tabs">
+        <Tabs
+          value={currentTab}
+          onChange={handleTabChange}
+          aria-label="console tabs"
+        >
           <Tab label="TERMINAL" {...a11yProps(0)} />
           {isAuthorize && <Tab label="READ ME" {...a11yProps(1)} />}
-          <Tab label={isAuthorize ? 'PREVIEW' : 'READ ME'} {...a11yProps(2)} />
+          <Tab label={isAuthorize ? "PREVIEW" : "READ ME"} {...a11yProps(2)} />
         </Tabs>
         {renderTerminalBasedActions()}
       </div>

@@ -16,6 +16,7 @@ interface IProps {
   value: string;
   onOk: () => void;
   onRequestClose: () => void;
+  // onEditMessage: () => void;
   loading: boolean;
   inputClassName?: string;
   cancelButtonClassName?: string;
@@ -30,6 +31,7 @@ const EditMessagePanel: React.FC<IProps> = ({
   loading,
   inputClassName,
   cancelButtonClassName
+  // onEditMessage
 }) => {
   const messageInputRef = useRef<any>(null);
   const classes = useStyles();

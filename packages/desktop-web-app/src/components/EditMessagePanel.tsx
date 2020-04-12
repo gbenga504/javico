@@ -1,9 +1,14 @@
-import React, { useRef, useEffect } from 'react';
-import { makeStyles, TextareaAutosize, Button } from '@material-ui/core';
-import { KeyboardReturn as KeyboardReturnIcon } from '@material-ui/icons';
+import React, { useRef, useEffect } from "react";
+import { makeStyles, TextareaAutosize, Button } from "@material-ui/core";
+import { KeyboardReturn as KeyboardReturnIcon } from "@material-ui/icons";
 
-import { color, fontsize, useStyles as commonUseStyles, margin } from '../Css';
-import { ButtonWithLoading } from '../atoms';
+import {
+  color,
+  fontsize,
+  useStyles as commonUseStyles,
+  margin
+} from "@javico/common/lib/design-language/Css";
+import { ButtonWithLoading } from "@javico/common/lib/components";
 
 interface IProps {
   visible: boolean;
@@ -20,7 +25,7 @@ const EditMessagePanel: React.FC<IProps> = ({
   value,
   onEditMessage,
   onRequestClose,
-  loading,
+  loading
 }) => {
   const messageInputRef = useRef<any>(null);
   const classes = useStyles();
@@ -48,11 +53,12 @@ const EditMessagePanel: React.FC<IProps> = ({
         value={value}
         onChange={onHandleValueChange}
       />
-      <div className={commonCss.flexRow} style={{ ...margin(4, 't') }}>
+      <div className={commonCss.flexRow} style={{ ...margin(4, "t") }}>
         <Button
           className={`${classes.button} ${classes.cancelButton}`}
           variant="outlined"
-          onClick={onRequestClose}>
+          onClick={onRequestClose}
+        >
           Cancel
         </Button>
         <ButtonWithLoading
@@ -61,7 +67,8 @@ const EditMessagePanel: React.FC<IProps> = ({
           color="primary"
           variant="contained"
           onClick={onEditMessage}
-          startIcon={<KeyboardReturnIcon />}>
+          startIcon={<KeyboardReturnIcon />}
+        >
           Save Changes
         </ButtonWithLoading>
       </div>
@@ -72,36 +79,36 @@ const EditMessagePanel: React.FC<IProps> = ({
 const useStyles = makeStyles(theme => ({
   inputField: {
     color: color.white,
-    width: '100%',
-    border: '1px solid #818385',
-    backgroundColor: 'transparent',
+    width: "100%",
+    border: "1px solid #818385",
+    backgroundColor: "transparent",
     fontSize: fontsize.small + 0.5,
-    resize: 'none',
+    resize: "none",
     borderRadius: 3,
     padding: `4px 10px`,
     paddingRight: theme.spacing(1),
-    '&:focus': {
-      outline: 'none',
-      border: `1px solid #1B9BD1`,
-    },
+    "&:focus": {
+      outline: "none",
+      border: `1px solid #1B9BD1`
+    }
   },
   button: {
     fontSize: fontsize.small,
     height: 28,
     minWidth: 56,
-    padding: '0 12px 1px',
-    width: 'auto',
+    padding: "0 12px 1px",
+    width: "auto"
   },
   cancelButton: {
     border: `1px solid ${color.darkThemeLightBorder}`,
-    color: color.white,
+    color: color.white
   },
   editButton: {
     margin: theme.spacing(0, 2),
-    '& ion-icon': {
-      fontSize: 18,
-    },
-  },
+    "& ion-icon": {
+      fontSize: 18
+    }
+  }
 }));
 
 export default EditMessagePanel;

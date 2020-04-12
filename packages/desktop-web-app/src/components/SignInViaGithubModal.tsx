@@ -1,22 +1,35 @@
-import React from 'react';
-import { Dialog, DialogContent, DialogActions, DialogTitle, Button } from '@material-ui/core';
-import { Apis } from '../utils/Apis';
-import { IBannerStyle, IDuration } from '../atoms/NotificationBanner';
-import { withNotificationBanner } from '../atoms';
-import { useStyles } from '../Css';
+import React from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogActions,
+  DialogTitle,
+  Button
+} from "@material-ui/core";
+import { Apis } from "@javico/common/lib/utils/Apis";
+import {
+  IBannerStyle,
+  IDuration,
+  withNotificationBanner
+} from "@javico/common/lib/components/NotificationBanner";
+import { useStyles } from "@javico/common/lib/design-language/Css";
 
 interface IProps {
   visible: boolean;
   onRequestClose: () => null;
   onSignInSuccess: (user: any) => null;
-  onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
+  onSetNotificationSettings: (
+    text: string,
+    style?: IBannerStyle,
+    duration?: IDuration
+  ) => null;
 }
 
 const SignInViaGithubModal: React.FC<IProps> = ({
   visible,
   onRequestClose,
   onSetNotificationSettings,
-  onSignInSuccess,
+  onSignInSuccess
 }) => {
   const commonCss = useStyles();
 
@@ -28,7 +41,7 @@ const SignInViaGithubModal: React.FC<IProps> = ({
         onSignInSuccess(result.user);
       })
       .catch(function(error: any) {
-        onSetNotificationSettings(error.message, 'danger', 'long');
+        onSetNotificationSettings(error.message, "danger", "long");
       });
   }
 
@@ -37,14 +50,22 @@ const SignInViaGithubModal: React.FC<IProps> = ({
       open={visible}
       onClose={onRequestClose}
       aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description">
+      aria-describedby="alert-dialog-description"
+    >
       <DialogTitle id="alert-dialog-title">SignIn via Github</DialogTitle>
-      <DialogContent>You need to signin via github to save your code.</DialogContent>
+      <DialogContent>
+        You need to signin via github to save your code.
+      </DialogContent>
       <DialogActions>
         <Button className={commonCss.cancelButton} onClick={onRequestClose}>
           Cancel
         </Button>
-        <Button color="primary" variant="contained" onClick={handleSignInWithGithub} autoFocus>
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={handleSignInWithGithub}
+          autoFocus
+        >
           Sign In
         </Button>
       </DialogActions>

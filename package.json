@@ -1,50 +1,51 @@
 {
-    "name": "gist",
-    "version": "0.1.0",
-    "private": true,
-    "workspaces": [
-        "packages/*"
-    ],
-    "dependencies": {
-        "react-scripts": "3.4.0",
-        "babel-loader": "8.0.6"
-    },
-    "scripts": {
-        "build": "lerna run build --scope @javico/common",
-        "format": "prettier --write \"src/**/*.{js,jsx,tsx,ts,json,css,md}\"",
-        "format:check": "prettier --list-different \"src/**/*.{js,jsx,json,tsx,ts,css,md}\"",
-        "analyze": "source-map-explorer 'build/static/js/*.js'",
-        "start": "lerna run start --scope @javico/common --scope desktop-web-app --parallel",
-        "storybook": "lerna run storybook --scope @javico/common --stream"
-    },
-    "lint-staged": {
-        "*.{js,ts,tsx,md}": [
-            "prettier --write",
-            "git add"
-        ]
-    },
-    "husky": {
-        "hooks": {
-            "pre-commit": "lint-staged"
-        }
-    },
-    "browserslist": {
-        "production": [
-            ">0.2%",
-            "not dead",
-            "not op_mini all"
-        ],
-        "development": [
-            "last 1 chrome version",
-            "last 1 firefox version",
-            "last 1 safari version"
-        ]
-    },
-    "devDependencies": {
-        "husky": "^3.1.0",
-        "lerna": "^3.20.2",
-        "lint-staged": "^9.5.0",
-        "prettier": "^1.19.1",
-        "source-map-explorer": "^2.1.1"
+  "name": "gist",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "dependencies": {
+    "react-scripts": "3.4.0",
+    "babel-loader": "8.0.6"
+  },
+  "scripts": {
+    "build": "lerna run build --scope @javico/common",
+    "format": "prettier --write \"src/**/*.{js,jsx,tsx,ts,json,css,md}\"",
+    "format:check": "prettier --list-different \"src/**/*.{js,jsx,json,tsx,ts,css,md}\"",
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
+    "start": "lerna run start --scope @javico/common --scope desktop-web-app --parallel",
+    "start:desktop-web-app": "lerna run start --scope desktop-web-app --stream",
+    "storybook": "lerna run storybook --scope @javico/common --stream"
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
     }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "husky": "^3.1.0",
+    "lerna": "^3.20.2",
+    "lint-staged": "^9.5.0",
+    "prettier": "^1.19.1",
+    "source-map-explorer": "^2.1.1"
+  }
 }

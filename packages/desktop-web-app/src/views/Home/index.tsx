@@ -4,7 +4,7 @@ import {
   InsertComment as InsertCommentIcon,
   Code as CodeIcon
 } from "@material-ui/icons";
-import { MonacoEditor } from "@javico/components/lib/components";
+import { MonacoEditor } from "@javico/common/lib/components/";
 import {
   color,
   useStyles as commonUseStyles,
@@ -21,11 +21,11 @@ import {
 } from "@javico/common/lib/components/NotificationBanner";
 
 import MenuBar from "../../components/MenuBar";
-import Console from "../../components/Console";
+// import Console from "../../components/Console";
 import { Apis } from "../../utils/Apis";
 import { getSourceCodeIdFromUrl, getBaseUrl } from "../../utils/UrlUtils";
 
-const Comments = lazy(() => import("../../components/Comments"));
+// const Comments = lazy(() => import("../../components/Comments"));
 
 interface IProps {
   onSetNotificationSettings: (
@@ -170,7 +170,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
             fetchSourceCode={fetchSourceCode}
           />
           <div className={classes.mainRightSection}>
-            <div
+            {/* <div
               className={`${classes.rightSubSection} ${
                 currentSection === "console"
                   ? classes.showRightSubSection
@@ -200,7 +200,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
                 />
               </Suspense>
             </div>
-            {renderSwitchView()}
+            {renderSwitchView()} */}
           </div>
         </main>
       </div>
