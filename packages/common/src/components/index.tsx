@@ -16,3 +16,4 @@ export { default as MonacoEditor } from "./MonacoEditor";
 export { default as SignInViaGithubModal } from "./SignInViaGithubModal";
 export { default as SyntaxHighlighter } from "./SyntaxHighlighter";
 export { default as Terminal } from "./Terminal";
+export { Comment, CommentList } from "./CommentListView";

@@ -10,7 +10,6 @@
         "babel-loader": "8.0.6"
     },
     "scripts": {
-        "clean": "rm -rf ./build",
         "build": "lerna run build --scope @javico/common",
         "format": "prettier --write \"src/**/*.{js,jsx,tsx,ts,json,css,md}\"",
         "format:check": "prettier --list-different \"src/**/*.{js,jsx,json,tsx,ts,css,md}\"",
