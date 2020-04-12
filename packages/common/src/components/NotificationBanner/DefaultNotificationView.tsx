@@ -3,7 +3,7 @@ import { Snackbar } from "@material-ui/core";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 
 import { INotificationBannerProps } from "./typeDefinition";
-import { usePrevious } from "../../hooks";
+import { usePrevious, useUpdateEffect } from "../../hooks";
 
 const Alert = (props: AlertProps) => {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -22,7 +22,7 @@ const DefaultNotificationView: React.FC<INotificationBannerProps> = ({
   >(undefined);
   const previousId = usePrevious(id);
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     if (id !== previousId) {
       queueRef.current.push({
         style,
@@ -37,7 +37,6 @@ const DefaultNotificationView: React.FC<INotificationBannerProps> = ({
     } else {
       processQueue();
     }
-    // eslint-disable-next-line
   }, [id]);
 
   function processQueue() {
@@ -82,7 +81,9 @@ const DefaultNotificationView: React.FC<INotificationBannerProps> = ({
           {messageInfo.text}
           {messageInfo.style === "success" && "!"}
         </Alert>
-      ) : null}
+      ) : (
+        undefined
+      )}
     </Snackbar>
   );
 };
