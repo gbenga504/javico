@@ -6,16 +6,17 @@
         "packages/*"
     ],
     "dependencies": {
-        "typescript": "3.7.2"
+        "react-scripts": "3.4.0",
+        "babel-loader": "8.0.6"
     },
     "scripts": {
         "clean": "rm -rf ./build",
-        "build": "lerna run build --scope @javico/common --scope @javico/components",
+        "build": "lerna run build --scope @javico/common",
         "format": "prettier --write \"src/**/*.{js,jsx,tsx,ts,json,css,md}\"",
         "format:check": "prettier --list-different \"src/**/*.{js,jsx,json,tsx,ts,css,md}\"",
         "analyze": "source-map-explorer 'build/static/js/*.js'",
-        "start": "lerna run start --scope @javico/common --parallel",
-        "storybook": "lerna run storybook --scope=@javico/common --stream"
+        "start": "lerna run start --scope @javico/common --scope desktop-web-app --parallel",
+        "storybook": "lerna run storybook --scope @javico/common --stream"
     },
     "lint-staged": {
         "*.{js,ts,tsx,md}": [

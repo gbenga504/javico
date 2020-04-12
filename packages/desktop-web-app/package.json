@@ -1,7 +1,8 @@
 {
-  "name": "gist",
+  "name": "desktop-web-app",
   "version": "0.1.0",
   "dependencies": {
+    "@javico/common": "1.0.0",
     "@material-ui/core": "^4.8.3",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.42",
@@ -12,17 +13,16 @@
     "@types/react-share": "^3.0.3",
     "dayjs": "^1.8.20",
     "firebase": "^7.6.0",
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0",
-    "react-scripts": "3.2.0",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
     "react-share": "^3.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "yarn run clean && react-scripts build",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "clean": "rm -rf ./build",
+    "clean": "rimraf build",
     "analyze": "source-map-explorer 'build/static/js/*.js'"
   },
   "eslintConfig": {
@@ -41,9 +41,6 @@
     ]
   },
   "devDependencies": {
-    "husky": "^3.1.0",
-    "lint-staged": "^9.5.0",
-    "prettier": "^1.19.1",
     "rimraf": "^3.0.2",
     "source-map-explorer": "^2.1.1",
     "typescript": "^3.8.3"
