@@ -1,18 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { makeStyles, Menu, MenuItem } from '@material-ui/core';
-import { MoreHoriz as MoreHorizIcon } from '@material-ui/icons';
+import React, { useState, useEffect } from "react";
+import { makeStyles, Menu, MenuItem } from "@material-ui/core";
+import { MoreHoriz as MoreHorizIcon } from "@material-ui/icons";
 
-import { useStyles as commonUseStyles, padding, color, fontsize } from '../../Css';
-import { Typography, withNotificationBanner } from '../../atoms';
-import SyntaxHighlighter from '../SyntaxHighlighter';
-import DeleteMessageModal from '../DeleteMessageModal';
-import EditMessagePanel from '../EditMessagePanel';
-import { parseTime } from '../../utils/TimeUtils';
-import { Apis, IReply } from '../../utils/Apis';
-import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
-import CommentUtils from '../../utils/CommentUtils';
-import MarkdownRenderer from '../MarkDownRenderer';
-import Replies from './Replies';
+import {
+  useStyles as commonUseStyles,
+  padding,
+  color,
+  fontsize
+} from "@javico/common/lib/design-language/Css";
+import { Typography, withNotificationBanner } from "../../atoms";
+import SyntaxHighlighter from "../SyntaxHighlighter";
+import DeleteMessageModal from "../DeleteMessageModal";
+import EditMessagePanel from "../EditMessagePanel";
+import { parseTime } from "../../utils/TimeUtils";
+import { Apis, IReply } from "../../utils/Apis";
+import { IBannerStyle, IDuration } from "../../atoms/NotificationBanner";
+import CommentUtils from "../../utils/CommentUtils";
+import MarkdownRenderer from "../MarkDownRenderer";
+import Replies from "./Replies";
 
 interface IProps {
   text: string;
@@ -23,7 +28,11 @@ interface IProps {
   createdAt: number;
   numReplies: number;
   onHandleReply: (comment: string, commentId: string) => void;
-  onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
+  onSetNotificationSettings: (
+    text: string,
+    style?: IBannerStyle,
+    duration?: IDuration
+  ) => null;
   sourceCodeId: string;
   userId: string;
   authorId: string;
@@ -41,14 +50,23 @@ const Comment: React.FC<IProps> = ({
   sourceCodeId,
   onSetNotificationSettings,
   userId,
-  authorId,
+  authorId
 }) => {
   const [isRepliesVisible, setIsRepliesVisible] = useState<boolean>(false);
-  const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | SVGSVGElement>(null);
-  const [isConfirmDeleteModalVisible, setIsConfirmDeleteModalVisible] = useState<boolean>(false);
-  const [isDeleteCommentLoading, setIsDeleteCommentLoading] = useState<boolean>(false);
+  const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | SVGSVGElement>(
+    null
+  );
+  const [
+    isConfirmDeleteModalVisible,
+    setIsConfirmDeleteModalVisible
+  ] = useState<boolean>(false);
+  const [isDeleteCommentLoading, setIsDeleteCommentLoading] = useState<boolean>(
+    false
+  );
   const [editableComment, setEditableComment] = useState<string>(text);
-  const [isEditMessagePanelVisible, setIsEditMessagePanelVisible] = useState<boolean>(false);
+  const [isEditMessagePanelVisible, setIsEditMessagePanelVisible] = useState<
+    boolean
+  >(false);
   const [isEditingComment, setIsEditingComment] = useState<boolean>(false);
   const [replies, setReplies] = useState<Array<IReply>>([]);
   const [isRepliesLoading, setIsRepliesLoading] = useState<boolean>(false);
@@ -63,7 +81,7 @@ const Comment: React.FC<IProps> = ({
       setIsRepliesLoading(true);
       Apis.replies.onSnapshotChanged(
         {
-          params: { sourceCodeID: sourceCodeId, limit: 10, commentID: id },
+          params: { sourceCodeID: sourceCodeId, limit: 10, commentID: id }
         },
         function(querySnapshot: Array<any>) {
           const { replies } = CommentUtils.parseReplies(querySnapshot, id);
@@ -71,8 +89,8 @@ const Comment: React.FC<IProps> = ({
           setReplies(replies);
         },
         function(error: any) {
-          onSetNotificationSettings(error, 'danger', 'long');
-        },
+          onSetNotificationSettings(error, "danger", "long");
+        }
       );
     }
     // eslint-disable-next-line
@@ -113,7 +131,7 @@ const Comment: React.FC<IProps> = ({
         setIsConfirmDeleteModalVisible(false);
       })
       .catch(error => {
-        onSetNotificationSettings(error, 'danger', 'long');
+        onSetNotificationSettings(error, "danger", "long");
       });
   }
 
@@ -139,14 +157,14 @@ const Comment: React.FC<IProps> = ({
     Apis.comments
       .updateComment({
         data: { text: editableComment.trim() },
-        params: { sourceCodeID: sourceCodeId, ID: id },
+        params: { sourceCodeID: sourceCodeId, ID: id }
       })
       .then(res => {
         setIsEditingComment(false);
         setIsEditMessagePanelVisible(false);
       })
       .catch(error => {
-        onSetNotificationSettings(error, 'danger', 'long');
+        onSetNotificationSettings(error, "danger", "long");
       });
   }
 
@@ -156,10 +174,15 @@ const Comment: React.FC<IProps> = ({
         anchorEl={optionsAnchorEl}
         keepMounted
         open={Boolean(optionsAnchorEl)}
-        onClose={handleCloseOptions}>
+        onClose={handleCloseOptions}
+      >
         <MenuItem onClick={() => handleReplyComment(text)}>Reply</MenuItem>
-        {authorId === userId && <MenuItem onClick={handleOpenEditMessagePanel}>Edit</MenuItem>}
-        {authorId === userId && <MenuItem onClick={handleOpenConfirmDeleteModal}>Delete</MenuItem>}
+        {authorId === userId && (
+          <MenuItem onClick={handleOpenEditMessagePanel}>Edit</MenuItem>
+        )}
+        {authorId === userId && (
+          <MenuItem onClick={handleOpenConfirmDeleteModal}>Delete</MenuItem>
+        )}
       </Menu>
     );
   }
@@ -169,10 +192,17 @@ const Comment: React.FC<IProps> = ({
       <>
         <div
           className={commonCss.flexRow}
-          style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography className={classes.commentUsername} thickness="bold" variant="span">
-            {!!authorName ? authorName : 'Anonymous'}{' '}
-            <Typography className={classes.commentTime}>{parseTime(createdAt)}</Typography>
+          style={{ justifyContent: "space-between", alignItems: "center" }}
+        >
+          <Typography
+            className={classes.commentUsername}
+            thickness="bold"
+            variant="span"
+          >
+            {!!authorName ? authorName : "Anonymous"}{" "}
+            <Typography className={classes.commentTime}>
+              {parseTime(createdAt)}
+            </Typography>
           </Typography>
           <MoreHorizIcon
             className={`${classes.commentMoreIcon} comment__show-more-button`}
@@ -189,10 +219,18 @@ const Comment: React.FC<IProps> = ({
   return (
     <div
       className={`${commonCss.flexColumn} ${commonCss.relative}`}
-      style={{ ...padding(16, 'lr'), ...padding(10, 'bt') }}>
+      style={{ ...padding(16, "lr"), ...padding(10, "bt") }}
+    >
       <div className={`${classes.comment} ${commonCss.flexRow}`} key={id}>
-        <img className={classes.commentUserImage} src={authorPhotoURL} alt={authorName} />
-        <div className={`${commonCss.flexColumn} ${commonCss.fullWidth}`} style={padding(8, 'l')}>
+        <img
+          className={classes.commentUserImage}
+          src={authorPhotoURL}
+          alt={authorName}
+        />
+        <div
+          className={`${commonCss.flexColumn} ${commonCss.fullWidth}`}
+          style={padding(8, "l")}
+        >
           {isEditMessagePanelVisible === false && renderComment()}
           <EditMessagePanel
             visible={isEditMessagePanelVisible}
@@ -206,7 +244,10 @@ const Comment: React.FC<IProps> = ({
       </div>
       <div className={classes.commentBottomContainer}>
         {codeReference && (
-          <SyntaxHighlighter containerStyle={{ marginTop: 5 }} sourceCode={codeReference} />
+          <SyntaxHighlighter
+            containerStyle={{ marginTop: 5 }}
+            sourceCode={codeReference}
+          />
         )}
         {!!numReplies === true && numReplies > 0 && (
           <Replies
@@ -237,46 +278,46 @@ const Comment: React.FC<IProps> = ({
 const useStyles = makeStyles(theme => ({
   commentBottomContainer: {
     marginLeft: 40,
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column"
   },
   comment: {
-    backgroundColor: 'inherit',
-    transition: 'all 0.3s',
-    cursor: 'pointer',
-    '&:hover': {
-      background: '#222529',
+    backgroundColor: "inherit",
+    transition: "all 0.3s",
+    cursor: "pointer",
+    "&:hover": {
+      background: "#222529"
     },
-    '&:hover .comment__show-more-button': {
-      display: 'block',
-    },
+    "&:hover .comment__show-more-button": {
+      display: "block"
+    }
   },
   commentUserImage: {
     height: 35,
     width: 35,
-    borderRadius: 5,
+    borderRadius: 5
   },
   commentUsername: {
-    cursor: 'pointer',
-    display: 'inline-block',
-    fontSize: fontsize.small,
+    cursor: "pointer",
+    display: "inline-block",
+    fontSize: fontsize.small
   },
   commentTime: {
     fontSize: fontsize.xsmall,
     color: `#ABABAD !important`,
-    marginLeft: 5,
+    marginLeft: 5
   },
   commentUserComment: {
     fontSize: fontsize.small + 0.5,
-    '& p': {
-      margin: 0,
-    },
+    "& p": {
+      margin: 0
+    }
   },
   commentMoreIcon: {
     color: color.white,
     fontSize: fontsize.large,
-    display: 'none',
-  },
+    display: "none"
+  }
 }));
 
 export default withNotificationBanner(React.memo(Comment));

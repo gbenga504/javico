@@ -15,7 +15,8 @@
         "format:check": "prettier --list-different \"src/**/*.{js,jsx,json,tsx,ts,css,md}\"",
         "analyze": "source-map-explorer 'build/static/js/*.js'",
         "start": "lerna run start --scope @javico/common --scope desktop-web-app --parallel",
-        "storybook": "lerna run storybook --scope @javico/common --stream"
+        "storybook": "lerna run storybook --scope @javico/common --stream",
+        "start:desktop-web-app": "lerna run start --scope desktop-web-app --stream"
     },
     "lint-staged": {
         "*.{js,ts,tsx,md}": [

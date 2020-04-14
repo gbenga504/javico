@@ -4,14 +4,14 @@ import {
   InsertComment as InsertCommentIcon,
   Code as CodeIcon
 } from "@material-ui/icons";
-import { MonacoEditor } from "@javico/components/lib/components";
+// import { MonacoEditor } from "@javico/common/lib/components";
 import {
   color,
   useStyles as commonUseStyles,
   padding
 } from "@javico/common/lib/design-language/Css";
 import {
-  IndeterminateLinearProgress,
+  // IndeterminateLinearProgress,
   withNotificationBanner,
   Seo
 } from "@javico/common/lib/components";
@@ -19,13 +19,14 @@ import {
   IBannerStyle,
   IDuration
 } from "@javico/common/lib/components/NotificationBanner";
+import { Apis } from "@javico/common/lib/utils/Apis";
 
-import MenuBar from "../../components/MenuBar";
+// import MenuBar from "../../components/MenuBar";
 import Console from "../../components/Console";
-import { Apis } from "../../utils/Apis";
+// import { Apis } from "../../utils/Apis";
 import { getSourceCodeIdFromUrl, getBaseUrl } from "../../utils/UrlUtils";
 
-const Comments = lazy(() => import("../../components/Comments"));
+// const Comments = lazy(() => import("../../components/Comments"));
 
 interface IProps {
   onSetNotificationSettings: (
@@ -65,50 +66,50 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
     });
   }, []);
 
-  useEffect(() => {
-    fetchSourceCode(toggleIsLoading(true));
-    // eslint-disable-next-line
-  }, []);
+  // useEffect(() => {
+  //   fetchSourceCode(toggleIsLoading(true));
+  //   // eslint-disable-next-line
+  // }, []);
 
-  function fetchSourceCode(cb: any) {
-    if (getSourceCodeIdFromUrl()) {
-      Apis.sourceCodes
-        .fetchSourceCode({
-          params: { ID: getSourceCodeIdFromUrl() }
-        })
-        .then(res => {
-          const { sourceCode, readme, ownerId, title } = res.data();
-          toggleIsLoading();
+  // function fetchSourceCode(cb: any) {
+  //   if (getSourceCodeIdFromUrl()) {
+  //     Apis.sourceCodes
+  //       .fetchSourceCode({
+  //         params: { ID: getSourceCodeIdFromUrl() }
+  //       })
+  //       .then(res => {
+  //         const { sourceCode, readme, ownerId, title } = res.data();
+  //         toggleIsLoading();
 
-          setFetchedSourceCode({
-            sourceCode,
-            readme,
-            ownerId,
-            title,
-            sourceCodeId: res.id
-          });
-          cb && cb();
-        })
-        .catch((error: any) => {
-          toggleIsLoading();
-          onSetNotificationSettings(error.message, "danger", "long");
-        });
-    } else {
-      toggleIsLoading();
-    }
-  }
+  //         setFetchedSourceCode({
+  //           sourceCode,
+  //           readme,
+  //           ownerId,
+  //           title,
+  //           sourceCodeId: res.id
+  //         });
+  //         cb && cb();
+  //       })
+  //       .catch((error: any) => {
+  //         toggleIsLoading();
+  //         onSetNotificationSettings(error.message, "danger", "long");
+  //       });
+  //   } else {
+  //     toggleIsLoading();
+  //   }
+  // }
 
-  function setSourcecodeOwner(data: any) {
-    setFetchedSourceCode({ ...fetchedSourceCode, ...data });
-  }
+  // function setSourcecodeOwner(data: any) {
+  //   setFetchedSourceCode({ ...fetchedSourceCode, ...data });
+  // }
 
   function handleToggleView() {
     setCurrentSection(currentSection === "console" ? "comments" : "console");
   }
 
-  function toggleIsLoading(loading = false) {
-    setisLoading(loading);
-  }
+  // function toggleIsLoading(loading = false) {
+  //   setisLoading(loading);
+  // }
 
   function renderSwitchView() {
     const IconComponent =
@@ -153,12 +154,12 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
         ogUrl={getBaseUrl()}
       />
       <div className={`${classes.relative} ${commonCss.flexRow}`}>
-        <div className={classes.linearProgress}>
+        {/* <div className={classes.linearProgress}>
           <IndeterminateLinearProgress isVisible={isLoading} />
         </div>
-        <MenuBar />
+        <MenuBar /> */}
         <main className={`${classes.main} ${commonCss.flexRow}`}>
-          <MonacoEditor
+          {/* <MonacoEditor
             onHandleLoading={toggleIsLoading}
             onRunSourceCode={setTerminalExecutableCode}
             onChangeCurrentSection={handleToggleView}
@@ -168,7 +169,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
             currentSection={currentSection}
             isFetchingSourcecode={isLoading}
             fetchSourceCode={fetchSourceCode}
-          />
+          /> */}
           <div className={classes.mainRightSection}>
             <div
               className={`${classes.rightSubSection} ${
@@ -192,13 +193,13 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
                   : classes.hideRightSubSection
               }`}
             >
-              <Suspense fallback={null}>
+              {/* <Suspense fallback={null}>
                 <Comments
                   visible={currentSection === "comments"}
                   sourceCodeId={fetchedSourceCode.sourceCodeId}
                   user={user}
                 />
-              </Suspense>
+              </Suspense> */}
             </div>
             {renderSwitchView()}
           </div>

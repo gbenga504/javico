@@ -25,7 +25,7 @@ interface IProps {
     authorId: string,
     previousReplyText: string,
     currentReplyText: string
-  ) => void;
+  ) => Promise<any>;
   isEditing: { [key: string]: boolean };
 }
 

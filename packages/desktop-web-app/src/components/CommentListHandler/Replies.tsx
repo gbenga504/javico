@@ -1,16 +1,16 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { CircularProgress, makeStyles } from '@material-ui/core';
+import React, { useState, useRef, useEffect } from "react";
+import { CircularProgress, makeStyles } from "@material-ui/core";
 import {
   KeyboardReturn as KeyboardReturnIcon,
   ExpandMore as ExpandMoreIcon,
-  ExpandLess as ExpandLessIcon,
-} from '@material-ui/icons';
+  ExpandLess as ExpandLessIcon
+} from "@material-ui/icons";
 
-import { Typography } from '../../atoms';
-import { Apis, IReply } from '../../utils/Apis';
-import Reply from './Reply';
-import CommentUtils from '../../utils/CommentUtils';
-import { color, fontsize } from '../../Css';
+import { Typography } from "../../atoms";
+import { Apis, IReply } from "../../utils/Apis";
+import Reply from "./Reply";
+import CommentUtils from "../../utils/CommentUtils";
+import { color, fontsize } from "../../Css";
 
 interface IProps {
   onHandleToggleRepliesVisibility: () => void;
@@ -35,7 +35,7 @@ const Replies: React.FC<IProps> = ({
   numReplies,
   isRepliesVisible,
   isRepliesLoading,
-  commentId,
+  commentId
 }) => {
   const [repliesHeight, setRepliesHeight] = useState<number>(0);
   const replyRef = useRef<any>(null);
@@ -63,8 +63,8 @@ const Replies: React.FC<IProps> = ({
           sourceCodeID: sourceCodeId,
           after: replies[replies.length - 1].clientTimestamp,
           limit: 10,
-          commentID: commentId,
-        },
+          commentID: commentId
+        }
       })
       .then(function(querySnapshot: Array<any>) {
         const { replies } = CommentUtils.parseReplies(querySnapshot, commentId);
@@ -75,7 +75,10 @@ const Replies: React.FC<IProps> = ({
 
   function renderShowMoreRepliesButton() {
     return (
-      <div onClick={handleLoadMoreReplies} className={classes.commentReplyActionButtonContainer}>
+      <div
+        onClick={handleLoadMoreReplies}
+        className={classes.commentReplyActionButtonContainer}
+      >
         <KeyboardReturnIcon />
         <Typography thickness="semi-bold">Show more replies</Typography>
       </div>
@@ -84,23 +87,29 @@ const Replies: React.FC<IProps> = ({
 
   const innerStyle = {
     height: `${isRepliesVisible ? repliesHeight : 0}px`,
-    opacity: isRepliesVisible ? 1 : 0,
+    opacity: isRepliesVisible ? 1 : 0
   };
 
-  const IconComponent = isRepliesVisible === true ? ExpandLessIcon : ExpandMoreIcon;
+  const IconComponent =
+    isRepliesVisible === true ? ExpandLessIcon : ExpandMoreIcon;
 
   return (
     <>
       <div
         onClick={onHandleToggleRepliesVisibility}
-        className={classes.commentReplyActionButtonContainer}>
+        className={classes.commentReplyActionButtonContainer}
+      >
         <IconComponent style={{ color: color.themeBlue }} />
         <Typography thickness="semi-bold">
-          {isRepliesVisible === true ? 'Hide' : 'View'} {numReplies}{' '}
-          {numReplies === 1 ? 'reply' : 'replies'}
+          {isRepliesVisible === true ? "Hide" : "View"} {numReplies}{" "}
+          {numReplies === 1 ? "reply" : "replies"}
         </Typography>
       </div>
-      <div ref={replyRef} style={{ ...innerStyle }} className={classes.repliesReply}>
+      <div
+        ref={replyRef}
+        style={{ ...innerStyle }}
+        className={classes.repliesReply}
+      >
         {isRepliesVisible === true &&
           replies.map((reply: IReply) => {
             return (
@@ -123,35 +132,37 @@ const Replies: React.FC<IProps> = ({
         replies.length < numReplies &&
         replies.length !== 0 &&
         renderShowMoreRepliesButton()}
-      {isRepliesLoading === true && <CircularProgress color="primary" size={20} />}
+      {isRepliesLoading === true && (
+        <CircularProgress color="primary" size={20} />
+      )}
     </>
   );
 };
 
 const useStyles = makeStyles(theme => ({
   commentReplyActionButtonContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    cursor: 'pointer',
+    display: "flex",
+    alignItems: "center",
+    cursor: "pointer",
     color: color.themeBlue,
     marginTop: theme.spacing(2),
-    '& ion-icon': {
+    "& ion-icon": {
       color: color.themeBlue,
-      fontSize: 16,
+      fontSize: 16
     },
-    '& span': {
+    "& span": {
       color: `${color.themeBlue} !important`,
       marginLeft: 10,
-      fontSize: fontsize.small,
-    },
+      fontSize: fontsize.small
+    }
   },
   repliesReply: {
-    willChange: 'height',
-    display: 'block',
+    willChange: "height",
+    display: "block",
     opacity: 1,
     // -webkit-transition: height 0.4s cubic-bezier(0.65, 0.05, 0.36, 1);
-    transition: 'all 0.4s cubic-bezier(0.65, 0.05, 0.36, 1)',
-  },
+    transition: "all 0.4s cubic-bezier(0.65, 0.05, 0.36, 1)"
+  }
 }));
 
 export default React.memo(Replies);

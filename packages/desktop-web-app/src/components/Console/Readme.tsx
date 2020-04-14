@@ -1,8 +1,7 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core';
-
-import { color, fontsize } from '../../Css';
-import { ButtonWithLoading } from '../../atoms';
+import React from "react";
+import { makeStyles } from "@material-ui/core";
+import { color, fontsize } from "@javico/common/lib/design-language/Css";
+import { ButtonWithLoading } from "@javico/common/lib/components";
 
 const Readme: React.FC<{
   onHandleReadMeTextChange: any;
@@ -20,13 +19,15 @@ const Readme: React.FC<{
         value={readMe}
         autoFocus={true}
         rows={7}
-        placeholder="Add a ReadMe (Helps others understand your code. Markdown is supported)"></textarea>
+        placeholder="Add a ReadMe (Helps others understand your code. Markdown is supported)"
+      ></textarea>
       <ButtonWithLoading
         variant="contained"
         onClick={onSubmitReadme}
         loading={isLoading}
         className={classes.saveReadmeButton}
-        color="primary">
+        color="primary"
+      >
         save
       </ButtonWithLoading>
     </>
@@ -37,20 +38,20 @@ const useStyles = makeStyles(theme => ({
   saveReadmeButton: {
     margin: theme.spacing(1),
     fontSize: fontsize.xsmall,
-    position: 'absolute',
+    position: "absolute",
     bottom: 10,
-    right: 10,
+    right: 10
   },
   consoleReadMeTextarea: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
     fontSize: fontsize.base,
-    resize: 'none',
-    background: 'transparent',
-    outline: 'none',
+    resize: "none",
+    background: "transparent",
+    outline: "none",
     color: color.white,
-    padding: theme.spacing(2),
-  },
+    padding: theme.spacing(2)
+  }
 }));
 
-export default Readme;
+export default React.memo(Readme);

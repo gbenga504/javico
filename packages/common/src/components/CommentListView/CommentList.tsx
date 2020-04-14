@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useImperativeHandle } from "react";
 import { TextareaAutosize, makeStyles } from "@material-ui/core";
 import { Send as SendIcon } from "@material-ui/icons";
 
@@ -18,7 +18,7 @@ interface IProps {
   visible: boolean;
   loading: boolean;
   onTopReached?: (info: { distanceFromEnd: number }) => void;
-  onTopReachedThreshold: number;
+  onTopReachedThreshold?: number;
   data: Array<IComment>;
   onMount?: () => void;
   onUnMount?: () => void;
@@ -30,217 +30,225 @@ interface IProps {
   renderItem: (item: IComment) => any;
 }
 
-const CommentList: React.FC<IProps> = ({
-  visible,
-  loading,
-  onTopReached,
-  onTopReachedThreshold = 0.9,
-  data,
-  onMount,
-  onUnMount,
-  onSend,
-  renderItem
-}) => {
-  const [quotedComment, setQuotedComment] = useState<string>("");
-  const [idOfQuotedComment, setIdOfQuotedComment] = useState<string>("");
-  const [newMessage, setNewMessage] = useState<string>("");
-  const classes = useStyles();
-  const commonCss = commonUseStyles();
-  const commentInputRef = useRef<any>(null);
-  const commentContainerRef = useRef<any>(null);
-  const previousComments = usePrevious(data);
+const CommentList = React.forwardRef(
+  (
+    {
+      visible,
+      loading,
+      onTopReached,
+      onTopReachedThreshold = 0.9,
+      data,
+      onMount,
+      onUnMount,
+      onSend,
+      renderItem
+    }: IProps,
+    ref
+  ) => {
+    const [quotedComment, setQuotedComment] = useState<string>("");
+    const [idOfQuotedComment, setIdOfQuotedComment] = useState<string>("");
+    const [newMessage, setNewMessage] = useState<string>("");
+    const classes = useStyles();
+    const commonCss = commonUseStyles();
+    const commentInputRef = useRef<any>(null);
+    const commentContainerRef = useRef<any>(null);
+    const previousComments = usePrevious(data);
 
-  useEffect(() => {
-    if (visible === true) {
-      onMount && onMount();
+    useEffect(() => {
+      if (visible === true) {
+        onMount && onMount();
+        focusCommentInput();
+      }
+
+      let tempCommentContainerRef: any = commentContainerRef.current;
+      function handleScroll() {
+        let boundingContainerClientRect = tempCommentContainerRef.getBoundingClientRect();
+        if (
+          tempCommentContainerRef.scrollTop <=
+            boundingContainerClientRect.height -
+              boundingContainerClientRect.height * onTopReachedThreshold &&
+          visible === true
+        ) {
+          // Trigger onTopReached
+          onTopReached &&
+            onTopReached({ distanceFromEnd: onTopReachedThreshold });
+        }
+      }
+      tempCommentContainerRef.addEventListener("scroll", handleScroll);
+
+      return () => {
+        onUnMount && onUnMount();
+        tempCommentContainerRef.removeEventListener("scroll", handleScroll);
+      };
+    }, [visible]);
+
+    useEffect(() => {
+      let _previousComments = previousComments || [];
+      if (data.length !== _previousComments.length) {
+        focusLastComment();
+      }
+    }, [data]);
+
+    useImperativeHandle(ref, () => ({
+      resetInputBox: () => {
+        setNewMessage("");
+        setQuotedComment("");
+        setIdOfQuotedComment("");
+      }
+    }));
+
+    function focusLastComment() {
+      commentContainerRef.current.scrollTop =
+        commentContainerRef.current.scrollHeight;
+    }
+
+    function focusCommentInput() {
+      setTimeout(() => commentInputRef.current.focus(), 100);
+    }
+
+    function handleQuoteComment(comment: string, commentId: string): void {
+      setQuotedComment(comment);
+      setIdOfQuotedComment(commentId);
       focusCommentInput();
     }
 
-    let tempCommentContainerRef: any = commentContainerRef.current;
-    function handleScroll() {
-      let boundingContainerClientRect = tempCommentContainerRef.getBoundingClientRect();
+    function handleCommentChange(
+      event: React.ChangeEvent<HTMLTextAreaElement>
+    ) {
+      setNewMessage(event.target.value);
+    }
+
+    function handleRemoveQuotedComment(event: React.KeyboardEvent) {
+      //Remove quoted comment when user presses the delete button
       if (
-        tempCommentContainerRef.scrollTop <=
-          boundingContainerClientRect.height -
-            boundingContainerClientRect.height * onTopReachedThreshold &&
-        visible === true
+        event.keyCode === 8 &&
+        !!quotedComment === true &&
+        newMessage.length === 0
       ) {
-        // Trigger onTopReached
-        onTopReached &&
-          onTopReached({ distanceFromEnd: onTopReachedThreshold });
+        setQuotedComment("");
+        setIdOfQuotedComment("");
+      }
+
+      //Send comment when user presses enter and the shift key is not pressed
+      if (event.keyCode === 13 && event.shiftKey === false) {
+        event.preventDefault();
+        onSend(
+          newMessage,
+          !!quotedComment === true ? "REPLY" : "COMMENT",
+          !!quotedComment === true ? idOfQuotedComment : undefined
+        );
       }
     }
-    tempCommentContainerRef.addEventListener("scroll", handleScroll);
 
-    return () => {
-      onUnMount && onUnMount();
-      tempCommentContainerRef.removeEventListener("scroll", handleScroll);
-    };
-  }, [visible]);
-
-  useEffect(() => {
-    let _previousComments = previousComments || [];
-    if (data.length !== _previousComments.length) {
-      focusLastComment();
-    }
-  }, [data]);
-
-  function focusLastComment() {
-    commentContainerRef.current.scrollTop =
-      commentContainerRef.current.scrollHeight;
-  }
-
-  function focusCommentInput() {
-    setTimeout(() => commentInputRef.current.focus(), 100);
-  }
-
-  function handleQuoteComment(comment: string, commentId: string): void {
-    setQuotedComment(comment);
-    setIdOfQuotedComment(commentId);
-    focusCommentInput();
-  }
-
-  function handleCommentChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
-    setNewMessage(event.target.value);
-  }
-
-  function handleRemoveQuotedComment(event: React.KeyboardEvent) {
-    //Remove quoted comment when user presses the delete button
-    if (
-      event.keyCode === 8 &&
-      !!quotedComment === true &&
-      newMessage.length === 0
-    ) {
-      setQuotedComment("");
-      setIdOfQuotedComment("");
-    }
-
-    //Send comment when user presses enter and the shift key is not pressed
-    if (event.keyCode === 13 && event.shiftKey === false) {
-      event.preventDefault();
+    function handleSendMessage() {
       onSend(
         newMessage,
         !!quotedComment === true ? "REPLY" : "COMMENT",
         !!quotedComment === true ? idOfQuotedComment : undefined
       );
     }
-  }
 
-  function handleSendMessage() {
-    onSend(
-      newMessage,
-      !!quotedComment === true ? "REPLY" : "COMMENT",
-      !!quotedComment === true ? idOfQuotedComment : undefined
-    );
-  }
+    function renderDateSeperator(date: number) {
+      return (
+        <React.Fragment>
+          <div className={classes.commentDateSeperatorContainer}>
+            <hr className={classes.commentDateSeperatorHr} />
+          </div>
+          <div className={classes.commentStickyDateContainer}>
+            <div>
+              <Typography
+                thickness="semi-bold"
+                className={classes.commentDateSeperatorText}
+              >
+                {getReadableDate(date)}
+              </Typography>
+            </div>
+          </div>
+        </React.Fragment>
+      );
+    }
 
-  //This is an imperative function which can be called to reset the input box
-  function resetInputBox() {
-    setNewMessage("");
-    setQuotedComment("");
-    setIdOfQuotedComment("");
-  }
+    function renderContentLoaders() {
+      return data.length > 0 ? (
+        <ContentLoader />
+      ) : (
+        Array.apply(null, Array(11)).map((value: any, index: number) => (
+          <ContentLoader key={value || index} />
+        ))
+      );
+    }
 
-  function renderDateSeperator(date: number) {
-    return (
-      <React.Fragment>
-        <div className={classes.commentDateSeperatorContainer}>
-          <hr className={classes.commentDateSeperatorHr} />
+    function renderComments() {
+      let previousDate: number | null = null;
+      return (
+        <>
+          {data.map((item, index) => {
+            let currentDate = new Date(item.createdAt).getDate();
+            let component = (
+              <React.Fragment key={item.id}>
+                {currentDate !== previousDate &&
+                  renderDateSeperator(item.createdAt)}
+                {loading === true && index === 0 && renderContentLoaders()}
+                {React.cloneElement(renderItem(item), {
+                  onRequestReply: handleQuoteComment
+                })}
+              </React.Fragment>
+            );
+            currentDate !== previousDate && (previousDate = currentDate);
+            return component;
+          })}
+        </>
+      );
+    }
+
+    function renderQuotedComment() {
+      return (
+        <div className={classes.commentQuotedCommentContainer}>
+          <p>{quotedComment}</p>
         </div>
-        <div className={classes.commentStickyDateContainer}>
-          <div>
-            <Typography
-              thickness="semi-bold"
-              className={classes.commentDateSeperatorText}
-            >
-              {getReadableDate(date)}
-            </Typography>
+      );
+    }
+
+    return (
+      <section className={classes.comments}>
+        <div
+          ref={commentContainerRef}
+          className={`${commonCss.fullHeightAndWidth} ${classes.commentsBody}`}
+        >
+          {renderComments()}
+        </div>
+        <div className={classes.commentInput}>
+          {!!quotedComment === true && renderQuotedComment()}
+          <div
+            className={`${classes.commentInputFieldContainer} ${
+              commonCss.flexRow
+            } ${!!quotedComment === true && "hide-border"}`}
+          >
+            <TextareaAutosize
+              aria-label="Drop a review"
+              className={classes.commentInputField}
+              placeholder={
+                !!quotedComment === true
+                  ? "Drop a reply"
+                  : "Drop a review on this code"
+              }
+              rowsMax={6}
+              rows={1}
+              ref={commentInputRef}
+              value={newMessage}
+              onChange={handleCommentChange}
+              onKeyDown={handleRemoveQuotedComment}
+            />
+            <SendIcon
+              className={classes.commentInputSendIcon}
+              onClick={handleSendMessage}
+            />
           </div>
         </div>
-      </React.Fragment>
+      </section>
     );
   }
-
-  function renderContentLoaders() {
-    return data.length > 0 ? (
-      <ContentLoader />
-    ) : (
-      Array.apply(null, Array(11)).map((value: any, index: number) => (
-        <ContentLoader key={value || index} />
-      ))
-    );
-  }
-
-  function renderComments() {
-    let previousDate: number | null = null;
-    return (
-      <>
-        {data.map((item, index) => {
-          let currentDate = new Date(item.createdAt).getDate();
-          let component = (
-            <React.Fragment key={item.id}>
-              {currentDate !== previousDate &&
-                renderDateSeperator(item.createdAt)}
-              {loading === true && index === 0 && renderContentLoaders()}
-              {React.cloneElement(renderItem(item), {
-                onRequestReply: handleQuoteComment
-              })}
-            </React.Fragment>
-          );
-          currentDate !== previousDate && (previousDate = currentDate);
-          return component;
-        })}
-      </>
-    );
-  }
-
-  function renderQuotedComment() {
-    return (
-      <div className={classes.commentQuotedCommentContainer}>
-        <p>{quotedComment}</p>
-      </div>
-    );
-  }
-
-  return (
-    <section className={classes.comments}>
-      <div
-        ref={commentContainerRef}
-        className={`${commonCss.fullHeightAndWidth} ${classes.commentsBody}`}
-      >
-        {renderComments()}
-      </div>
-      <div className={classes.commentInput}>
-        {!!quotedComment === true && renderQuotedComment()}
-        <div
-          className={`${classes.commentInputFieldContainer} ${
-            commonCss.flexRow
-          } ${!!quotedComment === true && "hide-border"}`}
-        >
-          <TextareaAutosize
-            aria-label="Drop a review"
-            className={classes.commentInputField}
-            placeholder={
-              !!quotedComment === true
-                ? "Drop a reply"
-                : "Drop a review on this code"
-            }
-            rowsMax={6}
-            rows={1}
-            ref={commentInputRef}
-            value={newMessage}
-            onChange={handleCommentChange}
-            onKeyDown={handleRemoveQuotedComment}
-          />
-          <SendIcon
-            className={classes.commentInputSendIcon}
-            onClick={handleSendMessage}
-          />
-        </div>
-      </div>
-    </section>
-  );
-};
+);
 
 const useStyles = makeStyles(theme => ({
   comments: {

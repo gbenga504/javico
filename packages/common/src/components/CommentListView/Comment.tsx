@@ -27,7 +27,7 @@ interface IReplyProps {
     id: string,
     previousReplyText: string,
     currentReplyText: string
-  ) => void;
+  ) => Promise<any>;
   isEditing: { [key: string]: boolean };
 }
 
@@ -46,7 +46,7 @@ interface IProps {
     id: string,
     previousCommentText: string,
     currentCommentText: string
-  ) => void;
+  ) => Promise<any>;
   isEditing: boolean;
   onShowReplies?: () => void;
   onHideReplies?: () => void;
@@ -125,7 +125,13 @@ const Comment: React.FC<IProps> = ({
   }
 
   function handleEditMessage() {
-    onEdit(id, text, editableComment);
+    if (text.trim() === editableComment.trim()) {
+      handleCloseEditMessagePanel();
+      return;
+    }
+    onEdit(id, text, editableComment).then(() => {
+      handleCloseEditMessagePanel();
+    });
   }
 
   function renderMenuOptions() {

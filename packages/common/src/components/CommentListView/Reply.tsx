@@ -25,7 +25,7 @@ interface IProps {
     id: string,
     previousReplyText: string,
     currentReplyText: string
-  ) => void;
+  ) => Promise<any>;
   isEditing: boolean;
 }
 
@@ -77,7 +77,17 @@ const Reply: React.FC<IProps> = ({
   }
 
   function handleEditMessage() {
-    onEdit(id, text, editableReply);
+    if (text.trim() === editableReply.trim()) {
+      handleCloseEditMessagePanel();
+      return;
+    }
+    onEdit(id, text, editableReply)
+      .then(() => {
+        setIsEditMessagePanelVisible(false);
+      })
+      .catch(() => {
+        setIsEditMessagePanelVisible(false);
+      });
   }
 
   function renderMenuOptions() {

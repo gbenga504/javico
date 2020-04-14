@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
-import { makeStyles, Menu, MenuItem } from '@material-ui/core';
-import { MoreHoriz as MoreHorizIcon } from '@material-ui/icons';
+import React, { useState } from "react";
+import { makeStyles, Menu, MenuItem } from "@material-ui/core";
+import { MoreHoriz as MoreHorizIcon } from "@material-ui/icons";
 
-import { useStyles as commonUseStyles, padding, color, fontsize } from '../../Css';
-import { Typography, withNotificationBanner } from '../../atoms';
-import DeleteMessageModal from '../DeleteMessageModal';
-import EditMessagePanel from '../EditMessagePanel';
-import { getRelativeTime } from '../../utils/TimeUtils';
-import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
-import { Apis } from '../../utils/Apis';
-import MarkdownRenderer from '../MarkDownRenderer';
+import {
+  useStyles as commonUseStyles,
+  padding,
+  color,
+  fontsize
+} from "../../Css";
+import { Typography, withNotificationBanner } from "../../atoms";
+import DeleteMessageModal from "../DeleteMessageModal";
+import EditMessagePanel from "../EditMessagePanel";
+import { getRelativeTime } from "../../utils/TimeUtils";
+import { IBannerStyle, IDuration } from "../../atoms/NotificationBanner";
+import { Apis } from "../../utils/Apis";
+import MarkdownRenderer from "../MarkDownRenderer";
 
 interface IProps {
   id: string;
@@ -20,7 +25,11 @@ interface IProps {
   sourceCodeId: string;
   isReplyOwner: boolean;
   commentId: string;
-  onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
+  onSetNotificationSettings: (
+    text: string,
+    style?: IBannerStyle,
+    duration?: IDuration
+  ) => null;
 }
 
 const Reply: React.FC<IProps> = ({
@@ -32,15 +41,24 @@ const Reply: React.FC<IProps> = ({
   onSetNotificationSettings,
   sourceCodeId,
   commentId,
-  isReplyOwner,
+  isReplyOwner
 }) => {
   const classes = useStyles();
   const commonCss = commonUseStyles();
-  const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | SVGSVGElement>(null);
-  const [isConfirmDeleteModalVisible, setIsConfirmDeleteModalVisible] = useState<boolean>(false);
-  const [isDeleteReplyLoading, setIsDeleteReplyLoading] = useState<boolean>(false);
+  const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | SVGSVGElement>(
+    null
+  );
+  const [
+    isConfirmDeleteModalVisible,
+    setIsConfirmDeleteModalVisible
+  ] = useState<boolean>(false);
+  const [isDeleteReplyLoading, setIsDeleteReplyLoading] = useState<boolean>(
+    false
+  );
   const [editableReply, setEditableReply] = useState<string>(text);
-  const [isEditMessagePanelVisible, setIsEditMessagePanelVisible] = useState<boolean>(false);
+  const [isEditMessagePanelVisible, setIsEditMessagePanelVisible] = useState<
+    boolean
+  >(false);
   const [isEditingReply, setIsEditingReply] = useState<boolean>(false);
 
   function handleShowOptions(event: React.MouseEvent<SVGSVGElement>) {
@@ -64,7 +82,7 @@ const Reply: React.FC<IProps> = ({
     setIsDeleteReplyLoading(true);
     Apis.replies
       .deleteReply({
-        params: { sourceCodeID: sourceCodeId, commentID: commentId, ID: id },
+        params: { sourceCodeID: sourceCodeId, commentID: commentId, ID: id }
       })
       .then(res => {
         setIsDeleteReplyLoading(false);
@@ -94,14 +112,14 @@ const Reply: React.FC<IProps> = ({
     Apis.replies
       .updateReply({
         data: { text: editableReply.trim() },
-        params: { sourceCodeID: sourceCodeId, commentID: commentId, ID: id },
+        params: { sourceCodeID: sourceCodeId, commentID: commentId, ID: id }
       })
       .then(res => {
         setIsEditingReply(false);
         setIsEditMessagePanelVisible(false);
       })
       .catch(error => {
-        onSetNotificationSettings(error, 'danger', 'long');
+        onSetNotificationSettings(error, "danger", "long");
       });
   }
 
@@ -111,7 +129,8 @@ const Reply: React.FC<IProps> = ({
         anchorEl={optionsAnchorEl}
         keepMounted
         open={Boolean(optionsAnchorEl)}
-        onClose={handleCloseOptions}>
+        onClose={handleCloseOptions}
+      >
         <MenuItem onClick={handleOpenEditMessagePanel}>Edit</MenuItem>
         <MenuItem onClick={handleOpenConfirmDeleteModal}>Delete</MenuItem>
       </Menu>
@@ -121,14 +140,28 @@ const Reply: React.FC<IProps> = ({
   function renderReply() {
     return (
       <>
-        <img className={classes.replyUserImage} src={authorPhotoURL} alt={authorName} />
-        <div className={commonCss.flexColumn} style={{ ...padding(8, 'l'), width: '100%' }}>
+        <img
+          className={classes.replyUserImage}
+          src={authorPhotoURL}
+          alt={authorName}
+        />
+        <div
+          className={commonCss.flexColumn}
+          style={{ ...padding(8, "l"), width: "100%" }}
+        >
           <div
             className={commonCss.flexRow}
-            style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography className={classes.replyUsername} thickness="bold" variant="span">
-              {!!authorName ? authorName : 'Anonymous'}{' '}
-              <Typography className={classes.replyTime}>{getRelativeTime(createdAt)}</Typography>
+            style={{ justifyContent: "space-between", alignItems: "center" }}
+          >
+            <Typography
+              className={classes.replyUsername}
+              thickness="bold"
+              variant="span"
+            >
+              {!!authorName ? authorName : "Anonymous"}{" "}
+              <Typography className={classes.replyTime}>
+                {getRelativeTime(createdAt)}
+              </Typography>
             </Typography>
 
             {isReplyOwner && (
@@ -170,44 +203,44 @@ const Reply: React.FC<IProps> = ({
 
 const useStyles = makeStyles(theme => ({
   reply: {
-    backgroundColor: 'inherit',
-    transition: 'all 0.3s',
-    cursor: 'pointer',
+    backgroundColor: "inherit",
+    transition: "all 0.3s",
+    cursor: "pointer",
     marginTop: 10,
-    '&:hover': {
-      background: '#222529',
+    "&:hover": {
+      background: "#222529"
     },
-    '&:hover .reply__show-more-button': {
-      display: 'block',
-    },
+    "&:hover .reply__show-more-button": {
+      display: "block"
+    }
   },
   replyUserImage: {
     width: 24,
     height: 24,
-    borderRadius: 5,
+    borderRadius: 5
   },
   replyUsername: {
-    cursor: 'pointer',
-    display: 'inline-block',
+    cursor: "pointer",
+    display: "inline-block",
     margin: theme.spacing(0, 0, 1),
-    fontSize: fontsize.small,
+    fontSize: fontsize.small
   },
   replyTime: {
     fontSize: fontsize.xsmall,
     color: `#ABABAD !important`,
-    marginLeft: 5,
+    marginLeft: 5
   },
   replyUserText: {
     fontSize: fontsize.small,
-    '& p': {
-      margin: 0,
-    },
+    "& p": {
+      margin: 0
+    }
   },
   replyMoreIcon: {
     color: color.white,
     fontSize: fontsize.large,
-    display: 'none',
-  },
+    display: "none"
+  }
 }));
 
 export default React.memo(withNotificationBanner(Reply));
