@@ -1,14 +1,14 @@
-import React from 'react';
+import React from "react";
 import {
   Dialog,
   DialogContent,
   DialogActions,
   DialogTitle,
   Button,
-  makeStyles,
-} from '@material-ui/core';
-import { ButtonWithLoading } from '../atoms';
-import { useStyles as commonUseStyles } from '../Css';
+  makeStyles
+} from "@material-ui/core";
+import { ButtonWithLoading } from "@javico/common/lib/components";
+import { useStyles as commonUseStyles } from "@javico/common/lib/design-language/Css";
 
 interface IProps {
   visible: boolean;
@@ -21,7 +21,7 @@ const DeleteMessageModal: React.FC<IProps> = ({
   visible,
   onRequestClose,
   onDeleteMessage,
-  loading,
+  loading
 }) => {
   const commonCss = commonUseStyles();
   const classes = useStyles();
@@ -31,13 +31,18 @@ const DeleteMessageModal: React.FC<IProps> = ({
       open={visible}
       onClose={onRequestClose}
       aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description">
+      aria-describedby="alert-dialog-description"
+    >
       <DialogTitle id="alert-dialog-title">Delete Message</DialogTitle>
       <DialogContent>
         Are you sure you want to delete this message? This cannot be undone.
       </DialogContent>
       <DialogActions>
-        <Button className={commonCss.cancelButton} onClick={onRequestClose} autoFocus>
+        <Button
+          className={commonCss.cancelButton}
+          onClick={onRequestClose}
+          autoFocus
+        >
           Cancel
         </Button>
         <ButtonWithLoading
@@ -45,7 +50,8 @@ const DeleteMessageModal: React.FC<IProps> = ({
           loading={loading}
           color="primary"
           variant="contained"
-          onClick={onDeleteMessage}>
+          onClick={onDeleteMessage}
+        >
           Delete
         </ButtonWithLoading>
       </DialogActions>
@@ -55,11 +61,11 @@ const DeleteMessageModal: React.FC<IProps> = ({
 
 const useStyles = makeStyles(theme => ({
   button: {
-    background: '#E01E5A',
-    '&:hover': {
-      background: '#E22F67',
-    },
-  },
+    background: "#E01E5A",
+    "&:hover": {
+      background: "#E22F67"
+    }
+  }
 }));
 
 export default React.memo(DeleteMessageModal);

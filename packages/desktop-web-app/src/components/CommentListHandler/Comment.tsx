@@ -210,7 +210,7 @@ const Comment: React.FC<IProps> = ({
           />
         </div>
         <Typography className={classes.commentUserComment} variant="span">
-          <MarkdownRenderer source={text} linkTarget="_blank" />
+          <MarkDownRenderer source={text} linkTarget="_blank" />
         </Typography>
       </>
     );
@@ -238,7 +238,8 @@ const Comment: React.FC<IProps> = ({
             onHandleValueChange={handleCommentChange}
             value={editableComment}
             onRequestClose={handleCloseEditMessagePanel}
-            onEditMessage={handleEditMessage}
+            // onEditMessage={handleEditMessage}
+            onOk={handleEditMessage}
           />
         </div>
       </div>
@@ -269,7 +270,7 @@ const Comment: React.FC<IProps> = ({
         visible={isConfirmDeleteModalVisible}
         loading={isDeleteCommentLoading}
         onRequestClose={handleCloseConfirmDeleteModal}
-        onDeleteMessage={handleDeleteComment}
+        onOk={handleDeleteComment}
       />
     </div>
   );

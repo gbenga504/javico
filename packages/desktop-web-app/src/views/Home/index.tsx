@@ -4,26 +4,26 @@ import {
   InsertComment as InsertCommentIcon,
   Code as CodeIcon
 } from "@material-ui/icons";
-// import { MonacoEditor } from "@javico/common/lib/components";
+import {
+  MonacoEditor,
+  IndeterminateLinearProgress,
+  withNotificationBanner,
+  Seo
+} from "@javico/common/lib/components/";
 import {
   color,
   useStyles as commonUseStyles,
   padding
 } from "@javico/common/lib/design-language/Css";
 import {
-  // IndeterminateLinearProgress,
-  withNotificationBanner,
-  Seo
-} from "@javico/common/lib/components";
-import {
   IBannerStyle,
   IDuration
 } from "@javico/common/lib/components/NotificationBanner";
 import { Apis } from "@javico/common/lib/utils/Apis";
 
-// import MenuBar from "../../components/MenuBar";
-import Console from "../../components/Console";
-// import { Apis } from "../../utils/Apis";
+import MenuBar from "../../components/MenuBar";
+// import Console from "../../components/Console";
+import { Apis } from "../../utils/Apis";
 import { getSourceCodeIdFromUrl, getBaseUrl } from "../../utils/UrlUtils";
 
 // const Comments = lazy(() => import("../../components/Comments"));
@@ -171,7 +171,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
             fetchSourceCode={fetchSourceCode}
           /> */}
           <div className={classes.mainRightSection}>
-            <div
+            {/* <div
               className={`${classes.rightSubSection} ${
                 currentSection === "console"
                   ? classes.showRightSubSection
@@ -200,9 +200,8 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
                   user={user}
                 />
               </Suspense> */}
-            </div>
-            {renderSwitchView()}
           </div>
+          {renderSwitchView()} */}
         </main>
       </div>
     </>

@@ -1,29 +1,42 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { Fab, Tooltip } from '@material-ui/core';
-import { ModeComment as ModeCommentIcon, PlayArrow as PlayArrowIcon } from '@material-ui/icons';
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import { Fab, Tooltip } from "@material-ui/core";
+import {
+  ModeComment as ModeCommentIcon,
+  PlayArrow as PlayArrowIcon
+} from "@material-ui/icons";
+import {
+  useStyles as commonUseStyles,
+  color
+} from "@javico/common/lib/design-language/Css";
+import {
+  IBannerStyle,
+  IDuration,
+  withNotificationBanner
+} from "@javico/common/lib/components/NotificationBanner";
+import {
+  MonacoIntegrator,
+  MonacoThemes,
+  Apis,
+  getSourceCodeIdFromUrl,
+  updateUrl
+} from "@javico/common/lib/utils";
 
-import { useStyles } from './styles';
-import { useStyles as commonUseStyles, color } from '../../Css';
-import MonacoIntegrator from '../../utils/MonacoIntegrator';
-import MonacoThemes from '../../utils/MonacoThemes';
-import { Apis } from '../../utils/Apis';
-import { AnimatedCircularLoader, withNotificationBanner } from '../../atoms';
-import SignInViaGithubModal from '../SignInViaGithubModal';
-import InlineCodeComment from '../InlineCodeComment';
-import { IBannerStyle, IDuration } from '../../atoms/NotificationBanner';
-import { getSourceCodeIdFromUrl, updateUrl } from '../../utils/UrlUtils';
-import SourceCodeHeading from './SourceCodeHeading';
+import { useStyles } from "./styles";
+// import { AnimatedCircularLoader } from "@javico/common/lib/components";
+import SignInViaGithubModal from "../SignInViaGithubModal";
+import InlineCodeComment from "../InlineCodeComment";
+import SourceCodeHeading from "./SourceCodeHeading";
 
 interface IProps {
   value?: string;
   onRunSourceCode?: ({
     sourceCode,
-    sourceCodeHash,
+    sourceCodeHash
   }: {
     sourceCode: string;
     sourceCodeHash: number;
   }) => void;
-  theme?: 'light' | 'dark' | 'ace' | 'night-dark';
+  theme?: "light" | "dark" | "ace" | "night-dark";
   language?: string;
   onHandleLoading: any;
   fetchedSourceCode: {
@@ -35,9 +48,13 @@ interface IProps {
   };
   onSetSourcecodeOwner: any;
   isFetchingSourcecode: boolean;
-  onSetNotificationSettings: (text: string, style?: IBannerStyle, duration?: IDuration) => null;
+  onSetNotificationSettings: (
+    text: string,
+    style?: IBannerStyle,
+    duration?: IDuration
+  ) => null;
   user: any;
-  currentSection: 'comments' | 'console';
+  currentSection: "comments" | "console";
   onChangeCurrentSection: () => void;
   fetchSourceCode: (cb: any) => void;
 }
@@ -45,9 +62,9 @@ interface IProps {
 const MonacoEditor: React.FC<IProps> = ({
   value,
   onRunSourceCode,
-  theme = 'vs-dark',
+  theme = "vs-dark",
   onHandleLoading,
-  language = 'javascript',
+  language = "javascript",
   onSetNotificationSettings,
   onSetSourcecodeOwner,
   isFetchingSourcecode,
@@ -61,19 +78,25 @@ const MonacoEditor: React.FC<IProps> = ({
     ownerId,
     title: sourceCodeTitle,
     sourceCodeId,
-    readme,
-  },
+    readme
+  }
 }) => {
-  const [shouldDisplayCommentBox, setShouldDisplayCommentBox] = useState<boolean>(false);
-  const [shouldDisplayCommentIcon, setShouldDisplayCommentIcon] = useState<boolean>(false);
+  const [shouldDisplayCommentBox, setShouldDisplayCommentBox] = useState<
+    boolean
+  >(false);
+  const [shouldDisplayCommentIcon, setShouldDisplayCommentIcon] = useState<
+    boolean
+  >(false);
   const [mousePosition, setMousePosition] = useState<any>({});
   const [isMonacoReady, setIsMonacoReady] = useState<boolean>(false);
   const [isEditorReady, setIsEditorReady] = useState<boolean>(false);
   const [selectionRange, setSelectionRange] = useState<any>(null);
-  const [selectionValue, setSelectionValue] = useState<string>('');
+  const [selectionValue, setSelectionValue] = useState<string>("");
   const [user, setUser] = useState<any>(_user);
-  const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
-  const [sourceCode, setSourceCode] = useState('');
+  const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(
+    false
+  );
+  const [sourceCode, setSourceCode] = useState("");
   const monacoRef = useRef<any>(null);
   const editorRef = useRef<any>(null);
   const subscriptionRef = useRef<any>(null);
@@ -84,7 +107,7 @@ const MonacoEditor: React.FC<IProps> = ({
   const createEditor = useCallback(() => {
     const model = monacoRef.current.editor.createModel(value, language);
     editorRef.current = monacoRef.current.editor.create(nodeRef.current, {
-      automaticLayout: true,
+      automaticLayout: true
     });
     editorRef.current.setModel(model);
 
@@ -147,9 +170,9 @@ const MonacoEditor: React.FC<IProps> = ({
           [
             {
               range: model.getFullModelRange(),
-              text: value,
-            },
-          ],
+              text: value
+            }
+          ]
         );
       }
     }
@@ -168,18 +191,24 @@ const MonacoEditor: React.FC<IProps> = ({
   }, [selectionValue, selectionRange]);
 
   function handleSourceCodeExecution() {
-    onRunSourceCode && onRunSourceCode({ sourceCode, sourceCodeHash: Date.now() });
+    onRunSourceCode &&
+      onRunSourceCode({ sourceCode, sourceCodeHash: Date.now() });
   }
 
   function disableEditor(disable = false) {
     if (editorRef.current !== null)
       editorRef.current.updateOptions({
-        readOnly: !getSourceCodeIdFromUrl() ? false : disable,
+        readOnly: !getSourceCodeIdFromUrl() ? false : disable
       });
   }
 
   function colorHighlight() {
-    const { endColumn, endLineNumber, startColumn, startLineNumber } = selectionRange;
+    const {
+      endColumn,
+      endLineNumber,
+      startColumn,
+      startLineNumber
+    } = selectionRange;
     editorRef.current.deltaDecorations(
       [],
       [
@@ -188,23 +217,33 @@ const MonacoEditor: React.FC<IProps> = ({
             startLineNumber,
             startColumn,
             endLineNumber,
-            endColumn,
+            endColumn
           ),
-          options: { inlineClassName: classes.monacoEditorHighlightMainContent },
+          options: { inlineClassName: classes.monacoEditorHighlightMainContent }
         },
         {
-          range: new monacoRef.current.Range(startLineNumber, 1, startLineNumber, startColumn),
+          range: new monacoRef.current.Range(
+            startLineNumber,
+            1,
+            startLineNumber,
+            startColumn
+          ),
           options: {
-            inlineClassName: classes.monacoEditorHighlightRemainingContent,
-          },
+            inlineClassName: classes.monacoEditorHighlightRemainingContent
+          }
         },
         {
-          range: new monacoRef.current.Range(endLineNumber, endColumn, endLineNumber, 1000),
+          range: new monacoRef.current.Range(
+            endLineNumber,
+            endColumn,
+            endLineNumber,
+            1000
+          ),
           options: {
-            inlineClassName: classes.monacoEditorHighlightRemainingContent,
-          },
-        },
-      ],
+            inlineClassName: classes.monacoEditorHighlightRemainingContent
+          }
+        }
+      ]
     );
   }
 
@@ -217,7 +256,7 @@ const MonacoEditor: React.FC<IProps> = ({
   function handleHideCommentBox() {
     setShouldDisplayCommentBox(false);
     setSelectionRange(null);
-    setSelectionValue('');
+    setSelectionValue("");
     setShouldDisplayCommentIcon(false);
     editorRef.current.getModel().setValue(sourceCode);
   }
@@ -238,14 +277,14 @@ const MonacoEditor: React.FC<IProps> = ({
     Apis.sourceCodes
       .saveSourceCode({
         data,
-        params: { ID: id },
+        params: { ID: id }
       })
       .then((res: any) => {
         fetchSourceCode(onHandleLoading());
       })
       .catch((error: any) => {
         onHandleLoading();
-        onSetNotificationSettings(error.message, 'danger', 'long');
+        onSetNotificationSettings(error.message, "danger", "long");
       });
   }
 
@@ -256,21 +295,21 @@ const MonacoEditor: React.FC<IProps> = ({
       .saveSourceCode({
         data: {
           ownerId: me.uid,
-          ...data,
-        },
+          ...data
+        }
       })
       .then(res => {
         onHandleLoading();
         onSetSourcecodeOwner({
           sourceCode,
           ownerId: me.uid,
-          sourceCodeId: res.id,
+          sourceCodeId: res.id
         });
         updateUrl(res, me.uid);
       })
       .catch((error: any) => {
         onHandleLoading();
-        onSetNotificationSettings(error.message, 'danger', 'long');
+        onSetNotificationSettings(error.message, "danger", "long");
       });
   }
 
@@ -278,7 +317,7 @@ const MonacoEditor: React.FC<IProps> = ({
     const id = getSourceCodeIdFromUrl();
     if (id) {
       if (sourceCode === fetchedSourceCode) {
-        onSetNotificationSettings('Your code is up to date', 'info', 'long');
+        onSetNotificationSettings("Your code is up to date", "info", "long");
         return;
       }
       onHandleLoading(true);
@@ -286,9 +325,9 @@ const MonacoEditor: React.FC<IProps> = ({
     } else {
       const data = {
         sourceCode,
-        readme: '',
-        title: 'Untitled',
-        tags: [],
+        readme: "",
+        title: "Untitled",
+        tags: []
       };
       saveNewSourcecode(data);
     }
@@ -303,8 +342,8 @@ const MonacoEditor: React.FC<IProps> = ({
   }
 
   function handleHideCommentIcon(e: any) {
-    if(shouldDisplayCommentBox){
-      if(e.keyCode === 27){
+    if (shouldDisplayCommentBox) {
+      if (e.keyCode === 27) {
         //  todo -> reset selected code e.t.cc
         setShouldDisplayCommentBox(false);
       }
@@ -315,7 +354,10 @@ const MonacoEditor: React.FC<IProps> = ({
   }
 
   function handleSaveSourceCode(event: React.KeyboardEvent) {
-    if ((event.ctrlKey === true || event.metaKey === true) && event.keyCode === 83) {
+    if (
+      (event.ctrlKey === true || event.metaKey === true) &&
+      event.keyCode === 83
+    ) {
       event.preventDefault();
 
       let me = Apis.users.getCurrentUser();
@@ -332,10 +374,12 @@ const MonacoEditor: React.FC<IProps> = ({
       <div
         className={`${commonCss.flexRow} ${commonCss.center} ${commonCss.fullHeightAndWidth}`}
         style={{
-          overflow: 'hidden',
-          background: color.darkThemeBlack,
-        }}>
-        <AnimatedCircularLoader />
+          overflow: "hidden",
+          background: color.darkThemeBlack
+        }}
+      >
+        {/* <AnimatedCircularLoader /> */}
+        ANIMATED CIRCULAR LOADER MISSING
       </div>
     ) : null;
   }
@@ -348,15 +392,16 @@ const MonacoEditor: React.FC<IProps> = ({
         className={classes.monacoEditorCodeCommentIcon}
         style={{
           left: mousePosition.x,
-          top: mousePosition.y,
-        }}>
+          top: mousePosition.y
+        }}
+      >
         <Tooltip title="Comment on code" placement="bottom" enterDelay={100}>
           <span className={commonCss.flexRow}>
             <ModeCommentIcon
               style={{
-                color: '#074e68',
+                color: "#074e68",
                 margin: 12,
-                fontSize: 14,
+                fontSize: 14
               }}
             />
           </span>
@@ -407,7 +452,8 @@ const MonacoEditor: React.FC<IProps> = ({
         color="primary"
         onClick={handleSourceCodeExecution}
         variant="round"
-        classes={{ root: classes.monacoEditorRunButton }}>
+        classes={{ root: classes.monacoEditorRunButton }}
+      >
         <PlayArrowIcon className={classes.monacoEditorRunButtonIcon} />
       </Fab>
       <SignInViaGithubModal

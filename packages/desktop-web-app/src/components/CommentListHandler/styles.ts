@@ -1,6 +1,9 @@
 import { makeStyles } from "@material-ui/core";
-
-import { color, fontsize, padding } from "../../Css";
+import {
+  padding,
+  color,
+  fontsize
+} from "@javico/common/lib/design-language/Css";
 
 export const useStyles = makeStyles(theme => ({
   comments: {
