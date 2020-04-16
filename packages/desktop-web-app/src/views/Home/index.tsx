@@ -9,7 +9,7 @@ import {
   IndeterminateLinearProgress,
   withNotificationBanner,
   Seo
-} from "@javico/common/lib/components/";
+} from "@javico/common/lib/components";
 import {
   color,
   useStyles as commonUseStyles,
@@ -20,13 +20,16 @@ import {
   IDuration
 } from "@javico/common/lib/components/NotificationBanner";
 import { Apis } from "@javico/common/lib/utils/Apis";
+import {
+  getSourceCodeIdFromUrl,
+  getBaseUrl
+} from "@javico/common/lib/utils/UrlUtils";
 
 import MenuBar from "../../components/MenuBar";
-// import Console from "../../components/Console";
-import { Apis } from "../../utils/Apis";
-import { getSourceCodeIdFromUrl, getBaseUrl } from "../../utils/UrlUtils";
-
-// const Comments = lazy(() => import("../../components/Comments"));
+import Console from "../../components/Console";
+const CommentListHandler = lazy(() =>
+  import("../../components/CommentListHandler")
+);
 
 interface IProps {
   onSetNotificationSettings: (
@@ -36,23 +39,36 @@ interface IProps {
   ) => null;
 }
 
+interface ISourceCodeMetaData {
+  sourceCode: string;
+  readme?: string;
+  ownerId: string;
+  title?: string;
+  sourceCodeId: string;
+}
+
+const RIGHT_SECTION = {
+  comments: "comments",
+  console: "console"
+};
+
 const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
   const [terminalExecutableCode, setTerminalExecutableCode] = useState<{
     sourceCode: string;
     sourceCodeHash: null | number;
   }>({ sourceCode: "", sourceCodeHash: null });
-  const [currentSection, setCurrentSection] = useState<"comments" | "console">(
-    "console"
+  const [currentRightSection, setCurrentRightSection] = useState<string>(
+    RIGHT_SECTION.console
   );
   const [user, setUser] = useState<any>(null);
-  const [isLoading, setisLoading] = useState<boolean>(false);
-  const [fetchedSourceCode, setFetchedSourceCode] = useState({
-    sourceCode: "",
-    readme: "",
-    ownerId: "",
-    title: "",
-    sourceCodeId: ""
-  });
+  const [
+    isFetchingSourceCodeMetaData,
+    setIsFetchingSourceCodeMetaData
+  ] = useState<boolean>(false);
+  const [
+    sourceCodeMetaData,
+    setSourceCodeMetaData
+  ] = useState<null | ISourceCodeMetaData>(null);
   const classes = useStyles();
   const commonCss = commonUseStyles();
 
@@ -64,59 +80,63 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
         setUser(null);
       }
     });
+    fetchSourceCodeMetaData();
   }, []);
 
-  // useEffect(() => {
-  //   fetchSourceCode(toggleIsLoading(true));
-  //   // eslint-disable-next-line
-  // }, []);
-
-  // function fetchSourceCode(cb: any) {
-  //   if (getSourceCodeIdFromUrl()) {
-  //     Apis.sourceCodes
-  //       .fetchSourceCode({
-  //         params: { ID: getSourceCodeIdFromUrl() }
-  //       })
-  //       .then(res => {
-  //         const { sourceCode, readme, ownerId, title } = res.data();
-  //         toggleIsLoading();
-
-  //         setFetchedSourceCode({
-  //           sourceCode,
-  //           readme,
-  //           ownerId,
-  //           title,
-  //           sourceCodeId: res.id
-  //         });
-  //         cb && cb();
-  //       })
-  //       .catch((error: any) => {
-  //         toggleIsLoading();
-  //         onSetNotificationSettings(error.message, "danger", "long");
-  //       });
-  //   } else {
-  //     toggleIsLoading();
-  //   }
-  // }
-
-  // function setSourcecodeOwner(data: any) {
-  //   setFetchedSourceCode({ ...fetchedSourceCode, ...data });
-  // }
-
-  function handleToggleView() {
-    setCurrentSection(currentSection === "console" ? "comments" : "console");
+  function fetchSourceCodeMetaData(): void {
+    if (getSourceCodeIdFromUrl()) {
+      setIsFetchingSourceCodeMetaData(true);
+      Apis.sourceCodes
+        .fetchSourceCode({
+          params: { ID: getSourceCodeIdFromUrl() }
+        })
+        .then(res => {
+          const { sourceCode, readme, ownerId, title } = res.data();
+          setIsFetchingSourceCodeMetaData(false);
+          setSourceCodeMetaData({
+            sourceCode,
+            readme,
+            ownerId,
+            title,
+            sourceCodeId: res.id
+          });
+        })
+        .catch((error: any) => {
+          setIsFetchingSourceCodeMetaData(false);
+          onSetNotificationSettings(error.message, "danger", "long");
+        });
+    }
   }
 
-  // function toggleIsLoading(loading = false) {
-  //   setisLoading(loading);
-  // }
+  function updateSourceCodeMetaData(data: {
+    sourceCode: string;
+    ownerId: string;
+    sourceCodeId: string;
+  }) {
+    setSourceCodeMetaData((prevState: ISourceCodeMetaData | null) => ({
+      ...prevState,
+      ...data
+    }));
+  }
+
+  function handleToggleView() {
+    setCurrentRightSection((prevState: string) =>
+      prevState === RIGHT_SECTION.console
+        ? RIGHT_SECTION.comments
+        : RIGHT_SECTION.console
+    );
+  }
 
   function renderSwitchView() {
     const IconComponent =
-      currentSection === "console" ? InsertCommentIcon : CodeIcon;
+      currentRightSection === RIGHT_SECTION.console
+        ? InsertCommentIcon
+        : CodeIcon;
     return (
       <Tooltip
-        title={currentSection === "console" ? "chat" : "terminal"}
+        title={
+          currentRightSection === RIGHT_SECTION.console ? "chat" : "terminal"
+        }
         placement="left"
         enterDelay={100}
       >
@@ -141,7 +161,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
     <>
       <Seo
         title={`${
-          !!fetchedSourceCode.ownerId ? fetchedSourceCode.title : "Untitled"
+          sourceCodeMetaData ? sourceCodeMetaData.title : "Untitled"
         }.js by ${
           !!user && !!user.displayName ? user.displayName : "Anonymous"
         }`}
@@ -154,12 +174,12 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
         ogUrl={getBaseUrl()}
       />
       <div className={`${classes.relative} ${commonCss.flexRow}`}>
-        {/* <div className={classes.linearProgress}>
+        <div className={classes.linearProgress}>
           <IndeterminateLinearProgress isVisible={isLoading} />
         </div>
-        <MenuBar /> */}
+        <MenuBar />
         <main className={`${classes.main} ${commonCss.flexRow}`}>
-          {/* <MonacoEditor
+          <MonacoEditor
             onHandleLoading={toggleIsLoading}
             onRunSourceCode={setTerminalExecutableCode}
             onChangeCurrentSection={handleToggleView}
@@ -169,9 +189,9 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
             currentSection={currentSection}
             isFetchingSourcecode={isLoading}
             fetchSourceCode={fetchSourceCode}
-          /> */}
+          />
           <div className={classes.mainRightSection}>
-            {/* <div
+            <div
               className={`${classes.rightSubSection} ${
                 currentSection === "console"
                   ? classes.showRightSubSection
@@ -193,15 +213,16 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
                   : classes.hideRightSubSection
               }`}
             >
-              {/* <Suspense fallback={null}>
-                <Comments
+              <Suspense fallback={null}>
+                <CommentListHandler
                   visible={currentSection === "comments"}
                   sourceCodeId={fetchedSourceCode.sourceCodeId}
                   user={user}
                 />
-              </Suspense> */}
+              </Suspense>
+            </div>
+            {renderSwitchView()}
           </div>
-          {renderSwitchView()} */}
         </main>
       </div>
     </>
