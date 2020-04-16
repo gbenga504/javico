@@ -68,11 +68,9 @@ const MonacoEditor: React.FC<IProps> = ({
   onSetNotificationSettings,
   onSetSourcecodeOwner,
   isFetchingSourcecode,
-  user: _user,
   currentSection,
   onChangeCurrentSection,
   fetchSourceCode,
-
   fetchedSourceCode: {
     sourceCode: fetchedSourceCode,
     ownerId,
@@ -148,14 +146,12 @@ const MonacoEditor: React.FC<IProps> = ({
   }, [fetchedSourceCode]);
 
   useEffect(() => {
-    if (_user) {
-      setUser(_user);
-      disableEditor(_user.uid !== ownerId);
+    if (user) {
+      disableEditor(user.uid !== ownerId);
     } else {
-      setUser(null);
       disableEditor(true);
     }
-  }, [_user, ownerId]);
+  }, [user, ownerId]);
 
   useEffect(() => {
     isMonacoReady === true && isEditorReady === false && createEditor();
@@ -439,7 +435,6 @@ const MonacoEditor: React.FC<IProps> = ({
           <InlineCodeComment
             onHideCommentBox={handleHideCommentBox}
             onOpenSignInModal={handleOpenSignInModal}
-            user={user}
             mousePosition={mousePosition}
             sourceCodeId={sourceCodeId}
             codeReference={selectionValue}

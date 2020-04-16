@@ -10,9 +10,11 @@ import {
   IDuration,
   withNotificationBanner
 } from "@javico/common/lib/components/NotificationBanner";
+import { useSelector } from "react-redux";
 
 import { useStyles } from "./styles";
 import Comment from "./Comment";
+import { getCurrentUserState } from "../../redux/auth/reducers";
 
 interface IProps {
   visible: boolean;
@@ -22,7 +24,6 @@ interface IProps {
     duration?: IDuration
   ) => null;
   sourceCodeId: string;
-  user: any;
 }
 
 const Comments: React.FC<IProps> = ({
@@ -37,6 +38,7 @@ const Comments: React.FC<IProps> = ({
   const [isLoadingComments, setIsLoadingComments] = useState<boolean>(false);
   const [nextCursor, setNextCursor] = useState<null | undefined | number>(null);
   const [comments, setComments] = useState<Array<IComment>>([]);
+  const user = useSelector(getCurrentUserState);
   const classes = useStyles();
   const commonCss = commonUseStyles();
   const commentInputRef = useRef<any>(null);
@@ -172,8 +174,6 @@ const Comments: React.FC<IProps> = ({
 
   function handleSendComment() {
     if (newMessage.trim().length > 0) {
-      const user = Apis.users.getCurrentUser();
-
       if (!!user === false) {
         onSetNotificationSettings(
           "Please login to add a review",
@@ -193,7 +193,7 @@ const Comments: React.FC<IProps> = ({
               sourceCodeId,
               author: {
                 id: user.uid,
-                name: user.displayName,
+                name: user.username,
                 photoURL: user.photoURL
               },
               text: newMessage
@@ -210,8 +210,6 @@ const Comments: React.FC<IProps> = ({
 
   function handleSendReply() {
     if (newMessage.trim().length > 0) {
-      const user = Apis.users.getCurrentUser();
-
       if (!!user === false) {
         onSetNotificationSettings(
           "Please login to add a review",
@@ -230,7 +228,7 @@ const Comments: React.FC<IProps> = ({
             data: {
               author: {
                 id: user.uid,
-                name: user.displayName,
+                name: user.username,
                 photoURL: user.photoURL
               },
               text: newMessage,

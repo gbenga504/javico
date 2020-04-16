@@ -1,5 +1,6 @@
-import React, { useState, useEffect, lazy, Suspense } from "react";
+import React, { useState, useRef, useEffect, lazy, Suspense } from "react";
 import { Tooltip, makeStyles, Button } from "@material-ui/core";
+import { useSelector } from "react-redux";
 import {
   InsertComment as InsertCommentIcon,
   Code as CodeIcon
@@ -27,6 +28,8 @@ import {
 
 import MenuBar from "../../components/MenuBar";
 import Console from "../../components/Console";
+import { getCurrentUserState } from "../../redux/auth/reducers";
+
 const CommentListHandler = lazy(() =>
   import("../../components/CommentListHandler")
 );
@@ -61,6 +64,8 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
     RIGHT_SECTION.console
   );
   const [user, setUser] = useState<any>(null);
+  const firebaseRef = useRef<any>(null);
+  const currentUser = useSelector(getCurrentUserState);
   const [
     isFetchingSourceCodeMetaData,
     setIsFetchingSourceCodeMetaData
@@ -73,15 +78,20 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
   const commonCss = commonUseStyles();
 
   useEffect(() => {
-    Apis.users.onAuthStateChanged(function(user: any) {
-      if (user) {
-        setUser(user);
-      } else {
-        setUser(null);
-      }
-    });
     fetchSourceCodeMetaData();
   }, []);
+
+  useEffect(() => {
+    firebaseRef.current = Apis.users.onAuthStateChanged(function(user: any) {
+      if (user && currentUser === null) {
+        Apis.users.fetchUserFromDB({ params: { ID: user.uid } });
+      }
+    });
+
+    return () => {
+      firebaseRef.current();
+    };
+  }, [currentUser]);
 
   function fetchSourceCodeMetaData(): void {
     if (getSourceCodeIdFromUrl()) {
@@ -170,12 +180,16 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
             ? `${fetchedSourceCode.readme.substring(0, 60)}...`
             : "Review my source code"
         }
-        ogImage={!!user ? user.photoURL : `${getBaseUrl()}/favicon.png`}
+        ogImage={
+          !!currentUser ? currentUser.photoURL : `${getBaseUrl()}/favicon.png`
+        }
         ogUrl={getBaseUrl()}
       />
       <div className={`${classes.relative} ${commonCss.flexRow}`}>
         <div className={classes.linearProgress}>
-          <IndeterminateLinearProgress isVisible={isLoading} />
+          <IndeterminateLinearProgress
+            isVisible={isFetchingSourceCodeMetaData}
+          />
         </div>
         <MenuBar />
         <main className={`${classes.main} ${commonCss.flexRow}`}>
@@ -185,7 +199,6 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
             onChangeCurrentSection={handleToggleView}
             fetchedSourceCode={fetchedSourceCode}
             onSetSourcecodeOwner={setSourcecodeOwner}
-            user={user}
             currentSection={currentSection}
             isFetchingSourcecode={isLoading}
             fetchSourceCode={fetchSourceCode}
@@ -203,7 +216,6 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
                 sourceCode={terminalExecutableCode.sourceCode}
                 sourceCodeHash={terminalExecutableCode.sourceCodeHash}
                 fetchedReadme={fetchedSourceCode.readme}
-                user={user}
               />
             </div>
             <div
@@ -217,7 +229,6 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
                 <CommentListHandler
                   visible={currentSection === "comments"}
                   sourceCodeId={fetchedSourceCode.sourceCodeId}
-                  user={user}
                 />
               </Suspense>
             </div>

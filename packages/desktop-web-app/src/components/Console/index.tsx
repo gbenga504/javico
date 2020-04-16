@@ -7,11 +7,13 @@ import {
 } from "@javico/common/lib/components";
 import { Apis } from "@javico/common/lib/utils/Apis";
 import { getSourceCodeIdFromUrl } from "@javico/common/lib/utils/UrlUtils";
+import { useSelector } from "react-redux";
 
 import { useStyles } from "./styles";
 import Readme from "./Readme";
 import Preview from "./Preview";
 import SignInViaGithubHandler from "../SignInViaGithubHandler";
+import { getCurrentUserState } from "../../redux/auth/reducers";
 
 function a11yProps(index: number) {
   return {
@@ -39,14 +41,12 @@ const Console: React.FC<{
   fetchedReadme: string;
   onSetNotificationSettings: any;
   ownerId: string;
-  user: any;
 }> = ({
   sourceCode,
   sourceCodeHash,
   ownerId,
   fetchedReadme,
-  onSetNotificationSettings,
-  user
+  onSetNotificationSettings
 }) => {
   const [currentTab, setCurrentTab] = useState<number>(0);
   const [isSavingReadme, setIsSavingReadme] = useState<boolean>(false);
@@ -59,6 +59,7 @@ const Console: React.FC<{
   const [readMe, setReadMe] = useState<string>(fetchedReadme);
   const workerRef = useRef<any>(null);
   const classes = useStyles();
+  const user = useSelector(getCurrentUserState);
   const isAuthorize = !!user ? user.uid === ownerId : false;
 
   useEffect(() => {
