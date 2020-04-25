@@ -1,7 +1,8 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core";
-import { color, fontsize } from "@javico/common/lib/design-language/Css";
 import { ButtonWithLoading } from "@javico/common/lib/components";
+
+import { color, fontsize } from "@javico/common/lib/design-language/Css";
 
 const Readme: React.FC<{
   onHandleReadMeTextChange: any;

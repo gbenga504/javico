@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import MonacoEditor from ".";
 import { MuiThemeProvider } from "@material-ui/core";
-import { theme } from "@javico/common/lib/design-language/Css";
+import { theme } from "../../design-language/Css";
 
 export default {
   title: "MonacoEditor",

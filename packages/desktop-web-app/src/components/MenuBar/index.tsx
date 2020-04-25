@@ -1,27 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { Tooltip, Menu, MenuItem, Button } from "@material-ui/core";
+import { useDispatch } from "react-redux";
 import {
   Search as SearchIcon,
   Share as ShareoptionIcon,
   GitHub as GitHubIcon,
-  WbIncandescent as WbIncandescentIcon,
+  // WbIncandescent as WbIncandescentIcon,
   Fullscreen as FullscreenIcon,
   FullscreenExit as FullscreenExitIcon
 } from "@material-ui/icons";
-
-import { useStyles } from "./styles";
 import {
   useStyles as commonUseStyles,
   color
 } from "@javico/common/lib/design-language/Css";
-import { Apis } from "../../utils/Apis";
 import {
   IBannerStyle,
   withNotificationBanner,
   IDuration
 } from "@javico/common/lib/components/NotificationBanner";
+import { Apis } from "@javico/common/lib/utils/Apis";
+import { getSourceCodeIdFromUrl } from "@javico/common/lib/utils/UrlUtils";
+
+import { useStyles } from "./styles";
 import ShareIcon from "./ShareIcon";
-import { getSourceCodeIdFromUrl } from "../../utils/UrlUtils";
+import { SET_CURRENT_USER, LOGOUT_REQUEST } from "../../redux/auth/actionTypes";
 
 interface IProps {
   onSetNotificationSettings: (
@@ -58,8 +60,8 @@ const iconList = (fullScreenMode: boolean) => [
     icon: fullScreenMode === false ? FullscreenIcon : FullscreenExitIcon
   },
   { text: "Share code", action: "toggleCodeOptions", icon: ShareoptionIcon },
-  { text: "Sign in", action: "signInWithGithub", icon: GitHubIcon },
-  { text: "Light theme", action: "", icon: WbIncandescentIcon }
+  { text: "Sign in", action: "signInWithGithub", icon: GitHubIcon }
+  // { text: "Light theme", action: "", icon: WbIncandescentIcon }
 ];
 
 const shareOptionsList = [
@@ -90,6 +92,7 @@ const MenuBar: React.FC<IProps> = ({ onSetNotificationSettings }) => {
   const [currentUser, setCurrentUser] = React.useState<any>(null);
   const classes = useStyles();
   const commonCss = commonUseStyles();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     window.addEventListener("resize", function() {
@@ -132,11 +135,15 @@ const MenuBar: React.FC<IProps> = ({ onSetNotificationSettings }) => {
   function handleSignInWithGithub() {
     Apis.users
       .signInWithGithub()
-      .then(function(result: any) {
+      .then(function(user: any) {
         /**
          * @todo
          * Save the users code in firestore
          */
+        dispatch({
+          type: SET_CURRENT_USER,
+          payload: user
+        });
       })
       .catch(function(error: any) {
         onSetNotificationSettings(error.message, "danger", "long");
@@ -149,6 +156,9 @@ const MenuBar: React.FC<IProps> = ({ onSetNotificationSettings }) => {
       .then(function() {
         setCurrentUser(null);
         handleCloseMenu();
+        dispatch({
+          type: LOGOUT_REQUEST
+        });
       })
       .catch(function(error: any) {
         onSetNotificationSettings(error.message, "danger", "long");

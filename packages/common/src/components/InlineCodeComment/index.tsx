@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Button, Tabs, Tab, withStyles } from "@material-ui/core";
 import { OpenInNew as OpenInNewIcon } from "@material-ui/icons";
 
@@ -17,7 +17,7 @@ interface IProps {
   onOk: (comment: string) => void;
   loading: boolean;
   visible: boolean;
-  anchorEl: null | HTMLElement;
+  distanceY: null | number;
 }
 
 const MuiTabs = withStyles({
@@ -56,7 +56,7 @@ const InlineCodeComment: React.FC<IProps> = ({
   onRequestClose,
   onOk,
   visible,
-  anchorEl,
+  distanceY,
   loading
 }) => {
   const [comment, setComment] = useState("");
@@ -65,6 +65,12 @@ const InlineCodeComment: React.FC<IProps> = ({
   const commentRef = useRef<any>(null);
   const commonCss = commonUseStyles();
   const classes = useStyles();
+
+  useEffect(() => {
+    if (visible === false) {
+      setComment("");
+    }
+  }, [visible]);
 
   function handleChange(e: any) {
     setComment(e.target.value);
@@ -82,7 +88,11 @@ const InlineCodeComment: React.FC<IProps> = ({
     setIsCommentBoxFocused(false);
   }
 
-  function handleSubmitComment() {
+  function handleSubmitComment(event: React.MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    if (!commentRef.current.reportValidity()) {
+      return;
+    }
     onOk(comment);
   }
 
@@ -141,7 +151,7 @@ const InlineCodeComment: React.FC<IProps> = ({
     <div
       className={`${classes.commentBoxContainer} ${commonCss.fullHeightAndWidth}`}
       style={{
-        top: anchorEl === null ? 0 : anchorEl.getBoundingClientRect().top + 20
+        top: (distanceY || 0) + 20
       }}
     >
       <form

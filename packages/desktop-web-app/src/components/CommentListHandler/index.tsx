@@ -11,6 +11,10 @@ import {
   IDuration
 } from "@javico/common/lib/components/NotificationBanner";
 import CommentUtils from "@javico/common/lib/utils/CommentUtils";
+import { useSelector } from "react-redux";
+
+import { getCurrentUserState } from "../../redux/auth/reducers";
+import { useStyles } from "./styles";
 
 interface IProps {
   visible: boolean;
@@ -20,14 +24,12 @@ interface IProps {
     duration?: IDuration
   ) => null;
   sourceCodeId: string;
-  user: any;
 }
 
 const CommentListHandler: React.FC<IProps> = ({
   visible,
   onSetNotificationSettings,
-  sourceCodeId,
-  user
+  sourceCodeId
 }) => {
   const [isLoadingComments, setIsLoadingComments] = useState<boolean>(false);
   const [metasOfMessageToDelete, setMetasOfMessageToDelete] = useState<{
@@ -53,6 +55,8 @@ const CommentListHandler: React.FC<IProps> = ({
   } | null>(null);
   const commentListRef = useRef<null | any>(null);
   const [nextCursor, setNextCursor] = useState<null | undefined | number>(null);
+  const currentUser = useSelector(getCurrentUserState);
+  const classes = useStyles();
 
   useEffect(() => {
     if (visible === true) {
@@ -88,25 +92,22 @@ const CommentListHandler: React.FC<IProps> = ({
 
   function toggleEditCommentLoadingState(id: string, loading: boolean) {
     setIsEditingComment((prevState: any) => {
-      if (!!prevState === true) {
-        return { ...prevState, [id]: loading };
-      }
+      let _prevState = prevState || {};
+      return { ..._prevState, [id]: loading };
     });
   }
 
   function toggleEditReplyLoadingState(id: string, loading: boolean) {
     setIsEditingReply((prevState: any) => {
-      if (!!prevState === true) {
-        return { ...prevState, [id]: loading };
-      }
+      let _prevState = prevState || {};
+      return { ..._prevState, [id]: loading };
     });
   }
 
   function toggleRepliesLoadingState(id: string, loading: boolean) {
     setIsLoadingReplies((prevState: any) => {
-      if (!!prevState === true) {
-        return { ...prevState, [id]: loading };
-      }
+      let _prevState = prevState || {};
+      return { ..._prevState, [id]: loading };
     });
   }
 
@@ -171,9 +172,9 @@ const CommentListHandler: React.FC<IProps> = ({
             data: {
               sourceCodeId,
               author: {
-                id: user.uid,
-                name: user.displayName,
-                photoURL: user.photoURL
+                id: currentUser.uid,
+                name: currentUser.displayName,
+                photoURL: currentUser.photoURL
               },
               text: newMessage
             },
@@ -212,9 +213,9 @@ const CommentListHandler: React.FC<IProps> = ({
           .createReply({
             data: {
               author: {
-                id: user.uid,
-                name: user.displayName,
-                photoURL: user.photoURL
+                id: currentUser.uid,
+                name: currentUser.displayName,
+                photoURL: currentUser.photoURL
               },
               text: newMessage,
               commentId: _idOfQuotedComment
@@ -323,7 +324,11 @@ const CommentListHandler: React.FC<IProps> = ({
 
   function handleLoadReplies(commentId: string) {
     return () => {
-      if (replies && replies[commentId].length === 0) {
+      if (
+        replies === null ||
+        (replies && replies[commentId] === undefined) ||
+        (replies && replies[commentId].length === 0)
+      ) {
         toggleRepliesLoadingState(commentId, true);
         Apis.replies.onSnapshotChanged(
           {
@@ -340,9 +345,8 @@ const CommentListHandler: React.FC<IProps> = ({
             );
             toggleRepliesLoadingState(commentId, false);
             setReplies((prevState: any) => {
-              if (!!prevState === true) {
-                return { ...prevState, [commentId]: replies };
-              }
+              let _prevState = prevState || {};
+              return { ..._prevState, [commentId]: replies };
             });
           },
           function(error: any) {
@@ -380,9 +384,8 @@ const CommentListHandler: React.FC<IProps> = ({
           );
           toggleRepliesLoadingState(commentId, false);
           setReplies((prevState: any) => {
-            if (!!prevState === true) {
-              return { ...prevState, [commentId]: replies };
-            }
+            let _prevState = prevState || {};
+            return { ..._prevState, [commentId]: replies };
           });
         });
     };
@@ -405,8 +408,12 @@ const CommentListHandler: React.FC<IProps> = ({
             authorName={item.author.name}
             authorPhotoURL={item.author.photoURL}
             createdAt={item.createdAt}
-            userId={(user && user.uid) || null}
+            userId={(currentUser && currentUser.uid) || null}
             authorId={item.author.id}
+            editMessagePanelProps={{
+              inputClassName: classes.editPanelInput,
+              cancelButtonClassName: classes.editPanelCancelButton
+            }}
             onRequestDelete={() =>
               setMetasOfMessageToDelete({ id: item.id, type: "COMMENT" })
             }

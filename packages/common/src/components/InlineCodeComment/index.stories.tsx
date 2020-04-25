@@ -36,7 +36,7 @@ export const inlineCodeComment = () => {
       <InlineCodeComment
         visible={Boolean(anchorEl)}
         loading={loading}
-        anchorEl={buttonRef.current}
+        distanceY={buttonRef.current.getBoundingClientRect().top}
         onRequestClose={() => setAnchorEl(null)}
         onOk={handleSave}
       />

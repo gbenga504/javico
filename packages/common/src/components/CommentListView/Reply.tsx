@@ -27,6 +27,10 @@ interface IProps {
     currentReplyText: string
   ) => Promise<any>;
   isEditing: boolean;
+  editMessagePanelProps?: {
+    inputClassName: string;
+    cancelButtonClassName: string;
+  };
 }
 
 const Reply: React.FC<IProps> = ({
@@ -38,7 +42,8 @@ const Reply: React.FC<IProps> = ({
   isReplyOwner,
   onRequestDelete,
   onEdit,
-  isEditing
+  isEditing,
+  editMessagePanelProps
 }) => {
   const classes = useStyles();
   const commonCss = commonUseStyles();
@@ -156,6 +161,7 @@ const Reply: React.FC<IProps> = ({
         value={editableReply}
         onRequestClose={handleCloseEditMessagePanel}
         onOk={handleEditMessage}
+        {...editMessagePanelProps}
       />
       {renderMenuOptions()}
     </div>

@@ -51,6 +51,10 @@ interface IProps {
   onShowReplies?: () => void;
   onHideReplies?: () => void;
   repliesProps: IReplyProps;
+  editMessagePanelProps?: {
+    inputClassName: string;
+    cancelButtonClassName: string;
+  };
 }
 
 const Comment: React.FC<IProps> = ({
@@ -68,7 +72,8 @@ const Comment: React.FC<IProps> = ({
   isEditing,
   onShowReplies,
   onHideReplies,
-  repliesProps
+  repliesProps,
+  editMessagePanelProps
 }) => {
   const [isRepliesVisible, setIsRepliesVisible] = useState<boolean>(false);
   const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | SVGSVGElement>(
@@ -205,6 +210,7 @@ const Comment: React.FC<IProps> = ({
             value={editableComment}
             onRequestClose={handleCloseEditMessagePanel}
             onOk={handleEditMessage}
+            {...editMessagePanelProps}
           />
         </div>
       </div>
@@ -228,6 +234,7 @@ const Comment: React.FC<IProps> = ({
             onRequestDelete={repliesProps.onRequestDelete}
             onEdit={repliesProps.onEdit}
             isEditing={repliesProps.isEditing}
+            editMessagePanelProps={editMessagePanelProps}
           />
         )}
       </div>

@@ -1,12 +1,11 @@
 import React, { useState, useRef, useEffect, lazy, Suspense } from "react";
 import { Tooltip, makeStyles, Button } from "@material-ui/core";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   InsertComment as InsertCommentIcon,
   Code as CodeIcon
 } from "@material-ui/icons";
 import {
-  MonacoEditor,
   IndeterminateLinearProgress,
   withNotificationBanner,
   Seo
@@ -20,15 +19,18 @@ import {
   IBannerStyle,
   IDuration
 } from "@javico/common/lib/components/NotificationBanner";
-import { Apis } from "@javico/common/lib/utils/Apis";
 import {
-  getSourceCodeIdFromUrl,
-  getBaseUrl
-} from "@javico/common/lib/utils/UrlUtils";
+  Apis,
+  getBaseUrl,
+  getSourceCodeIdFromUrl
+} from "@javico/common/lib/utils";
 
+import Editor from "../../components/Editor";
 import MenuBar from "../../components/MenuBar";
 import Console from "../../components/Console";
 import { getCurrentUserState } from "../../redux/auth/reducers";
+import { SET_CURRENT_USER } from "../../redux/auth/actionTypes";
+import { RIGHT_SECTION, ISourceCodeMetaData } from "../../utils/Constants";
 
 const CommentListHandler = lazy(() =>
   import("../../components/CommentListHandler")
@@ -42,20 +44,12 @@ interface IProps {
   ) => null;
 }
 
-interface ISourceCodeMetaData {
-  sourceCode: string;
-  readme?: string;
-  ownerId: string;
-  title?: string;
-  sourceCodeId: string;
-}
-
-const RIGHT_SECTION = {
-  comments: "comments",
-  console: "console"
-};
-
 const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
+  const firebaseRef = useRef<any>(null);
+  const currentUser = useSelector(getCurrentUserState);
+  const dispatch = useDispatch();
+  const classes = useStyles();
+  const commonCss = commonUseStyles();
   const [terminalExecutableCode, setTerminalExecutableCode] = useState<{
     sourceCode: string;
     sourceCodeHash: null | number;
@@ -63,9 +57,6 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
   const [currentRightSection, setCurrentRightSection] = useState<string>(
     RIGHT_SECTION.console
   );
-  const [user, setUser] = useState<any>(null);
-  const firebaseRef = useRef<any>(null);
-  const currentUser = useSelector(getCurrentUserState);
   const [
     isFetchingSourceCodeMetaData,
     setIsFetchingSourceCodeMetaData
@@ -74,8 +65,6 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
     sourceCodeMetaData,
     setSourceCodeMetaData
   ] = useState<null | ISourceCodeMetaData>(null);
-  const classes = useStyles();
-  const commonCss = commonUseStyles();
 
   useEffect(() => {
     fetchSourceCodeMetaData();
@@ -84,7 +73,9 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
   useEffect(() => {
     firebaseRef.current = Apis.users.onAuthStateChanged(function(user: any) {
       if (user && currentUser === null) {
-        Apis.users.fetchUserFromDB({ params: { ID: user.uid } });
+        Apis.users.fetchUserFromDB({ params: { ID: user.uid } }).then(user => {
+          dispatch({ type: SET_CURRENT_USER, payload: user });
+        });
       }
     });
 
@@ -129,7 +120,13 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
     }));
   }
 
-  function handleToggleView() {
+  function toggleFetchingSourceCodeMetaDataState(isFetching = true) {
+    setIsFetchingSourceCodeMetaData(prevState =>
+      isFetching === undefined ? !prevState : isFetching
+    );
+  }
+
+  function handleToggleRightView() {
     setCurrentRightSection((prevState: string) =>
       prevState === RIGHT_SECTION.console
         ? RIGHT_SECTION.comments
@@ -153,7 +150,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
         <Button
           color="primary"
           variant="contained"
-          onClick={handleToggleView}
+          onClick={handleToggleRightView}
           classes={{
             root: classes.switchButtonRoot,
             label: classes.switchButtonLabel
@@ -167,22 +164,32 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
     );
   }
 
+  let title = "";
+  let description = "";
+  let photoURL = "";
+
+  if (sourceCodeMetaData) {
+    title = sourceCodeMetaData.title || "Untitled.js";
+    title = `${title} by ${
+      currentUser && currentUser.displayName
+        ? currentUser.displayName
+        : "Anonymous"
+    }`;
+
+    description = sourceCodeMetaData.readme
+      ? `${sourceCodeMetaData.readme.substring(0, 60)}...`
+      : "Review my source code";
+    photoURL = !!currentUser
+      ? currentUser.photoURL
+      : `${getBaseUrl()}/favicon.png`;
+  }
+
   return (
     <>
       <Seo
-        title={`${
-          sourceCodeMetaData ? sourceCodeMetaData.title : "Untitled"
-        }.js by ${
-          !!user && !!user.displayName ? user.displayName : "Anonymous"
-        }`}
-        description={
-          !!fetchedSourceCode.readme === true
-            ? `${fetchedSourceCode.readme.substring(0, 60)}...`
-            : "Review my source code"
-        }
-        ogImage={
-          !!currentUser ? currentUser.photoURL : `${getBaseUrl()}/favicon.png`
-        }
+        title={title}
+        description={description}
+        ogImage={photoURL}
         ogUrl={getBaseUrl()}
       />
       <div className={`${classes.relative} ${commonCss.flexRow}`}>
@@ -193,42 +200,46 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
         </div>
         <MenuBar />
         <main className={`${classes.main} ${commonCss.flexRow}`}>
-          <MonacoEditor
-            onHandleLoading={toggleIsLoading}
+          <Editor
+            toggleProgressBarVisibility={toggleFetchingSourceCodeMetaDataState}
             onRunSourceCode={setTerminalExecutableCode}
-            onChangeCurrentSection={handleToggleView}
-            fetchedSourceCode={fetchedSourceCode}
-            onSetSourcecodeOwner={setSourcecodeOwner}
-            currentSection={currentSection}
-            isFetchingSourcecode={isLoading}
-            fetchSourceCode={fetchSourceCode}
+            changeCurrentRightSection={handleToggleRightView}
+            sourceCodeMetaData={sourceCodeMetaData}
+            updateSourceCodeMetaData={updateSourceCodeMetaData}
+            currentRightSection={currentRightSection}
+            isFetchingSourceCodeMetaData={isFetchingSourceCodeMetaData}
+            fetchSourceCodeMetaData={fetchSourceCodeMetaData}
           />
           <div className={classes.mainRightSection}>
             <div
               className={`${classes.rightSubSection} ${
-                currentSection === "console"
+                currentRightSection === "console"
                   ? classes.showRightSubSection
                   : classes.hideRightSubSection
               }`}
             >
               <Console
-                ownerId={fetchedSourceCode.ownerId}
+                ownerId={sourceCodeMetaData ? sourceCodeMetaData.ownerId : null}
                 sourceCode={terminalExecutableCode.sourceCode}
                 sourceCodeHash={terminalExecutableCode.sourceCodeHash}
-                fetchedReadme={fetchedSourceCode.readme}
+                fetchedReadme={
+                  sourceCodeMetaData ? sourceCodeMetaData.readme : null
+                }
               />
             </div>
             <div
               className={`${classes.rightSubSection} ${
-                currentSection === "comments"
+                currentRightSection === "comments"
                   ? classes.showRightSubSection
                   : classes.hideRightSubSection
               }`}
             >
               <Suspense fallback={null}>
                 <CommentListHandler
-                  visible={currentSection === "comments"}
-                  sourceCodeId={fetchedSourceCode.sourceCodeId}
+                  visible={currentRightSection === RIGHT_SECTION.comments}
+                  sourceCodeId={
+                    sourceCodeMetaData ? sourceCodeMetaData.sourceCodeId : null
+                  }
                 />
               </Suspense>
             </div>
@@ -286,7 +297,8 @@ const useStyles = makeStyles({
   rightSubSection: {
     position: "absolute",
     width: "100%",
-    transition: "all 0.6s"
+    transition: "all 0.6s",
+    height: "100vh"
   },
   showRightSubSection: {
     right: "0%",

@@ -1,11 +1,11 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core";
 import { MarkDownRenderer } from "@javico/common/lib/components";
-import { color, fontsize } from "@javico/common/lib/design-language/Css";
 import {
   getSourcecodeUrl,
   getBaseUrl
 } from "@javico/common/lib/utils/UrlUtils";
+import { color, fontsize } from "@javico/common/lib/design-language/Css";
 
 const Preview: React.FC<{ readMe: string }> = ({ readMe }) => {
   const classes = useStyles();

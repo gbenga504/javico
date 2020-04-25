@@ -1,31 +1,24 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Fab, Tooltip } from "@material-ui/core";
-import {
-  ModeComment as ModeCommentIcon,
-  PlayArrow as PlayArrowIcon
-} from "@material-ui/icons";
-import {
-  useStyles as commonUseStyles,
-  color
-} from "@javico/common/lib/design-language/Css";
+import React, { useEffect, useState, useRef } from "react";
+import { Fab } from "@material-ui/core";
+import { PlayArrow as PlayArrowIcon } from "@material-ui/icons";
+import { useSelector } from "react-redux";
 import {
   IBannerStyle,
   IDuration,
   withNotificationBanner
 } from "@javico/common/lib/components/NotificationBanner";
+import { InlineCodeComment, MonacoEditor } from "@javico/common/lib/components";
 import {
-  MonacoIntegrator,
-  MonacoThemes,
   Apis,
   getSourceCodeIdFromUrl,
   updateUrl
 } from "@javico/common/lib/utils";
 
 import { useStyles } from "./styles";
-// import { AnimatedCircularLoader } from "@javico/common/lib/components";
-import SignInViaGithubModal from "../SignInViaGithubModal";
-import InlineCodeComment from "../InlineCodeComment";
 import SourceCodeHeading from "./SourceCodeHeading";
+import SignInViaGithubHandler from "../SignInViaGithubHandler";
+import * as Constants from "../../utils/Constants";
+import { getCurrentUserState } from "../../redux/auth/reducers";
 
 interface IProps {
   value?: string;
@@ -38,255 +31,124 @@ interface IProps {
   }) => void;
   theme?: "light" | "dark" | "ace" | "night-dark";
   language?: string;
-  onHandleLoading: any;
-  fetchedSourceCode: {
+  toggleProgressBarVisibility: (isFetching: boolean) => void;
+  sourceCodeMetaData: Constants.ISourceCodeMetaData;
+  updateSourceCodeMetaData: (data: {
     sourceCode: string;
     ownerId: string;
-    title: string;
     sourceCodeId: string;
-    readme: string;
-  };
-  onSetSourcecodeOwner: any;
-  isFetchingSourcecode: boolean;
+  }) => void;
+  isFetchingSourceCodeMetaData: boolean;
   onSetNotificationSettings: (
     text: string,
     style?: IBannerStyle,
     duration?: IDuration
   ) => null;
-  user: any;
-  currentSection: "comments" | "console";
-  onChangeCurrentSection: () => void;
-  fetchSourceCode: (cb: any) => void;
+  currentRightSection: string;
+  changeCurrentRightSection: () => void;
+  fetchSourceCodeMetaData: () => void;
 }
 
-const MonacoEditor: React.FC<IProps> = ({
-  value,
+const Editor: React.FC<IProps> = ({
   onRunSourceCode,
-  theme = "vs-dark",
-  onHandleLoading,
-  language = "javascript",
   onSetNotificationSettings,
-  onSetSourcecodeOwner,
-  isFetchingSourcecode,
-  currentSection,
-  onChangeCurrentSection,
-  fetchSourceCode,
-  fetchedSourceCode: {
+  updateSourceCodeMetaData,
+  isFetchingSourceCodeMetaData,
+  currentRightSection,
+  changeCurrentRightSection,
+  fetchSourceCodeMetaData,
+  toggleProgressBarVisibility,
+  sourceCodeMetaData
+}) => {
+  const [selectionValue, setSelectionValue] = useState<string>("");
+  const [isSubmittingComment, setIsSubmittingComment] = useState<boolean>(
+    false
+  );
+  const [commentAnchorDistanceY, setCommentAnchorDistanceY] = useState<
+    number | null
+  >(null);
+  const currentUser = useSelector(getCurrentUserState);
+  const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(
+    false
+  );
+  const [sourceCode, setSourceCode] = useState<string>("");
+  const editorRef = useRef<any>(null);
+  const classes = useStyles();
+  const {
     sourceCode: fetchedSourceCode,
     ownerId,
     title: sourceCodeTitle,
     sourceCodeId,
     readme
-  }
-}) => {
-  const [shouldDisplayCommentBox, setShouldDisplayCommentBox] = useState<
-    boolean
-  >(false);
-  const [shouldDisplayCommentIcon, setShouldDisplayCommentIcon] = useState<
-    boolean
-  >(false);
-  const [mousePosition, setMousePosition] = useState<any>({});
-  const [isMonacoReady, setIsMonacoReady] = useState<boolean>(false);
-  const [isEditorReady, setIsEditorReady] = useState<boolean>(false);
-  const [selectionRange, setSelectionRange] = useState<any>(null);
-  const [selectionValue, setSelectionValue] = useState<string>("");
-  const [user, setUser] = useState<any>(_user);
-  const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(
-    false
-  );
-  const [sourceCode, setSourceCode] = useState("");
-  const monacoRef = useRef<any>(null);
-  const editorRef = useRef<any>(null);
-  const subscriptionRef = useRef<any>(null);
-  const nodeRef = useRef<HTMLDivElement>(null);
-  const classes = useStyles();
-  const commonCss = commonUseStyles();
-
-  const createEditor = useCallback(() => {
-    const model = monacoRef.current.editor.createModel(value, language);
-    editorRef.current = monacoRef.current.editor.create(nodeRef.current, {
-      automaticLayout: true
-    });
-    editorRef.current.setModel(model);
-
-    for (let themeName in MonacoThemes) {
-      monacoRef.current.editor.defineTheme(themeName, MonacoThemes[themeName]);
-    }
-
-    monacoRef.current.editor.setTheme(theme);
-    subscriptionRef.current = model.onDidChangeContent(() => {
-      setSourceCode(model.getValue());
-    });
-    editorRef.current.focus();
-    setIsEditorReady(true);
-  }, [language, theme, value]);
+  } = sourceCodeMetaData || {};
 
   useEffect(() => {
-    MonacoIntegrator.init()
-      .then((monaco: any) => {
-        monacoRef.current = monaco;
-        setIsMonacoReady(true);
-      })
-      .catch(error => {
-        console.error(`An error ocurred while initializing monaco ${error}`);
-      });
-
-    return () => {
-      editorRef.current && editorRef.current.dispose();
-      subscriptionRef.current && subscriptionRef.current.dispose();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (editorRef.current !== null) {
-      editorRef.current.getModel().setValue(fetchedSourceCode);
-      disableEditor(user ? user.uid !== ownerId : true);
+    let editor = editorRef.current;
+    if (editor !== null && !!editor.getEditorRef() === true) {
+      editor
+        .getEditorRef()
+        .getModel()
+        .setValue(fetchedSourceCode);
     }
-    // eslint-disable-next-line
   }, [fetchedSourceCode]);
 
   useEffect(() => {
-    if (user) {
-      disableEditor(user.uid !== ownerId);
+    if (!!currentUser === true && !!ownerId === true) {
+      editorRef.current.disableEditor(currentUser.uid !== ownerId);
+    } else if (!!currentUser === false && !!ownerId === true) {
+      editorRef.current.disableEditor(true);
     } else {
-      disableEditor(true);
+      editorRef.current.disableEditor(false);
     }
-  }, [user, ownerId]);
+  }, [currentUser, ownerId]);
 
-  useEffect(() => {
-    isMonacoReady === true && isEditorReady === false && createEditor();
-  }, [isMonacoReady, isEditorReady, createEditor]);
-
-  useEffect(() => {
-    if (editorRef.current !== null) {
-      const model = editorRef.current.getModel();
-      if (value !== model.getValue()) {
-        model.pushEditOperations(
-          [],
-          [
-            {
-              range: model.getFullModelRange(),
-              text: value
-            }
-          ]
-        );
-      }
-    }
-  }, [value]);
-
-  useEffect(() => {
-    if (monacoRef.current !== null) {
-      monacoRef.current.editor.setTheme(theme);
-    }
-  }, [theme]);
-
-  useEffect(() => {
-    if (!!selectionValue === true) {
-      setShouldDisplayCommentIcon(true);
-    }
-  }, [selectionValue, selectionRange]);
-
-  function handleSourceCodeExecution() {
+  function handleSourceCodeExecution(
+    event: React.MouseEvent<HTMLButtonElement>
+  ) {
     onRunSourceCode &&
       onRunSourceCode({ sourceCode, sourceCodeHash: Date.now() });
   }
 
-  function disableEditor(disable = false) {
-    if (editorRef.current !== null)
-      editorRef.current.updateOptions({
-        readOnly: !getSourceCodeIdFromUrl() ? false : disable
-      });
+  function handleSourceCodeChange(value: string) {
+    setSourceCode(value);
   }
 
-  function colorHighlight() {
-    const {
-      endColumn,
-      endLineNumber,
-      startColumn,
-      startLineNumber
-    } = selectionRange;
-    editorRef.current.deltaDecorations(
-      [],
-      [
-        {
-          range: new monacoRef.current.Range(
-            startLineNumber,
-            startColumn,
-            endLineNumber,
-            endColumn
-          ),
-          options: { inlineClassName: classes.monacoEditorHighlightMainContent }
-        },
-        {
-          range: new monacoRef.current.Range(
-            startLineNumber,
-            1,
-            startLineNumber,
-            startColumn
-          ),
-          options: {
-            inlineClassName: classes.monacoEditorHighlightRemainingContent
-          }
-        },
-        {
-          range: new monacoRef.current.Range(
-            endLineNumber,
-            endColumn,
-            endLineNumber,
-            1000
-          ),
-          options: {
-            inlineClassName: classes.monacoEditorHighlightRemainingContent
-          }
-        }
-      ]
-    );
+  function handleCodeHighlight(
+    highlightedValue: string,
+    anchorEl: HTMLDivElement | null,
+    distanceY: number
+  ) {
+    setSelectionValue(highlightedValue);
+    setCommentAnchorDistanceY(distanceY);
   }
 
-  function handleShowCommentBox() {
-    colorHighlight();
-    setShouldDisplayCommentBox(true);
-    setShouldDisplayCommentIcon(false);
+  function handleCloseInlineCodeComment() {
+    setCommentAnchorDistanceY(null);
+    editorRef.current
+      .getEditorRef()
+      .getModel()
+      .setValue(sourceCode);
   }
 
-  function handleHideCommentBox() {
-    setShouldDisplayCommentBox(false);
-    setSelectionRange(null);
-    setSelectionValue("");
-    setShouldDisplayCommentIcon(false);
-    editorRef.current.getModel().setValue(sourceCode);
-  }
-
-  function handleHighlightText(e: any) {
-    const selection = editorRef.current.getSelection();
-    const value = editorRef.current.getModel().getValueInRange(selection);
-    if (!!value && value.trim().length > 0) {
-      setSelectionRange(selection);
-      setMousePosition({ x: e.clientX, y: e.clientY });
-      setSelectionValue(value);
-    } else {
-      handleHideCommentIcon();
-    }
-  }
-
-  function updateSourcecode(id: string, data: any) {
+  function updateSourcecode(id: string, data: { sourceCode: string }) {
+    toggleProgressBarVisibility(true);
     Apis.sourceCodes
       .saveSourceCode({
         data,
         params: { ID: id }
       })
-      .then((res: any) => {
-        fetchSourceCode(onHandleLoading());
+      .then(() => {
+        fetchSourceCodeMetaData();
       })
       .catch((error: any) => {
-        onHandleLoading();
+        toggleProgressBarVisibility(false);
         onSetNotificationSettings(error.message, "danger", "long");
       });
   }
 
   function saveNewSourcecode(data: any) {
     let me = Apis.users.getCurrentUser();
-    onHandleLoading(true);
+    toggleProgressBarVisibility(true);
     Apis.sourceCodes
       .saveSourceCode({
         data: {
@@ -295,8 +157,8 @@ const MonacoEditor: React.FC<IProps> = ({
         }
       })
       .then(res => {
-        onHandleLoading();
-        onSetSourcecodeOwner({
+        toggleProgressBarVisibility(false);
+        updateSourceCodeMetaData({
           sourceCode,
           ownerId: me.uid,
           sourceCodeId: res.id
@@ -304,20 +166,19 @@ const MonacoEditor: React.FC<IProps> = ({
         updateUrl(res, me.uid);
       })
       .catch((error: any) => {
-        onHandleLoading();
+        toggleProgressBarVisibility(false);
         onSetNotificationSettings(error.message, "danger", "long");
       });
   }
 
-  function handleSaveDeveloperCode() {
-    const id = getSourceCodeIdFromUrl();
-    if (id) {
+  function saveDeveloperCode() {
+    const sourceCodeId = getSourceCodeIdFromUrl();
+    if (sourceCodeId) {
       if (sourceCode === fetchedSourceCode) {
         onSetNotificationSettings("Your code is up to date", "info", "long");
         return;
       }
-      onHandleLoading(true);
-      updateSourcecode(id, { sourceCode });
+      updateSourcecode(sourceCodeId, { sourceCode });
     } else {
       const data = {
         sourceCode,
@@ -329,6 +190,49 @@ const MonacoEditor: React.FC<IProps> = ({
     }
   }
 
+  function handleSaveSourceCode(value: string) {
+    let me = Apis.users.getCurrentUser();
+    if (!!me && me.email) {
+      saveDeveloperCode();
+    } else {
+      handleOpenSignInModal();
+    }
+  }
+
+  function handleSubmitComment(comment: string) {
+    if (!currentUser) {
+      handleOpenSignInModal();
+    } else {
+      setIsSubmittingComment(true);
+      Apis.comments
+        .createComment({
+          data: {
+            sourceCodeId,
+            author: {
+              id: currentUser.uid,
+              name: currentUser.username,
+              photoURL: currentUser.photoURL
+            },
+            text: comment,
+            codeReference: selectionValue
+          },
+          params: {
+            sourceCodeID: sourceCodeId
+          }
+        })
+        .then(res => {
+          setIsSubmittingComment(false);
+          handleCloseInlineCodeComment();
+          currentRightSection !== Constants.RIGHT_SECTION.comments &&
+            changeCurrentRightSection();
+        })
+        .catch(err => {
+          setIsSubmittingComment(false);
+          onSetNotificationSettings(err, "danger", "long");
+        });
+    }
+  }
+
   function handleCloseSignInModal() {
     setIsSignInModalVisible(false);
   }
@@ -337,111 +241,32 @@ const MonacoEditor: React.FC<IProps> = ({
     setIsSignInModalVisible(true);
   }
 
-  function handleHideCommentIcon(e: any) {
-    if (shouldDisplayCommentBox) {
-      if (e.keyCode === 27) {
-        //  todo -> reset selected code e.t.cc
-        setShouldDisplayCommentBox(false);
-      }
-    }
-    if (shouldDisplayCommentIcon === true) {
-      setShouldDisplayCommentIcon(false);
-    }
-  }
-
-  function handleSaveSourceCode(event: React.KeyboardEvent) {
-    if (
-      (event.ctrlKey === true || event.metaKey === true) &&
-      event.keyCode === 83
-    ) {
-      event.preventDefault();
-
-      let me = Apis.users.getCurrentUser();
-      if (!!me && me.email) {
-        handleSaveDeveloperCode();
-      } else {
-        handleOpenSignInModal();
-      }
-    }
-  }
-
-  function renderLoading() {
-    return isEditorReady === false ? (
-      <div
-        className={`${commonCss.flexRow} ${commonCss.center} ${commonCss.fullHeightAndWidth}`}
-        style={{
-          overflow: "hidden",
-          background: color.darkThemeBlack
-        }}
-      >
-        {/* <AnimatedCircularLoader /> */}
-        ANIMATED CIRCULAR LOADER MISSING
-      </div>
-    ) : null;
-  }
-
-  function renderCommentIcon() {
-    if (shouldDisplayCommentIcon === false) return null;
-    return (
-      <div
-        onClick={handleShowCommentBox}
-        className={classes.monacoEditorCodeCommentIcon}
-        style={{
-          left: mousePosition.x,
-          top: mousePosition.y
-        }}
-      >
-        <Tooltip title="Comment on code" placement="bottom" enterDelay={100}>
-          <span className={commonCss.flexRow}>
-            <ModeCommentIcon
-              style={{
-                color: "#074e68",
-                margin: 12,
-                fontSize: 14
-              }}
-            />
-          </span>
-        </Tooltip>
-      </div>
-    );
-  }
-
   return (
     <>
       <div className={classes.monacoEditorContainer}>
         <SourceCodeHeading
           sourceCodeTitle={sourceCodeTitle}
-          onHandleLoading={onHandleLoading}
+          toggleProgressBarVisibility={toggleProgressBarVisibility}
           saveNewSourcecode={saveNewSourcecode}
           updateSourcecode={updateSourcecode}
-          isFetchingSourcecode={isFetchingSourcecode}
-          onSetSourcecodeOwner={onSetSourcecodeOwner}
+          isFetchingSourceCodeMetaData={isFetchingSourceCodeMetaData}
           sourceCode={sourceCode}
           readme={readme}
-          onHandleOpenSignInModal={handleOpenSignInModal}
-          user={user}
           ownerId={ownerId}
-          fetchSourceCode={fetchSourceCode}
         />
-        {renderLoading()}
-        <div
-          onKeyUp={handleHideCommentIcon}
-          onKeyDown={handleSaveSourceCode}
-          onMouseUp={handleHighlightText}
-          ref={nodeRef}
-          className={classes.monacoEditor}
+        <MonacoEditor
+          ref={editorRef}
+          onChangeValue={handleSourceCodeChange}
+          onSaveValue={handleSaveSourceCode}
+          onHighlightValue={handleCodeHighlight}
         />
-        {shouldDisplayCommentBox && (
-          <InlineCodeComment
-            onHideCommentBox={handleHideCommentBox}
-            onOpenSignInModal={handleOpenSignInModal}
-            mousePosition={mousePosition}
-            sourceCodeId={sourceCodeId}
-            codeReference={selectionValue}
-            currentSection={currentSection}
-            onChangeCurrentSection={onChangeCurrentSection}
-          />
-        )}
+        <InlineCodeComment
+          visible={Boolean(commentAnchorDistanceY)}
+          distanceY={commentAnchorDistanceY}
+          onRequestClose={handleCloseInlineCodeComment}
+          onOk={handleSubmitComment}
+          loading={isSubmittingComment}
+        />
       </div>
       <Fab
         color="primary"
@@ -451,14 +276,13 @@ const MonacoEditor: React.FC<IProps> = ({
       >
         <PlayArrowIcon className={classes.monacoEditorRunButtonIcon} />
       </Fab>
-      <SignInViaGithubModal
+      <SignInViaGithubHandler
         visible={isSignInModalVisible}
         onRequestClose={handleCloseSignInModal}
-        onSignInSuccess={handleSaveDeveloperCode}
+        onSignInSuccess={saveDeveloperCode}
       />
-      {renderCommentIcon()}
     </>
   );
 };
 
-export default React.memo(withNotificationBanner(MonacoEditor));
+export default React.memo(withNotificationBanner(Editor));

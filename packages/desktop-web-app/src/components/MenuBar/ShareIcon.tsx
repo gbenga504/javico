@@ -5,10 +5,10 @@ import {
   Twitter as TwitterIcon,
   FileCopy as FileCopyIcon
 } from "@material-ui/icons";
-
-import { getSourcecodeUrl } from "../../utils/UrlUtils";
-import { Tooltip } from "@material-ui/core";
 import { color } from "@javico/common/lib/design-language/Css";
+import { getSourcecodeUrl } from "@javico/common/lib/utils";
+
+import { Tooltip } from "@material-ui/core";
 
 interface IProps {
   showShareOptions: boolean | null;

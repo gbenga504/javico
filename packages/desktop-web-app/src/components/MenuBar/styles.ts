@@ -37,10 +37,12 @@ export const useStyles = makeStyles(theme => ({
   menubarIcon: {
     width: 56,
     height: 56,
-    fontSize: 25,
     color: color.darkThemeMenubarIcon,
     cursor: "pointer",
     textAlign: "center",
+    "& svg": {
+      fontSize: 25
+    },
     "&:hover": {
       color: color.white
     }

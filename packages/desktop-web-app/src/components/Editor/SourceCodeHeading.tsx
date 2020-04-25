@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import {
   makeStyles,
   MenuItem,
@@ -14,7 +15,8 @@ import {
 } from "@material-ui/icons";
 import {
   useStyles as commonUseStyles,
-  color
+  color,
+  fontsize
 } from "@javico/common/lib/design-language/Css";
 import { getSourceCodeIdFromUrl } from "@javico/common/lib/utils";
 import {
@@ -23,18 +25,18 @@ import {
   withNotificationBanner
 } from "@javico/common/lib/components/NotificationBanner";
 
-import SignInViaGithubModal from "../SignInViaGithubModal";
+import SignInViaGithubHandler from "../SignInViaGithubHandler";
+import { getCurrentUserState } from "../../redux/auth/reducers";
 
 interface IProps {
   sourceCodeTitle: string;
-  isFetchingSourcecode: boolean;
-  onHandleLoading: (isLoading?: boolean) => void;
+  isFetchingSourceCodeMetaData: boolean;
+  toggleProgressBarVisibility: (isFetching: boolean) => void;
   saveNewSourcecode: (data: any) => void;
   updateSourcecode: (id: string, data: any) => void;
   sourceCode: string;
   ownerId: string;
   readme: string;
-  user: any;
   onSetNotificationSettings: (
     text: string,
     style?: IBannerStyle,
@@ -45,34 +47,36 @@ interface IProps {
 const SourceCodeHeading: React.FC<IProps> = ({
   onSetNotificationSettings,
   sourceCodeTitle,
-  isFetchingSourcecode,
+  isFetchingSourceCodeMetaData,
   saveNewSourcecode,
   updateSourcecode,
-  onHandleLoading,
+  toggleProgressBarVisibility,
   ownerId,
   readme,
-  user,
   sourceCode
 }) => {
   const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | SVGSVGElement>(
     null
   );
-  const [isRenameTitle, setIsRenameTitle] = useState<boolean>(false);
+  const [canRenameTitle, setCanRenameTitle] = useState<boolean>(false);
   const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(
     false
   );
-  const [renameTitleValue, setRenameTitleValue] = useState<string>(
+  const [renamedTitleValue, setRenamedTitleValue] = useState<string>(
     sourceCodeTitle
   );
-  const [activeAction, setActiveAction] = useState<"" | "fork" | "create">("");
+  const [activeAction, setActiveAction] = useState<null | "fork" | "create">(
+    null
+  );
   const classes = useStyles();
   const commonCss = commonUseStyles();
-  const isOwner = user ? user.uid === ownerId : false;
+  const currentUser = useSelector(getCurrentUserState);
+  const isOwner = currentUser ? currentUser.uid === ownerId : false;
 
   useEffect(() => {
-    setRenameTitleValue(sourceCodeTitle);
-    if (isRenameTitle) {
-      setIsRenameTitle(false);
+    setRenamedTitleValue(sourceCodeTitle);
+    if (canRenameTitle) {
+      setCanRenameTitle(false);
     }
     // eslint-disable-next-line
   }, [sourceCodeTitle]);
@@ -86,7 +90,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
   }
 
   function handleRenameTitle() {
-    setIsRenameTitle(true);
+    setCanRenameTitle(true);
     setOptionsAnchorEl(null);
   }
 
@@ -104,7 +108,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
   }
 
   function handleRenameTitleChange(event: any) {
-    setRenameTitleValue(event.target.value);
+    setRenamedTitleValue(event.target.value);
   }
 
   function handleCloseSignInModal() {
@@ -115,7 +119,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
     if (e.keyCode === 13) {
       e.preventDefault();
       const id = getSourceCodeIdFromUrl();
-      if (!renameTitleValue) {
+      if (!renamedTitleValue) {
         onSetNotificationSettings(
           "Sourcecode title can't be empty",
           "danger",
@@ -123,20 +127,20 @@ const SourceCodeHeading: React.FC<IProps> = ({
         );
         return;
       }
-      onHandleLoading(true);
+      toggleProgressBarVisibility(true);
       if (id) {
-        if (renameTitleValue === sourceCodeTitle) {
-          onHandleLoading();
+        if (renamedTitleValue === sourceCodeTitle) {
+          toggleProgressBarVisibility(false);
           closeRenameTitle();
           return;
         }
-        let data = { title: renameTitleValue, sourceCode };
+        let data = { title: renamedTitleValue, sourceCode };
         updateSourcecode(id, data);
       } else {
-        if (!!user) {
+        if (!!currentUser === true) {
           saveSourceCode();
         } else {
-          onHandleLoading();
+          toggleProgressBarVisibility(false);
           setIsSignInModalVisible(true);
         }
       }
@@ -147,14 +151,14 @@ const SourceCodeHeading: React.FC<IProps> = ({
     let data = {
       sourceCode,
       readme,
-      title: renameTitleValue,
+      title: renamedTitleValue,
       tags: [],
       fork: {
         ownerId,
         sourcecodeId: getSourceCodeIdFromUrl()
       }
     };
-    if (!user) {
+    if (!currentUser) {
       setIsSignInModalVisible(true);
       setActiveAction("fork");
       return;
@@ -163,7 +167,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
   }
 
   function createNewSourcecode() {
-    if (!user) {
+    if (!currentUser) {
       setIsSignInModalVisible(true);
       setActiveAction("create");
       return;
@@ -183,14 +187,14 @@ const SourceCodeHeading: React.FC<IProps> = ({
       data = {
         sourceCode,
         readme,
-        title: renameTitleValue,
+        title: renamedTitleValue,
         tags: [],
         fork: {
           ownerId,
           sourcecodeId: getSourceCodeIdFromUrl()
         }
       };
-      setActiveAction("");
+      setActiveAction(null);
     } else if (activeAction === "create") {
       data = {
         sourceCode: "",
@@ -198,12 +202,12 @@ const SourceCodeHeading: React.FC<IProps> = ({
         title: "Untitled",
         tags: []
       };
-      setActiveAction("");
+      setActiveAction(null);
     } else {
       data = {
         sourceCode,
         readme: "",
-        title: renameTitleValue,
+        title: renamedTitleValue,
         tags: []
       };
     }
@@ -211,16 +215,16 @@ const SourceCodeHeading: React.FC<IProps> = ({
     saveNewSourcecode(data);
   }
 
-  function handleRenameTitleInputKeydown(event: any) {
-    if (isRenameTitle) {
+  function handleRenameTitleInputKeydown(event: React.KeyboardEvent) {
+    if (canRenameTitle) {
       cancelRenameTitle(event);
       saveRenameTitle(event);
     }
   }
 
   function closeRenameTitle() {
-    setIsRenameTitle(false);
-    setRenameTitleValue(sourceCodeTitle);
+    setCanRenameTitle(false);
+    setRenamedTitleValue(sourceCodeTitle);
   }
 
   function renderTitleMenuOptions() {
@@ -249,9 +253,9 @@ const SourceCodeHeading: React.FC<IProps> = ({
   function renderSourcecodeTitle() {
     return (
       <>
-        {!isRenameTitle ? (
+        {!canRenameTitle ? (
           <>
-            {(!isFetchingSourcecode || getSourceCodeIdFromUrl()) && (
+            {(!isFetchingSourceCodeMetaData || getSourceCodeIdFromUrl()) && (
               <span className={classes.monacoEditorTitle}>
                 <span style={{ fontSize: 14, padding: 5 }}>
                   {!!sourceCodeTitle
@@ -262,7 +266,9 @@ const SourceCodeHeading: React.FC<IProps> = ({
                 </span>
                 {(isOwner ||
                   !getSourceCodeIdFromUrl() ||
-                  (!user === true && !ownerId === true && !!ownerId)) && (
+                  (!currentUser === true &&
+                    !ownerId === true &&
+                    !!ownerId)) && (
                   <MoreVertIcon
                     className={`${classes.commentTitleMenuIcon} comment__hide-title-menu-icon`}
                     onClick={e => handleShowOptions(e)}
@@ -280,7 +286,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
               onKeyDown={handleRenameTitleInputKeydown}
               onChange={handleRenameTitleChange}
               className={classes.monacoEditorRenameTitleInput}
-              value={renameTitleValue}
+              value={renamedTitleValue}
               autoFocus
             />
             <CloseIcon
@@ -334,7 +340,7 @@ const SourceCodeHeading: React.FC<IProps> = ({
           </IconButton>
         </Tooltip>
       </div>
-      <SignInViaGithubModal
+      <SignInViaGithubHandler
         visible={isSignInModalVisible}
         onRequestClose={handleCloseSignInModal}
         onSignInSuccess={saveSourceCode}
@@ -359,6 +365,7 @@ const useStyles = makeStyles(theme => ({
   createSourcecodeIcon: {
     color: color.white,
     transition: "all 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+    fontSize: 16,
     "&:hover": {
       color: color.themeBlue
     }

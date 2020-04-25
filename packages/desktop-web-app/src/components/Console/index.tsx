@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Tabs, Tab } from "@material-ui/core";
+import { Tabs, Tab as MuiTab, withStyles } from "@material-ui/core";
 import { NotInterested as ClearIcon } from "@material-ui/icons";
 import {
   withNotificationBanner,
@@ -8,6 +8,7 @@ import {
 import { Apis } from "@javico/common/lib/utils/Apis";
 import { getSourceCodeIdFromUrl } from "@javico/common/lib/utils/UrlUtils";
 import { useSelector } from "react-redux";
+import { color } from "@javico/common/lib/design-language/Css";
 
 import { useStyles } from "./styles";
 import Readme from "./Readme";
@@ -34,6 +35,12 @@ type Methods =
   | "table";
 type TerminalMessageType = { id: string; method: Methods; data: any[] };
 type TerminalMessagesType = TerminalMessageType[];
+
+const Tab = withStyles({
+  root: {
+    color: `${color.white} !important`
+  }
+})(MuiTab);
 
 const Console: React.FC<{
   sourceCode: string;

@@ -27,6 +27,10 @@ interface IProps {
     currentReplyText: string
   ) => Promise<any>;
   isEditing: { [key: string]: boolean };
+  editMessagePanelProps?: {
+    inputClassName: string;
+    cancelButtonClassName: string;
+  };
 }
 
 const ReplyList: React.FC<IProps> = ({
@@ -36,11 +40,11 @@ const ReplyList: React.FC<IProps> = ({
   numReplies,
   visible,
   loading,
-  commentId,
   onLoadMore,
   onRequestDelete,
   onEdit,
-  isEditing
+  isEditing,
+  editMessagePanelProps
 }) => {
   const [repliesHeight, setRepliesHeight] = useState<number>(0);
   const replyRef = useRef<any>(null);
@@ -109,6 +113,7 @@ const ReplyList: React.FC<IProps> = ({
                 onRequestDelete={onRequestDelete}
                 onEdit={onEdit}
                 isEditing={isEditing[reply.id]}
+                editMessagePanelProps={editMessagePanelProps}
               />
             );
           })}

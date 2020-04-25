@@ -16,7 +16,6 @@ interface IProps {
   value: string;
   onOk: () => void;
   onRequestClose: () => void;
-  // onEditMessage: () => void;
   loading: boolean;
   inputClassName?: string;
   cancelButtonClassName?: string;
@@ -31,7 +30,6 @@ const EditMessagePanel: React.FC<IProps> = ({
   loading,
   inputClassName,
   cancelButtonClassName
-  // onEditMessage
 }) => {
   const messageInputRef = useRef<any>(null);
   const classes = useStyles();
@@ -47,7 +45,7 @@ const EditMessagePanel: React.FC<IProps> = ({
   }, [visible]);
 
   return visible === true ? (
-    <div className={`${commonCss.flexColumn}`}>
+    <div className={commonCss.flexColumn} style={{ flex: 1 }}>
       <TextareaAutosize
         aria-label="Drop a review"
         className={`${classes.inputField} ${inputClassName}`}
