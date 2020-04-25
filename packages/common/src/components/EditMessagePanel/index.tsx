@@ -44,6 +44,13 @@ const EditMessagePanel: React.FC<IProps> = ({
     visible === true && setTimeout(() => messageInputRef.current.focus(), 500);
   }, [visible]);
 
+  function handleSaveChanges(event: React.KeyboardEvent) {
+    if (event.keyCode === 13 && event.shiftKey === false) {
+      event.preventDefault();
+      onOk();
+    }
+  }
+
   return visible === true ? (
     <div className={commonCss.flexColumn} style={{ flex: 1 }}>
       <TextareaAutosize
@@ -56,6 +63,7 @@ const EditMessagePanel: React.FC<IProps> = ({
         ref={messageInputRef}
         value={value}
         onChange={onHandleValueChange}
+        onKeyDown={handleSaveChanges}
       />
       <div className={commonCss.flexRow} style={{ ...margin(4, "t") }}>
         <Button
