@@ -68,6 +68,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
 
   useEffect(() => {
     fetchSourceCodeMetaData();
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -82,7 +83,7 @@ const Home: React.FC<IProps> = ({ onSetNotificationSettings }) => {
     return () => {
       firebaseRef.current();
     };
-  }, [currentUser]);
+  }, [currentUser, dispatch]);
 
   function fetchSourceCodeMetaData(): void {
     if (getSourceCodeIdFromUrl()) {

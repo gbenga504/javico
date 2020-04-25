@@ -15,8 +15,7 @@ import {
 } from "@material-ui/icons";
 import {
   useStyles as commonUseStyles,
-  color,
-  fontsize
+  color
 } from "@javico/common/lib/design-language/Css";
 import { getSourceCodeIdFromUrl } from "@javico/common/lib/utils";
 import {

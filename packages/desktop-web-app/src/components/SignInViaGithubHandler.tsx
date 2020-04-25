@@ -6,7 +6,6 @@ import {
 } from "@javico/common/lib/components/NotificationBanner";
 import SignInViaGithubModal from "@javico/common/lib/components/SignInViaGithubModal";
 import { Apis } from "@javico/common/lib/utils/Apis";
-import { useStyles } from "@javico/common/lib/design-language/Css";
 
 interface IProps {
   visible: boolean;
@@ -26,7 +25,6 @@ const SignInViaGithubHandler: React.FC<IProps> = ({
   onSignInSuccess
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const commonCss = useStyles();
 
   function handleSignInWithGithub() {
     setIsLoading(true);
