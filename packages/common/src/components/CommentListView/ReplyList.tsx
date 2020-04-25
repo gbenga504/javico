@@ -57,7 +57,7 @@ const ReplyList: React.FC<IProps> = ({
       }
       setRepliesHeight(replyRef.current.scrollHeight);
     }
-  }, [visible]);
+  }, [visible, data]);
 
   function handleLoadMoreReplies() {
     onLoadMore(data[data.length - 1].clientTimestamp);
