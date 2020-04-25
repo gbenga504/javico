@@ -19,7 +19,7 @@
     "typecheck": "tsc --noEmit",
     "build": "yarn build:lib",
     "build:dev": "yarn build",
-    "build:lib": "yarn clean && yarn tsc && yarn babel src --out-dir lib",
+    "build:lib": "yarn clean && yarn tsc && yarn babel src --out-dir lib && yarn cpx \"src/**/*.{css,svg,png,jpg,woff,woff2}\" lib",
     "clean": "rimraf lib",
     "prepublish": "yarn build",
     "start": "(yarn tsc --watch & yarn babel src --out-dir lib --extensions '.ts,.tsx' --watch)"
@@ -54,6 +54,7 @@
     "@storybook/addon-knobs": "^5.3.17",
     "@storybook/react": "^5.3.17",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "cpx": "^1.5.0",
     "rimraf": "^3.0.2",
     "typescript": "^3.8.3"
   }
