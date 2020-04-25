@@ -14,7 +14,7 @@ body {
     font-family: "Eina Regular", sans-serif;
     color: var(--white-color);
     overflow: hidden;
-    font-size: 1.6rem;
+    /* font-size: 1.6rem; */
   }
   
   code {
@@ -30,7 +30,7 @@ body {
   #root {
     width: 100%;
     height: 100%;
-    font-size: 62.5%;
+    /* font-size: 62.5%; */
   }
   
   @font-face {
