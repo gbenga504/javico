@@ -365,7 +365,7 @@ const useStyles = makeStyles(theme => ({
   createSourcecodeIcon: {
     color: color.white,
     transition: "all 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
-    fontSize: 16,
+    fontSize: 20,
     "&:hover": {
       color: color.themeBlue
     }

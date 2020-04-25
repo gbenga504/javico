@@ -264,7 +264,7 @@ const MonacoEditor = React.forwardRef(
             background: color.darkThemeBlack
           }}
         >
-          <CircularProgress color="primary" />
+          <CircularProgress size={60} color="primary" thickness={6} />
         </div>
       ) : null;
     }
