@@ -1,6 +1,5 @@
 import { makeStyles } from '@material-ui/core';
-
-import { color, fontsize, fonts } from '../../Css';
+import { color, fontsize, fonts } from '@javico/common/lib/design-language/Css';
 
 export const useStyles = makeStyles(theme => ({
   container: {

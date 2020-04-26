@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MuiThemeProvider } from '@material-ui/core';
+import { theme } from '@javico/common/lib/design-language/Css';
 
-import { theme } from './Css';
 import AppBar from './components/AppBar';
 import TabNavigator from './components/TabNavigator';
 import ReadMe from './views/ReadMe';
@@ -33,4 +33,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default React.memo(App);

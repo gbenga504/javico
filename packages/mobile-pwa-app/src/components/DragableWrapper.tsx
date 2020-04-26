@@ -1,8 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { DragHandle as DragHandleIcon } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core';
-
-import { color, useStyles as commonCss, fontsize } from '../Css';
+import { color, useStyles as commonCss, fontsize } from '@javico/common/lib/design-language/Css';
 
 const DragableWrapper: React.FC<{
   isVisible: boolean;

@@ -6,8 +6,12 @@ import {
   ExitToApp as LogoutIcon,
   Settings as SettingsIcon,
 } from '@material-ui/icons';
-import { useStyles as commonUseStyles, color, fontsize } from '../Css';
-import Typography from '../atoms/Typography';
+import {
+  useStyles as commonUseStyles,
+  color,
+  fontsize,
+} from '@javico/common/lib/design-language/Css';
+import { Typography } from '@javico/common/lib/components';
 
 interface IProps {
   isVisible: boolean;

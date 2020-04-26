@@ -7,9 +7,9 @@ import {
   MenuBook as MenuBookIcon,
   PlayArrow as PlayArrowIcon,
 } from '@material-ui/icons';
+import { color, useStyles as commonCss, fontsize } from '@javico/common/lib/design-language/Css';
 
 import UserImg from '../../assets/images/user.svg';
-import { color, useStyles as commonCss, fontsize } from '../../Css';
 import Comments from './Comments';
 import Terminal from './Terminal';
 import Readme from './Readme';

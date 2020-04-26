@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Tabs, Tab, makeStyles } from '@material-ui/core';
-
-import { color } from '../Css';
+import { color } from '@javico/common/lib/design-language/Css';
 
 function a11yProps(index: number) {
   return {

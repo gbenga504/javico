@@ -6,10 +6,10 @@ import {
   MoreVert as CallToActionIcon,
 } from '@material-ui/icons';
 import { ButtonBase } from '@material-ui/core';
+import { Typography } from '@javico/common/lib/components';
+import { useStyles as commonUseStyles, color } from '@javico/common/lib/design-language/Css';
 
 import { useStyles } from './styles';
-import { useStyles as commonUseStyles, color } from '../../Css';
-import Typography from '../../atoms/Typography';
 import ActionsModal from '../ActionsModal';
 
 type Menus = 'editor' | 'comment' | 'readme' | 'action';

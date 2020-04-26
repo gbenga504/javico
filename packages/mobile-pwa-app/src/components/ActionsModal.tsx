@@ -6,10 +6,14 @@ import {
   DeviceHub as ForkIcon,
   NoteAdd as AddNewIcon,
 } from '@material-ui/icons';
+import { Typography } from '@javico/common/lib/components';
+import {
+  useStyles as commonUseStyles,
+  color,
+  fontsize,
+} from '@javico/common/lib/design-language/Css';
 
 import DraggableListener from '../atoms/DraggableListener';
-import { useStyles as commonUseStyles, color, fontsize } from '../Css';
-import Typography from '../atoms/Typography';
 
 type Action = 'changeTitle' | 'share' | 'forkCode' | 'addNew';
 interface IProps {
