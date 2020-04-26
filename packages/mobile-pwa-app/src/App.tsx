@@ -6,7 +6,6 @@ import AppBar from './components/AppBar';
 import TabNavigator from './components/TabNavigator';
 import ReadMe from './views/ReadMe';
 import Settings from './views/Settings';
-import Editor from './views/Editor';
 import MenuDrawer from './components/MenuDrawer';
 
 const App: React.FC = () => {
@@ -14,7 +13,6 @@ const App: React.FC = () => {
   return (
     <MuiThemeProvider theme={theme}>
       {/* <MenuDrawer onBlur={() => setIsSideBarVisible(false)} isSideBarVisible={isSideBarVisible} /> */}
-      {/* <Editor setIsSideBarVisible={() => setIsSideBarVisible(true)} /> */}
       <div
         style={{
           display: 'flex',
