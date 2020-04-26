@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Fab } from "@material-ui/core";
+import { Fab, makeStyles } from "@material-ui/core";
 import { PlayArrow as PlayArrowIcon } from "@material-ui/icons";
 import { useSelector } from "react-redux";
 import {
@@ -13,8 +13,8 @@ import {
   getSourceCodeIdFromUrl,
   updateUrl
 } from "@javico/common/lib/utils";
+import { color, fontsize } from "@javico/common/lib/design-language/Css";
 
-import { useStyles } from "./styles";
 import SourceCodeHeading from "./SourceCodeHeading";
 import SignInViaGithubHandler from "../SignInViaGithubHandler";
 import * as Constants from "../../utils/Constants";
@@ -284,5 +284,24 @@ const Editor: React.FC<IProps> = ({
     </>
   );
 };
+
+const useStyles = makeStyles({
+  monacoEditorContainer: {
+    width: "50%",
+    position: "relative",
+    background: color.darkThemeBlack
+  },
+  monacoEditorRunButton: {
+    position: "absolute",
+    bottom: 15,
+    right: "50%",
+    zIndex: 2000
+  },
+  monacoEditorRunButtonIcon: {
+    color: color.white,
+    fontSize: fontsize.xlarge * 2,
+    marginLeft: 2
+  }
+});
 
 export default React.memo(withNotificationBanner(Editor));

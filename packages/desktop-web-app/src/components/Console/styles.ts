@@ -29,8 +29,5 @@ export const useStyles = makeStyles(theme => ({
     overflowY: "scroll",
     borderTop: `1px solid ${color.darkThemeLightBorder}`,
     fontSize: `${fontsize.terminal}px !important`
-  },
-  consoleTab: {
-    color: color.white
   }
 }));
