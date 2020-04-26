@@ -1,6 +1,6 @@
 import { createStore, applyMiddleware, compose } from 'redux';
-import reducers from './reducers';
 import { logger } from 'redux-logger';
+import reducers from './reducers';
 
 declare global {
   interface Window {

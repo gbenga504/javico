@@ -1,0 +1,61 @@
+{
+  "name": "@javico/common",
+  "version": "1.0.0",
+  "description": "Shared contents for the javico series of apps",
+  "author": "Anifowoshe Gbenga <daveanifowoshe@ymail.com>",
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gbenga504/gist.git",
+    "directory": "packages/common"
+  },
+  "scripts": {
+    "storybook": "start-storybook",
+    "typecheck": "tsc --noEmit",
+    "build": "yarn build:lib",
+    "build:dev": "yarn build",
+    "build:lib": "yarn clean && yarn tsc && yarn babel src --out-dir lib && yarn cpx \"src/**/*.{css,svg,png,jpg,woff,woff2}\" lib",
+    "clean": "rimraf lib",
+    "prepublish": "yarn build",
+    "start": "(yarn tsc --watch & yarn babel src --out-dir lib --extensions '.ts,.tsx' --watch)"
+  },
+  "bugs": {
+    "url": "https://github.com/gbenga504/gist/issues"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.9.11",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.50",
+    "@types/react": "^16.9.25",
+    "@types/react-dom": "^16.9.5",
+    "@types/react-helmet": "^5.0.15",
+    "@types/react-syntax-highlighter": "^11.0.4",
+    "console-feed": "^3.0.0",
+    "firebase": "^7.14.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-helmet": "^5.2.1",
+    "react-markdown": "^4.3.1",
+    "react-syntax-highlighter": "^12.2.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
+    "@babel/preset-react": "^7.9.1",
+    "@babel/preset-typescript": "^7.9.0",
+    "@storybook/addon-actions": "^5.3.17",
+    "@storybook/addon-info": "^5.3.17",
+    "@storybook/addon-knobs": "^5.3.17",
+    "@storybook/react": "^5.3.17",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "cpx": "^1.5.0",
+    "rimraf": "^3.0.2",
+    "typescript": "^3.8.3"
+  }
+}

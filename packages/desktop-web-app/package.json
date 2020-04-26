@@ -1,55 +1,34 @@
 {
-  "name": "gist",
+  "name": "desktop-web-app",
   "version": "0.1.0",
-  "private": true,
   "dependencies": {
-    "@material-ui/core": "^4.8.3",
+    "@javico/common": "1.0.0",
+    "@material-ui/core": "^4.9.11",
     "@material-ui/icons": "^4.9.1",
-    "@material-ui/lab": "^4.0.0-alpha.42",
+    "@material-ui/lab": "^4.0.0-alpha.50",
     "@types/jest": "24.0.23",
     "@types/node": "12.12.14",
-    "@types/react": "16.9.13",
+    "@types/react": "^16.9.27",
     "@types/react-dom": "16.9.4",
-    "@types/react-helmet": "^5.0.15",
     "@types/react-redux": "^7.1.7",
     "@types/react-share": "^3.0.3",
-    "@types/react-syntax-highlighter": "^11.0.4",
     "@types/redux-logger": "^3.0.7",
-    "console-feed": "^2.8.11",
     "dayjs": "^1.8.20",
-    "firebase": "^7.6.0",
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0",
-    "react-helmet": "^5.2.1",
-    "react-markdown": "^4.2.2",
+    "firebase": "^7.14.1",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
     "react-redux": "^7.2.0",
-    "react-scripts": "3.2.0",
     "react-share": "^3.0.1",
-    "react-syntax-highlighter": "^12.2.1",
     "redux": "^4.0.5",
-    "redux-logger": "^3.0.6",
-    "typescript": "3.7.2"
+    "redux-logger": "^3.0.6"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "./build.sh",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "clean": "rm -rf ./build",
-    "format": "prettier --write \"src/**/*.{js,jsx,tsx,ts,json,css,md}\"",
-    "format:check": "prettier --list-different \"src/**/*.{js,jsx,json,tsx,ts,css,md}\"",
+    "clean": "rimraf build",
     "analyze": "source-map-explorer 'build/static/js/*.js'"
-  },
-  "lint-staged": {
-    "*.{js,ts,tsx,md}": [
-      "prettier --write",
-      "git add"
-    ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -67,9 +46,8 @@
     ]
   },
   "devDependencies": {
-    "husky": "^3.1.0",
-    "lint-staged": "^9.5.0",
-    "prettier": "^1.19.1",
-    "source-map-explorer": "^2.1.1"
+    "rimraf": "^3.0.2",
+    "source-map-explorer": "^2.1.1",
+    "typescript": "^3.8.3"
   }
 }
