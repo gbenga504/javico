@@ -10,12 +10,15 @@
     "babel-loader": "8.0.6"
   },
   "scripts": {
-    "build": "lerna run build --scope @javico/common",
+    "build": "lerna run build --scope @javico/common --stream && lerna run build --scope desktop-web-app --stream && lerna run build --scope mobile-pwa-app --stream",
+    "build:common": "lerna run build --scope @javico/common --stream",
+    "init": "lerna run clean && rimraf node_modules && lerna bootstrap",
     "format": "prettier --write \"src/**/*.{js,jsx,tsx,ts,json,css,md}\"",
     "format:check": "prettier --list-different \"src/**/*.{js,jsx,json,tsx,ts,css,md}\"",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "start": "lerna run start --scope @javico/common --scope desktop-web-app --parallel",
+    "start": "lerna run start --scope @javico/common --scope desktop-web-app --parallel --scope mobile-pwa-app",
     "start:desktop-web-app": "lerna run start --scope desktop-web-app --stream",
+    "start:mobile-pwa-app": "lerna run start --scope mobile-pwa-app --stream",
     "storybook": "lerna run storybook --scope @javico/common --stream"
   },
   "lint-staged": {
