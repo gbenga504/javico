@@ -8,10 +8,9 @@ import ProfilePreviewModal from '../ProfilePreviewModal';
 const AppBar: React.FC = () => {
   const classes = useStyles();
   const commonCss = commonUseStyles();
-  const [
-    anchorElForProfilePreview,
-    setAnchorElForProfilePreview,
-  ] = React.useState<HTMLDivElement | null>(null);
+  const [anchorElForProfilePreview, setAnchorElForProfilePreview] = useState<HTMLDivElement | null>(
+    null,
+  );
   const isVisible = Boolean(anchorElForProfilePreview);
   const profilePreviewId = isVisible ? 'profile-popover' : undefined;
 

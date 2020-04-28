@@ -1,34 +1,28 @@
-import React, { useState } from 'react';
-import { MuiThemeProvider } from '@material-ui/core';
+import React from 'react';
+import { MuiThemeProvider, makeStyles } from '@material-ui/core';
 import { theme } from '@javico/common/lib/design-language/Css';
 
-import AppBar from './components/AppBar';
-import TabNavigator from './components/TabNavigator';
-import ReadMe from './views/ReadMe';
-import Settings from './views/Settings';
-import MenuDrawer from './components/MenuDrawer';
+import Routes from './Routes';
 
 const App: React.FC = () => {
-  // const [isSideBarVisible, setIsSideBarVisible] = useState<boolean>(false);
+  const classes = useStyles();
+
   return (
     <MuiThemeProvider theme={theme}>
-      {/* <MenuDrawer onBlur={() => setIsSideBarVisible(false)} isSideBarVisible={isSideBarVisible} /> */}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          height: '100%',
-        }}>
-        <AppBar />
-        <div style={{ flex: 1 }}>
-          <ReadMe />
-        </div>
-        <TabNavigator />
+      <div className={classes.container}>
+        <Routes />
       </div>
-      {/* <Settings /> */}
     </MuiThemeProvider>
   );
 };
+
+const useStyles = makeStyles({
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    height: '100%',
+  },
+});
 
 export default React.memo(App);
