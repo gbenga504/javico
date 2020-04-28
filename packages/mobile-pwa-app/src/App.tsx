@@ -2,14 +2,23 @@ import React, { useState } from 'react';
 import { MuiThemeProvider } from '@material-ui/core';
 import { theme } from '@javico/common/lib/design-language/Css';
 
-import AppBar from './components/AppBar';
 import TabNavigator from './components/TabNavigator';
 import ReadMe from './views/ReadMe';
-import Settings from './views/Settings';
-import MenuDrawer from './components/MenuDrawer';
+import ActionsModal from './components/ActionsModal';
+import Editor from './views/Editor';
+// import Settings from './views/Settings';
+// import MenuDrawer from './components/MenuDrawer';
+
+export type IMenus = 'editor' | 'comment' | 'readme' | 'action';
 
 const App: React.FC = () => {
-  // const [isSideBarVisible, setIsSideBarVisible] = useState<boolean>(false);
+  const [activeMenu, setActiveMenu] = useState<IMenus>('editor');
+  const [isActionsModalVisible, setIsActionsModalVisible] = useState<boolean>(false);
+
+  function handleToggleActionsModal() {
+    setIsActionsModalVisible(prevState => !prevState);
+  }
+
   return (
     <MuiThemeProvider theme={theme}>
       {/* <MenuDrawer onBlur={() => setIsSideBarVisible(false)} isSideBarVisible={isSideBarVisible} /> */}
@@ -20,13 +29,18 @@ const App: React.FC = () => {
           justifyContent: 'space-between',
           height: '100%',
         }}>
-        <AppBar />
         <div style={{ flex: 1 }}>
-          <ReadMe />
+          {activeMenu === 'readme' && <ReadMe />}
+          {activeMenu === 'editor' && <Editor />}
         </div>
-        <TabNavigator />
+        <TabNavigator
+          activeMenu={activeMenu}
+          onSetActiveMenu={setActiveMenu}
+          onHandleToggleActionsModal={handleToggleActionsModal}
+        />
       </div>
       {/* <Settings /> */}
+      <ActionsModal onRequestClose={handleToggleActionsModal} isVisible={isActionsModalVisible} />
     </MuiThemeProvider>
   );
 };
