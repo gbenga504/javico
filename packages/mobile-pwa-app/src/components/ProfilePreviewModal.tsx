@@ -12,6 +12,8 @@ import {
   fontsize,
 } from '@javico/common/lib/design-language/Css';
 import { Typography } from '@javico/common/lib/components';
+import history from '../history';
+import { Paths } from '../Routes';
 
 interface IProps {
   isVisible: boolean;
@@ -40,6 +42,10 @@ const ProfilePreviewModal: React.FC<IProps> = ({
 
   function renderAvatar() {
     return <div className={classes.avatarContainer}></div>;
+  }
+
+  function handleNavigateToSettingsView() {
+    history.push(Paths.SETTINGS);
   }
 
   return (
@@ -84,7 +90,9 @@ const ProfilePreviewModal: React.FC<IProps> = ({
         </Typography>
       </ButtonBase>
       <div className={classes.seperator} />
-      <ButtonBase className={`${classes.addPadding} ${commonCss.flexRow} ${classes.button}`}>
+      <ButtonBase
+        className={`${classes.addPadding} ${commonCss.flexRow} ${classes.button}`}
+        onClick={handleNavigateToSettingsView}>
         <SettingsIcon className={classes.icon} />
         <Typography thickness="semi-bold" className={`${classes.text} ${classes.buttonText}`}>
           Settings

@@ -7,15 +7,20 @@ import {
   fontsize,
 } from '@javico/common/lib/design-language/Css';
 import { Typography } from '@javico/common/lib/components';
+import { Paths } from '../Routes';
 
-const Settings: React.FC = () => {
+const Settings: React.FC<{ history: any }> = ({ history }) => {
   const commonCss = commonUseStyles();
   const classes = useStyles();
+
+  function handleNavigateToEditorView() {
+    history.push(Paths.EDITOR);
+  }
 
   function renderHeader() {
     return (
       <div className={`${commonCss.flexRow} ${classes.header} ${classes.addPadding}`}>
-        <ArrowBackIosIcon className={classes.backIcon} />
+        <ArrowBackIosIcon className={classes.backIcon} onClick={handleNavigateToEditorView} />
         <Typography thickness="semi-bold" className={classes.titleText}>
           Settings
         </Typography>
