@@ -1,8 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core';
+import { fontsize, useStyles as commonCss } from '@javico/common/lib/design-language/Css';
 
 import UserImg from '../assets/images/user.svg';
-import { fontsize, useStyles as commonCss } from '../Css';
 
 const MenuDrawer: React.FC<{ isSideBarVisible: boolean; onBlur: () => void }> = ({
   isSideBarVisible,

@@ -1,9 +1,12 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
 import { ArrowBackIos as ArrowBackIosIcon } from '@material-ui/icons';
-
-import { useStyles as commonUseStyles, color, fontsize } from '../Css';
-import Typography from '../atoms/Typography';
+import {
+  useStyles as commonUseStyles,
+  color,
+  fontsize,
+} from '@javico/common/lib/design-language/Css';
+import { Typography } from '@javico/common/lib/components';
 
 const Settings: React.FC = () => {
   const commonCss = commonUseStyles();

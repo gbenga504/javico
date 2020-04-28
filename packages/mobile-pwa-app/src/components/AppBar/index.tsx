@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Settings as SettingsIcon } from '@material-ui/icons';
+import { useStyles as commonUseStyles, color } from '@javico/common/lib/design-language/Css';
 
 import { useStyles } from './styles';
-import { useStyles as commonUseStyles, color } from '../../Css';
 import ProfilePreviewModal from '../ProfilePreviewModal';
 
 const AppBar: React.FC = () => {

@@ -1,8 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core';
 import ReactDOM from 'react-dom';
-
-import { color } from '../Css';
+import { color } from '@javico/common/lib/design-language/Css';
 
 const draggableRoot = document.body;
 
