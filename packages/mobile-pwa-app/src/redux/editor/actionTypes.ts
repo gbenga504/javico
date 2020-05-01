@@ -1,0 +1,1 @@
+export const SAVE_EDITOR_STATE = 'SAVE_EDITOR_STATE';
