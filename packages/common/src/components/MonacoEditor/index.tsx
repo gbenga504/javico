@@ -9,7 +9,6 @@ import { Tooltip, CircularProgress } from "@material-ui/core";
 import { ModeComment as ModeCommentIcon } from "@material-ui/icons";
 import {
   useStyles as commonUseStyles,
-  color,
   fontsize
 } from "../../design-language/Css";
 import { useStyles } from "./styles";
@@ -27,6 +26,8 @@ interface IProps {
   ) => void;
   theme?: "light" | "dark" | "ace" | "night-dark" | "vs-dark";
   language?: string;
+  model?: any;
+  viewState?: any;
 }
 
 const MonacoEditor = React.forwardRef(
@@ -37,7 +38,9 @@ const MonacoEditor = React.forwardRef(
       onSaveValue,
       onHighlightValue,
       theme = "vs-dark",
-      language = "javascript"
+      language = "javascript",
+      model: _model,
+      viewState
     }: IProps,
     ref
   ) => {
@@ -54,7 +57,7 @@ const MonacoEditor = React.forwardRef(
     const changeSubscriptionRef = useRef<any>(null);
     const nodeRef = useRef<HTMLDivElement>(null);
     const commentIconRef = useRef<HTMLDivElement>(null);
-    const classes = useStyles();
+    const classes = useStyles({ theme });
     const commonCss = commonUseStyles();
 
     const createEditor = useCallback(() => {
@@ -65,7 +68,8 @@ const MonacoEditor = React.forwardRef(
       editorRef.current = monacoRef.current.editor.create(nodeRef.current, {
         automaticLayout: true
       });
-      editorRef.current.setModel(model);
+      editorRef.current.setModel(_model || model);
+      !!viewState === true && editorRef.current.restoreViewState(viewState);
 
       for (let themeName in MonacoThemes) {
         monacoRef.current.editor.defineTheme(
@@ -261,7 +265,7 @@ const MonacoEditor = React.forwardRef(
           className={`${commonCss.flexRow} ${commonCss.center} ${commonCss.fullHeightAndWidth}`}
           style={{
             overflow: "hidden",
-            background: color.darkThemeBlack
+            background: "transparent"
           }}
         >
           <CircularProgress size={60} color="primary" thickness={6} />

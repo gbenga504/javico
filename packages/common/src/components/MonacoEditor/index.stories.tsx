@@ -29,6 +29,7 @@ export const editor = () => {
 
   return (
     <MonacoEditor
+      theme="light"
       onChangeValue={handleValueChange}
       onHighlightValue={handleValueHighlight}
       onSaveValue={handleSave}

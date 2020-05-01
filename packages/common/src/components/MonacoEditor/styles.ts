@@ -7,7 +7,8 @@ export const useStyles = makeStyles({
     width: "100%",
     height: "100%",
     position: "relative",
-    background: color.darkThemeBlack
+    background: ({ theme }: { theme: string }) =>
+      theme === "light" ? color.white : color.darkThemeBlack
   },
   monacoEditorTitleHead: {
     height: 30,
