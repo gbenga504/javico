@@ -19,6 +19,7 @@ import SourceCodeHeading from "./SourceCodeHeading";
 import SignInViaGithubHandler from "../SignInViaGithubHandler";
 import * as Constants from "../../utils/Constants";
 import { getCurrentUserState } from "../../redux/auth/reducers";
+import ResizeListener from "./ResizeListener";
 
 interface IProps {
   value?: string;
@@ -71,8 +72,13 @@ const Editor: React.FC<IProps> = ({
   const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(
     false
   );
+  const [currentEditorBoundary, setCurrentEditorBoundary] = useState<object>(
+    {}
+  );
   const [sourceCode, setSourceCode] = useState<string>("");
+  const [resizeWidth, setResizeWidth] = useState<string>("");
   const editorRef = useRef<any>(null);
+  const monacoEditorContainerRef = useRef<any>();
   const classes = useStyles();
   const {
     sourceCode: fetchedSourceCode,
@@ -81,6 +87,18 @@ const Editor: React.FC<IProps> = ({
     sourceCodeId,
     readme
   } = sourceCodeMetaData || {};
+
+  function getEditorBoundary() {
+    if (monacoEditorContainerRef.current)
+      return monacoEditorContainerRef.current.getBoundingClientRect();
+    return {};
+  }
+
+  useEffect(() => {
+    if (monacoEditorContainerRef.current)
+      setCurrentEditorBoundary(getEditorBoundary());
+    setResizeWidth(getEditorBoundary().width + "px");
+  }, [monacoEditorContainerRef.current]);
 
   useEffect(() => {
     let editor = editorRef.current;
@@ -241,9 +259,26 @@ const Editor: React.FC<IProps> = ({
     setIsSignInModalVisible(true);
   }
 
+  function resizeEditor(width: number) {
+    // if (monacoEditorContainerRef.current)
+    // monacoEditorContainerRef.current.style.width = width + "px";
+    // console.log("jkihkbfkljhbkljhvbnljvd resizeEditor ", width);
+    setResizeWidth(width + "px");
+    console.log("jkihkbfkljhbkljhvbnljvd dragMove ", width);
+  }
+
   return (
     <>
-      <div className={classes.monacoEditorContainer}>
+      <div
+        ref={monacoEditorContainerRef}
+        className={classes.monacoEditorContainer}
+        style={{ width: resizeWidth }}
+      >
+        <ResizeListener
+          resizeEditor={resizeEditor}
+          currentBoundary={currentEditorBoundary}
+          getEditorBoundary={getEditorBoundary}
+        />
         <SourceCodeHeading
           sourceCodeTitle={sourceCodeTitle}
           toggleProgressBarVisibility={toggleProgressBarVisibility}
