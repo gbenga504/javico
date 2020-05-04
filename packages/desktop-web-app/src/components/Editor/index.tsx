@@ -72,13 +72,13 @@ const Editor: React.FC<IProps> = ({
   const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(
     false
   );
-  const [currentEditorBoundary, setCurrentEditorBoundary] = useState<object>(
-    {}
-  );
+  const [disableDragforward, setDisableDragforward] = useState<boolean>(false);
+  const [currentEditorBoundary, setCurrentEditorBoundary] = useState<any>({});
   const [sourceCode, setSourceCode] = useState<string>("");
-  const [resizeWidth, setResizeWidth] = useState<string>("");
+  const [resizeWidth, setResizeWidth] = useState<any>("50%");
   const editorRef = useRef<any>(null);
   const monacoEditorContainerRef = useRef<any>();
+  const editorInnerwidthRef = useRef<number>();
   const classes = useStyles();
   const {
     sourceCode: fetchedSourceCode,
@@ -95,10 +95,26 @@ const Editor: React.FC<IProps> = ({
   }
 
   useEffect(() => {
-    if (monacoEditorContainerRef.current)
+    editorInnerwidthRef.current = resizeWidth;
+    if (resizeWidth > monacoEditorContainerRef.current.clientWidth) {
+      console.log(
+        "jkihkbfkljhbkljhvbnljvd innerwidth 2 ",
+        disableDragforward,
+        resizeWidth,
+        monacoEditorContainerRef.current
+          ? monacoEditorContainerRef.current.clientWidth
+          : ""
+      );
+      setDisableDragforward(true);
+    }
+  }, [resizeWidth]);
+
+  useEffect(() => {
+    if (monacoEditorContainerRef.current) {
       setCurrentEditorBoundary(getEditorBoundary());
-    setResizeWidth(getEditorBoundary().width + "px");
-  }, [monacoEditorContainerRef.current]);
+      setResizeWidth(getEditorBoundary().width);
+    }
+  }, []);
 
   useEffect(() => {
     let editor = editorRef.current;
@@ -260,12 +276,44 @@ const Editor: React.FC<IProps> = ({
   }
 
   function resizeEditor(width: number) {
-    // if (monacoEditorContainerRef.current)
-    // monacoEditorContainerRef.current.style.width = width + "px";
     // console.log("jkihkbfkljhbkljhvbnljvd resizeEditor ", width);
-    setResizeWidth(width + "px");
-    console.log("jkihkbfkljhbkljhvbnljvd dragMove ", width);
+
+    // console.log("jkihkbfkljhbkljhvbnljvd width ", width);
+    // console.log(
+    //   "jkihkbfkljhbkljhvbnljvd innerwidth 1 ",
+    //   disableDragforward,
+    //   monacoEditorContainerRef.current
+    //     ? monacoEditorContainerRef.current.clientWidth
+    //     : ""
+    // );
+    if (monacoEditorContainerRef.current) {
+      console.log(
+        "jkihkbfkljhbkljhvbnljvd width disableDragforward 1 ",
+        disableDragforward
+      );
+      if (disableDragforward === true) return;
+      console.log(
+        "jkihkbfkljhbkljhvbnljvd width disableDragforward 2 ",
+        disableDragforward
+      );
+      // if (
+      //   getEditorBoundary().width < monacoEditorContainerRef.current.clientWidth
+      // ) {
+      // monacoEditorContainerRef.current.clientWidth;
+      // if(editorInnerwidthRef >= )
+      setResizeWidth(width);
+      // }
+    }
   }
+
+  console.log("jkihkbfkljhbkljhvbnljvd width global ", disableDragforward);
+
+  // console.log(
+  //   "jkihkbfkljhbkljhvbnljvd innerwidth 2 ",
+  //   monacoEditorContainerRef.current
+  //     ? monacoEditorContainerRef.current.clientWidth
+  //     : ""
+  // );
 
   return (
     <>
@@ -277,7 +325,7 @@ const Editor: React.FC<IProps> = ({
         <ResizeListener
           resizeEditor={resizeEditor}
           currentBoundary={currentEditorBoundary}
-          getEditorBoundary={getEditorBoundary}
+          resizeWidth={resizeWidth}
         />
         <SourceCodeHeading
           sourceCodeTitle={sourceCodeTitle}
@@ -322,7 +370,6 @@ const Editor: React.FC<IProps> = ({
 
 const useStyles = makeStyles({
   monacoEditorContainer: {
-    width: "50%",
     position: "relative",
     background: color.darkThemeBlack
   },
@@ -339,4 +386,4 @@ const useStyles = makeStyles({
   }
 });
 
-export default React.memo(withNotificationBanner(Editor));
+export default withNotificationBanner(Editor);
