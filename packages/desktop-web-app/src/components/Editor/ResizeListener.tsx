@@ -1,14 +1,22 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core";
-import { color } from "@javico/common/lib/design-language/Css";
 
 interface IProps {
-  resizeEditor: (width: number) => void;
-  resizeWidth: any;
+  children: any;
+  initialWidth?: string;
+  initialHeight?: string;
+  style?: object;
 }
 
-const ResizeListener: React.FC<IProps> = ({ resizeEditor, resizeWidth }) => {
+const ResizeListener: React.FC<IProps> = ({
+  children,
+  initialHeight,
+  initialWidth,
+  style
+}) => {
   const draggableContainerRef = useRef<HTMLDivElement | null>(null);
+  const [resizeWidth, setResizeWidth] = useState<any>(initialWidth);
+  const resizeContainerRef = useRef<any>();
   const classes = useStyles();
 
   useEffect(() => {
@@ -29,7 +37,25 @@ const ResizeListener: React.FC<IProps> = ({ resizeEditor, resizeWidth }) => {
       }
     };
     // eslint-disable-next-line
-  }, [resizeWidth]);
+  }, []);
+
+  useEffect(() => {
+    if (resizeContainerRef.current) {
+      setResizeWidth(getEditorBoundary().width);
+    }
+  }, []);
+
+  function getEditorBoundary() {
+    if (resizeContainerRef.current)
+      return resizeContainerRef.current.getBoundingClientRect();
+    return {};
+  }
+
+  function resizeEditor(width: number) {
+    if (resizeContainerRef.current) {
+      setResizeWidth(width);
+    }
+  }
 
   function dragMove(e: any) {
     resizeEditor(e.clientX);
@@ -48,11 +74,23 @@ const ResizeListener: React.FC<IProps> = ({ resizeEditor, resizeWidth }) => {
   return (
     <div
       style={{
-        left: resizeWidth
+        position: "relative",
+        width: resizeWidth,
+        ...style
       }}
-      ref={draggableContainerRef}
-      className={classes.resizeEditorAnchor}
-    />
+      ref={resizeContainerRef}
+    >
+      <div
+        style={{
+          left: resizeContainerRef.current
+            ? resizeContainerRef.current.clientWidth
+            : resizeWidth
+        }}
+        ref={draggableContainerRef}
+        className={classes.resizeEditorAnchor}
+      />
+      {children}
+    </div>
   );
 };
 
@@ -63,9 +101,7 @@ const useStyles = makeStyles({
     bottom: 0,
     width: 1,
     zIndex: 5,
-    cursor: "ew-resize",
-    opacity: 0,
-    backgroundColor: color.gray20
+    cursor: "ew-resize"
   }
 });
 

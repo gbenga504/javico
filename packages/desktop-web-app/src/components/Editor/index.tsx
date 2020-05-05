@@ -73,9 +73,7 @@ const Editor: React.FC<IProps> = ({
     false
   );
   const [sourceCode, setSourceCode] = useState<string>("");
-  const [resizeWidth, setResizeWidth] = useState<any>("50%");
   const editorRef = useRef<any>(null);
-  const monacoEditorContainerRef = useRef<any>();
   const classes = useStyles();
   const {
     sourceCode: fetchedSourceCode,
@@ -84,18 +82,6 @@ const Editor: React.FC<IProps> = ({
     sourceCodeId,
     readme
   } = sourceCodeMetaData || {};
-
-  function getEditorBoundary() {
-    if (monacoEditorContainerRef.current)
-      return monacoEditorContainerRef.current.getBoundingClientRect();
-    return {};
-  }
-
-  useEffect(() => {
-    if (monacoEditorContainerRef.current) {
-      setResizeWidth(getEditorBoundary().width);
-    }
-  }, []);
 
   useEffect(() => {
     let editor = editorRef.current;
@@ -256,59 +242,48 @@ const Editor: React.FC<IProps> = ({
     setIsSignInModalVisible(true);
   }
 
-  function resizeEditor(width: number) {
-    if (monacoEditorContainerRef.current) {
-      setResizeWidth(width);
-    }
-  }
-
   return (
     <>
-      <div
-        ref={monacoEditorContainerRef}
-        className={classes.monacoEditorContainer}
-        style={{ width: resizeWidth }}
+      <ResizeListener
+        initialWidth="50%"
+        style={{
+          minWidth: "30%"
+        }}
       >
-        <ResizeListener
-          resizeEditor={resizeEditor}
-          resizeWidth={
-            monacoEditorContainerRef.current
-              ? monacoEditorContainerRef.current.clientWidth
-              : resizeWidth
-          }
-        />
-        <SourceCodeHeading
-          sourceCodeTitle={sourceCodeTitle}
-          toggleProgressBarVisibility={toggleProgressBarVisibility}
-          saveNewSourcecode={saveNewSourcecode}
-          updateSourcecode={updateSourcecode}
-          isFetchingSourceCodeMetaData={isFetchingSourceCodeMetaData}
-          sourceCode={sourceCode}
-          readme={readme}
-          ownerId={ownerId}
-        />
-        <MonacoEditor
-          ref={editorRef}
-          onChangeValue={handleSourceCodeChange}
-          onSaveValue={handleSaveSourceCode}
-          onHighlightValue={handleCodeHighlight}
-        />
-        <InlineCodeComment
-          visible={Boolean(commentAnchorDistanceY)}
-          distanceY={commentAnchorDistanceY}
-          onRequestClose={handleCloseInlineCodeComment}
-          onOk={handleSubmitComment}
-          loading={isSubmittingComment}
-        />
-        <Fab
-          color="primary"
-          onClick={handleSourceCodeExecution}
-          variant="round"
-          classes={{ root: classes.monacoEditorRunButton }}
-        >
-          <PlayArrowIcon className={classes.monacoEditorRunButtonIcon} />
-        </Fab>
-      </div>
+        <div className={classes.monacoEditorContainer}>
+          <SourceCodeHeading
+            sourceCodeTitle={sourceCodeTitle}
+            toggleProgressBarVisibility={toggleProgressBarVisibility}
+            saveNewSourcecode={saveNewSourcecode}
+            updateSourcecode={updateSourcecode}
+            isFetchingSourceCodeMetaData={isFetchingSourceCodeMetaData}
+            sourceCode={sourceCode}
+            readme={readme}
+            ownerId={ownerId}
+          />
+          <MonacoEditor
+            ref={editorRef}
+            onChangeValue={handleSourceCodeChange}
+            onSaveValue={handleSaveSourceCode}
+            onHighlightValue={handleCodeHighlight}
+          />
+          <InlineCodeComment
+            visible={Boolean(commentAnchorDistanceY)}
+            distanceY={commentAnchorDistanceY}
+            onRequestClose={handleCloseInlineCodeComment}
+            onOk={handleSubmitComment}
+            loading={isSubmittingComment}
+          />
+          <Fab
+            color="primary"
+            onClick={handleSourceCodeExecution}
+            variant="round"
+            classes={{ root: classes.monacoEditorRunButton }}
+          >
+            <PlayArrowIcon className={classes.monacoEditorRunButtonIcon} />
+          </Fab>
+        </div>
+      </ResizeListener>
       <SignInViaGithubHandler
         visible={isSignInModalVisible}
         onRequestClose={handleCloseSignInModal}
@@ -320,9 +295,9 @@ const Editor: React.FC<IProps> = ({
 
 const useStyles = makeStyles({
   monacoEditorContainer: {
-    position: "relative",
     background: color.darkThemeBlack,
-    minWidth: "30%"
+    width: "100%",
+    height: "100%"
   },
   monacoEditorRunButton: {
     position: "absolute",
