@@ -300,15 +300,15 @@ const Editor: React.FC<IProps> = ({
           onOk={handleSubmitComment}
           loading={isSubmittingComment}
         />
+        <Fab
+          color="primary"
+          onClick={handleSourceCodeExecution}
+          variant="round"
+          classes={{ root: classes.monacoEditorRunButton }}
+        >
+          <PlayArrowIcon className={classes.monacoEditorRunButtonIcon} />
+        </Fab>
       </div>
-      <Fab
-        color="primary"
-        onClick={handleSourceCodeExecution}
-        variant="round"
-        classes={{ root: classes.monacoEditorRunButton }}
-      >
-        <PlayArrowIcon className={classes.monacoEditorRunButtonIcon} />
-      </Fab>
       <SignInViaGithubHandler
         visible={isSignInModalVisible}
         onRequestClose={handleCloseSignInModal}
@@ -323,12 +323,11 @@ const useStyles = makeStyles({
     position: "relative",
     background: color.darkThemeBlack,
     minWidth: "30%"
-    // transition: "all 0.5s"
   },
   monacoEditorRunButton: {
     position: "absolute",
     bottom: 15,
-    right: "50%",
+    right: 20,
     zIndex: 2000
   },
   monacoEditorRunButtonIcon: {
