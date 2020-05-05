@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Tabs, Tab as MuiTab, withStyles } from "@material-ui/core";
-import { NotInterested as ClearIcon } from "@material-ui/icons";
 import {
   withNotificationBanner,
   Terminal
@@ -132,19 +131,6 @@ const Console: React.FC<{
       });
   }
 
-  function renderTerminalBasedActions() {
-    return (
-      currentTab === 0 && (
-        <div className={classes.consoleTerminalBasedActionsContainer}>
-          <ClearIcon
-            className={classes.consoleTerminalClearIcon}
-            onClick={handleClearConsole}
-          />
-        </div>
-      )
-    );
-  }
-
   return (
     <section className={classes.console}>
       <div>
@@ -153,15 +139,12 @@ const Console: React.FC<{
           onChange={handleTabChange}
           aria-label="console tabs"
         >
-          <Tab label="TERMINAL" {...a11yProps(0)} />
-          {isAuthorize && <Tab label="READ ME" {...a11yProps(1)} />}
-          <Tab label={isAuthorize ? "PREVIEW" : "READ ME"} {...a11yProps(2)} />
+          {isAuthorize && <Tab label="READ ME" {...a11yProps(0)} />}
+          <Tab label={isAuthorize ? "PREVIEW" : "READ ME"} {...a11yProps(1)} />
         </Tabs>
-        {renderTerminalBasedActions()}
       </div>
       <div className={classes.consoleSection}>
-        {currentTab === 0 && <Terminal terminalMessages={terminalMessages} />}
-        {currentTab === 1 ? (
+        {currentTab === 0 ? (
           isAuthorize ? (
             <Readme
               readMe={readMe}
@@ -173,7 +156,13 @@ const Console: React.FC<{
             <Preview readMe={readMe} />
           )
         ) : null}
-        {currentTab === 2 && <Preview readMe={readMe} />}
+        {currentTab === 1 && <Preview readMe={readMe} />}
+      </div>
+      <div className={classes.terminalSection}>
+        <Terminal
+          terminalMessages={terminalMessages}
+          onHandleClearConsole={handleClearConsole}
+        />
       </div>
       <SignInViaGithubHandler
         visible={isSignInModalVisible}
