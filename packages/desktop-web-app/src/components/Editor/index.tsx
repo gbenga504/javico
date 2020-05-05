@@ -72,13 +72,10 @@ const Editor: React.FC<IProps> = ({
   const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(
     false
   );
-  const [disableDragforward, setDisableDragforward] = useState<boolean>(false);
-  const [currentEditorBoundary, setCurrentEditorBoundary] = useState<any>({});
   const [sourceCode, setSourceCode] = useState<string>("");
   const [resizeWidth, setResizeWidth] = useState<any>("50%");
   const editorRef = useRef<any>(null);
   const monacoEditorContainerRef = useRef<any>();
-  const editorInnerwidthRef = useRef<number>();
   const classes = useStyles();
   const {
     sourceCode: fetchedSourceCode,
@@ -95,16 +92,7 @@ const Editor: React.FC<IProps> = ({
   }
 
   useEffect(() => {
-    editorInnerwidthRef.current = resizeWidth;
-    if (resizeWidth > monacoEditorContainerRef.current.clientWidth) {
-      setDisableDragforward(true);
-      setResizeWidth(monacoEditorContainerRef.current.clientWidth);
-    }
-  }, [resizeWidth]);
-
-  useEffect(() => {
     if (monacoEditorContainerRef.current) {
-      setCurrentEditorBoundary(getEditorBoundary());
       setResizeWidth(getEditorBoundary().width);
     }
   }, []);
@@ -270,7 +258,6 @@ const Editor: React.FC<IProps> = ({
 
   function resizeEditor(width: number) {
     if (monacoEditorContainerRef.current) {
-      if (disableDragforward === true) return;
       setResizeWidth(width);
     }
   }
@@ -284,7 +271,6 @@ const Editor: React.FC<IProps> = ({
       >
         <ResizeListener
           resizeEditor={resizeEditor}
-          currentBoundary={currentEditorBoundary}
           resizeWidth={
             monacoEditorContainerRef.current
               ? monacoEditorContainerRef.current.clientWidth
@@ -335,7 +321,8 @@ const Editor: React.FC<IProps> = ({
 const useStyles = makeStyles({
   monacoEditorContainer: {
     position: "relative",
-    background: color.darkThemeBlack
+    background: color.darkThemeBlack,
+    minWidth: "30%"
     // transition: "all 0.5s"
   },
   monacoEditorRunButton: {

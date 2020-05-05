@@ -4,7 +4,6 @@ import { color } from "@javico/common/lib/design-language/Css";
 
 interface IProps {
   resizeEditor: (width: number) => void;
-  currentBoundary: any;
   resizeWidth: any;
 }
 
@@ -65,7 +64,7 @@ const useStyles = makeStyles({
     width: 1,
     zIndex: 5,
     cursor: "ew-resize",
-    opacity: 1,
+    opacity: 0,
     backgroundColor: color.gray20
   }
 });
