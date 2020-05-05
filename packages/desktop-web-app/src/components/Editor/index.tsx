@@ -97,15 +97,8 @@ const Editor: React.FC<IProps> = ({
   useEffect(() => {
     editorInnerwidthRef.current = resizeWidth;
     if (resizeWidth > monacoEditorContainerRef.current.clientWidth) {
-      console.log(
-        "jkihkbfkljhbkljhvbnljvd innerwidth 2 ",
-        disableDragforward,
-        resizeWidth,
-        monacoEditorContainerRef.current
-          ? monacoEditorContainerRef.current.clientWidth
-          : ""
-      );
       setDisableDragforward(true);
+      setResizeWidth(monacoEditorContainerRef.current.clientWidth);
     }
   }, [resizeWidth]);
 
@@ -276,44 +269,11 @@ const Editor: React.FC<IProps> = ({
   }
 
   function resizeEditor(width: number) {
-    // console.log("jkihkbfkljhbkljhvbnljvd resizeEditor ", width);
-
-    // console.log("jkihkbfkljhbkljhvbnljvd width ", width);
-    // console.log(
-    //   "jkihkbfkljhbkljhvbnljvd innerwidth 1 ",
-    //   disableDragforward,
-    //   monacoEditorContainerRef.current
-    //     ? monacoEditorContainerRef.current.clientWidth
-    //     : ""
-    // );
     if (monacoEditorContainerRef.current) {
-      console.log(
-        "jkihkbfkljhbkljhvbnljvd width disableDragforward 1 ",
-        disableDragforward
-      );
       if (disableDragforward === true) return;
-      console.log(
-        "jkihkbfkljhbkljhvbnljvd width disableDragforward 2 ",
-        disableDragforward
-      );
-      // if (
-      //   getEditorBoundary().width < monacoEditorContainerRef.current.clientWidth
-      // ) {
-      // monacoEditorContainerRef.current.clientWidth;
-      // if(editorInnerwidthRef >= )
       setResizeWidth(width);
-      // }
     }
   }
-
-  console.log("jkihkbfkljhbkljhvbnljvd width global ", disableDragforward);
-
-  // console.log(
-  //   "jkihkbfkljhbkljhvbnljvd innerwidth 2 ",
-  //   monacoEditorContainerRef.current
-  //     ? monacoEditorContainerRef.current.clientWidth
-  //     : ""
-  // );
 
   return (
     <>
@@ -325,7 +285,11 @@ const Editor: React.FC<IProps> = ({
         <ResizeListener
           resizeEditor={resizeEditor}
           currentBoundary={currentEditorBoundary}
-          resizeWidth={resizeWidth}
+          resizeWidth={
+            monacoEditorContainerRef.current
+              ? monacoEditorContainerRef.current.clientWidth
+              : resizeWidth
+          }
         />
         <SourceCodeHeading
           sourceCodeTitle={sourceCodeTitle}
@@ -372,6 +336,7 @@ const useStyles = makeStyles({
   monacoEditorContainer: {
     position: "relative",
     background: color.darkThemeBlack
+    // transition: "all 0.5s"
   },
   monacoEditorRunButton: {
     position: "absolute",
