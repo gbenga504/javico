@@ -93,6 +93,7 @@ const ResizeListener: React.FC<IProps> = ({
         position: "relative",
         width: resizeWidth,
         height: resizeHeight,
+        [isWidthResize ? "borderRight" : "borderTop"]: "1px solid #6c470f",
         ...style
       }}
       ref={resizeContainerRef}
@@ -120,7 +121,7 @@ const useStyles = makeStyles({
     bottom: 0,
     width: 1,
     zIndex: 5,
-    backgroundColor: "#6c470f"
+    backgroundColor: "transparent"
   }
 });
 
