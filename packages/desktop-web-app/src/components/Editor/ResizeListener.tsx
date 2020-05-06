@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core";
-import { color } from "@javico/common/lib/design-language/Css";
 
 interface IProps {
   children: any;
@@ -22,11 +21,15 @@ const ResizeListener: React.FC<IProps> = ({
   const draggableContainerRef = useRef<HTMLDivElement | null>(null);
   const [resizeWidth, setResizeWidth] = useState<any>(initialWidth);
   const [resizeHeight, setResizeHeight] = useState<any>(initialHeight);
+
   const resizeContainerRef = useRef<any>();
   const originalHeight = useRef<any>();
-  const originalY = useRef<any>();
   const originalMouseY = useRef<any>();
+
+  const originalWidth = useRef<any>();
+  const originalMouseX = useRef<any>();
   const classes = useStyles();
+  const isWidthResize = resizeDirection === "width";
 
   useEffect(() => {
     const tempRef = draggableContainerRef.current;
@@ -36,8 +39,10 @@ const ResizeListener: React.FC<IProps> = ({
         e.preventDefault();
 
         originalHeight.current = resizeContainerRef.current.getBoundingClientRect().height;
-        originalY.current = resizeContainerRef.current.getBoundingClientRect().top;
         originalMouseY.current = e.clientY;
+
+        originalWidth.current = resizeContainerRef.current.getBoundingClientRect().width;
+        originalMouseX.current = e.clientX;
 
         window.addEventListener("mousemove", dragMove);
         window.addEventListener("mouseup", dragEnd);
@@ -66,10 +71,10 @@ const ResizeListener: React.FC<IProps> = ({
   }
 
   function dragMove(e: any) {
-    setResizeWidth(e.clientX);
-    setResizeHeight(
-      originalHeight.current - (e.pageY - originalMouseY.current)
-    );
+    const width = originalWidth.current + (e.pageX - originalMouseX.current);
+    const height = originalHeight.current - (e.pageY - originalMouseY.current);
+    isWidthResize && setResizeWidth(width);
+    !isWidthResize && setResizeHeight(height);
   }
 
   function dragEnd(e: any) {
@@ -95,10 +100,8 @@ const ResizeListener: React.FC<IProps> = ({
       <div
         style={{
           ...resizePos,
-          cursor: resizeDirection === "width" ? "ew-resize" : "ns-resize",
-          [resizeDirection === "width"
-            ? "left"
-            : ""]: resizeContainerRef.current
+          cursor: isWidthResize ? "ew-resize" : "ns-resize",
+          [isWidthResize ? "left" : ""]: resizeContainerRef.current
             ? resizeContainerRef.current.clientWidth
             : resizeWidth
         }}
