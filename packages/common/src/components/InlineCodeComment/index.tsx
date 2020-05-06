@@ -96,6 +96,13 @@ const InlineCodeComment: React.FC<IProps> = ({
     onOk(comment);
   }
 
+  function handleKeyUp(event: React.KeyboardEvent) {
+    if (event.key === "Escape" && !!visible) {
+      event.preventDefault();
+      onRequestClose();
+    }
+  }
+
   function renderWriteComment() {
     return (
       <>
@@ -149,9 +156,10 @@ const InlineCodeComment: React.FC<IProps> = ({
 
   return visible === true ? (
     <div
+      onKeyUp={handleKeyUp}
       className={`${classes.commentBoxContainer} ${commonCss.fullHeightAndWidth}`}
       style={{
-        top: (distanceY || 0) + 20
+        top: distanceY || 0 //+ 20
       }}
     >
       <form
