@@ -71,6 +71,9 @@ const Editor: React.FC<IProps> = ({
   const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(
     false
   );
+  const [codeReferenceStartLine, setCodeReferenceStartLine] = useState<
+    number | null
+  >(null);
   const [sourceCode, setSourceCode] = useState<string>("");
   const editorRef = useRef<any>(null);
   const classes = useStyles();
@@ -116,10 +119,12 @@ const Editor: React.FC<IProps> = ({
   function handleCodeHighlight(
     highlightedValue: string,
     anchorEl: HTMLDivElement | null,
-    distanceY: number
+    distanceY: number,
+    startLineNumber: number
   ) {
     setSelectionValue(highlightedValue);
     setCommentAnchorDistanceY(distanceY);
+    setCodeReferenceStartLine(startLineNumber);
   }
 
   function handleCloseInlineCodeComment() {
@@ -214,7 +219,8 @@ const Editor: React.FC<IProps> = ({
               photoURL: currentUser.photoURL
             },
             text: comment,
-            codeReference: selectionValue
+            codeReference: selectionValue,
+            codeReferenceStartLine
           },
           params: {
             sourceCodeID: sourceCodeId

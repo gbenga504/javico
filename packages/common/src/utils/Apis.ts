@@ -68,6 +68,7 @@ export interface IComment {
   createdAt: number;
   numReplies: number;
   updatedAt?: string;
+  codeReferenceStartLine?: number;
   clientTimestamp: number;
 }
 

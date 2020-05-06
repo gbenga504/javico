@@ -38,6 +38,7 @@ interface IProps {
   authorName: string;
   authorPhotoURL: string;
   createdAt: number;
+  startingLineNumber?: number;
   onRequestReply?: (comment: string, id: string) => void;
   userId: string;
   authorId: string;
@@ -73,7 +74,8 @@ const Comment: React.FC<IProps> = ({
   onShowReplies,
   onHideReplies,
   repliesProps,
-  editMessagePanelProps
+  editMessagePanelProps,
+  startingLineNumber
 }) => {
   const [isRepliesVisible, setIsRepliesVisible] = useState<boolean>(false);
   const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | SVGSVGElement>(
@@ -219,6 +221,7 @@ const Comment: React.FC<IProps> = ({
           <SyntaxHighlighter
             containerStyle={{ marginTop: 5 }}
             sourceCode={codeReference}
+            startingLineNumber={startingLineNumber}
           />
         )}
         {!!repliesProps.numReplies === true && repliesProps.numReplies > 0 && (
