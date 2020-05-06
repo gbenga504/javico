@@ -4,7 +4,9 @@ import { color, fontsize } from "@javico/common/lib/design-language/Css";
 
 export const useStyles = makeStyles(theme => ({
   console: {
-    height: "100vh",
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
     backgroundColor: color.deepBlue,
     "&>div:first-child": {
       width: "100%",
@@ -19,10 +21,11 @@ export const useStyles = makeStyles(theme => ({
   },
   consoleSection: {
     width: "100%",
-    height: "calc(60% - 48px)",
+    flex: 1,
+    minHeight: "20%",
     position: "relative",
     overflowY: "scroll",
-    borderTop: `1px solid ${color.darkThemeLightBorder}`,
+    borderTop: `1px solid ${color.darkThemeDarkBorder}`,
     fontSize: `${fontsize.terminal}px !important`
   },
   terminalSection: {

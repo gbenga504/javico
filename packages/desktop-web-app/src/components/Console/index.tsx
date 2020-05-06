@@ -14,6 +14,7 @@ import Readme from "./Readme";
 import Preview from "./Preview";
 import SignInViaGithubHandler from "../SignInViaGithubHandler";
 import { getCurrentUserState } from "../../redux/auth/reducers";
+import ResizeListener from "../Editor/ResizeListener";
 
 function a11yProps(index: number) {
   return {
@@ -158,12 +159,28 @@ const Console: React.FC<{
         ) : null}
         {currentTab === 1 && <Preview readMe={readMe} />}
       </div>
-      <div className={classes.terminalSection}>
-        <Terminal
-          terminalMessages={terminalMessages}
-          onHandleClearConsole={handleClearConsole}
-        />
-      </div>
+      <ResizeListener
+        resizePos={{
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 1,
+          width: "100%"
+        }}
+        resizeDirection="height"
+        initialHeight="40%"
+        style={{
+          minHeight: "5%",
+          width: "100%"
+        }}
+      >
+        <div className={classes.terminalSection}>
+          <Terminal
+            terminalMessages={terminalMessages}
+            onHandleClearConsole={handleClearConsole}
+          />
+        </div>
+      </ResizeListener>
       <SignInViaGithubHandler
         visible={isSignInModalVisible}
         onRequestClose={handleCloseSignInModal}

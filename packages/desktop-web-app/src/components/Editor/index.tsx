@@ -246,6 +246,7 @@ const Editor: React.FC<IProps> = ({
     <>
       <ResizeListener
         initialWidth="50%"
+        resizeDirection="width"
         style={{
           minWidth: "30%"
         }}
