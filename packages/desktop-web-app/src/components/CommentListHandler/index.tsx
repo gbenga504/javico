@@ -410,6 +410,7 @@ const CommentListHandler: React.FC<IProps> = ({
             createdAt={item.createdAt}
             userId={(currentUser && currentUser.uid) || null}
             authorId={item.author.id}
+            startingLineNumber={item.codeReferenceStartLine}
             editMessagePanelProps={{
               inputClassName: classes.editPanelInput,
               cancelButtonClassName: classes.editPanelCancelButton

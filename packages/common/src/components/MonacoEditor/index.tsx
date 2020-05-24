@@ -23,7 +23,8 @@ interface IProps {
   onHighlightValue: (
     highlightedValue: string,
     anchorEl: HTMLDivElement | null,
-    distanceY: number
+    distanceY: number,
+    startLineNumber: number
   ) => void;
   theme?: "light" | "dark" | "ace" | "night-dark" | "vs-dark";
   language?: string;
@@ -223,7 +224,8 @@ const MonacoEditor = React.forwardRef(
         commentIconRef.current,
         commentIconRef.current
           ? commentIconRef.current.getBoundingClientRect().top
-          : 0
+          : 0,
+        selectionRange.startLineNumber
       );
       handleHideCommentIcon();
     }

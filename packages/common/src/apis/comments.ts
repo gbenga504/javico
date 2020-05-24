@@ -9,6 +9,7 @@ interface IPayload {
     text: string;
     codeReference?: string;
     clientTimestamp?: number;
+    codeReferenceStartLine?: number | null;
   };
   params: {
     sourceCodeID: string;

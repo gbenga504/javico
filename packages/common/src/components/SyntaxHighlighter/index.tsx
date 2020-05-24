@@ -8,12 +8,14 @@ import { useStyles } from "./styles";
 interface IProps {
   containerStyle?: any;
   sourceCode: string;
+  startingLineNumber?: number;
 }
 
 ReactSyntaxHighlighter.registerLanguage("javascript", js);
 const SyntaxHighlighter: React.FC<IProps> = ({
   containerStyle,
-  sourceCode
+  sourceCode,
+  startingLineNumber
 }) => {
   const classes = useStyles();
 
@@ -24,6 +26,7 @@ const SyntaxHighlighter: React.FC<IProps> = ({
       showLineNumbers={true}
       customStyle={{ margin: 0, padding: 0, ...containerStyle }}
       lineNumberContainerProps={{ className: classes.lineNumbersContainer }}
+      startingLineNumber={startingLineNumber}
     >
       {sourceCode}
     </ReactSyntaxHighlighter>
