@@ -28,6 +28,8 @@ interface IProps {
   language?: string;
   model?: any;
   viewState?: any;
+  onDidFocusEditorText?: () => void;
+  onDidBlurEditorText?: () => void;
 }
 
 const MonacoEditor = React.forwardRef(
@@ -40,7 +42,9 @@ const MonacoEditor = React.forwardRef(
       theme = "vs-dark",
       language = "javascript",
       model: _model,
-      viewState
+      viewState,
+      onDidFocusEditorText,
+      onDidBlurEditorText
     }: IProps,
     ref
   ) => {
@@ -81,6 +85,12 @@ const MonacoEditor = React.forwardRef(
       monacoRef.current.editor.setTheme(theme);
       changeSubscriptionRef.current = model.onDidChangeContent(() => {
         onChangeValue(model.getValue());
+      });
+      editorRef.current.onDidFocusEditorText(() => {
+        onDidFocusEditorText && onDidFocusEditorText();
+      });
+      editorRef.current.onDidBlurEditorText(() => {
+        onDidBlurEditorText && onDidBlurEditorText();
       });
       editorRef.current.focus();
       setIsEditorReady(true);

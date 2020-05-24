@@ -12,6 +12,10 @@ export const useStyles = makeStyles(theme => ({
     position: 'absolute',
     bottom: 0,
     left: 0,
+    transition: 'bottom 0.5s',
+  },
+  containerHidden: {
+    bottom: -61,
   },
   menuButton: {
     display: 'block',

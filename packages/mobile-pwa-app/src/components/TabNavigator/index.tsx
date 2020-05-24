@@ -17,7 +17,8 @@ type IMenus = 'editor' | 'comment' | 'readme' | 'action';
 
 const TabNavigator: React.FC<{
   onToggleActionsModal: () => void;
-}> = ({ onToggleActionsModal }) => {
+  isVisible: boolean;
+}> = ({ onToggleActionsModal, isVisible }) => {
   const [activeMenu, setActiveMenu] = useState<IMenus>('editor');
   const classes = useStyles();
   const commonCss = commonUseStyles();
@@ -36,7 +37,10 @@ const TabNavigator: React.FC<{
   }
 
   return (
-    <div className={`${classes.container} ${commonCss.flexRow}`}>
+    <div
+      className={`${classes.container} ${isVisible === false && classes.containerHidden} ${
+        commonCss.flexRow
+      }`}>
       {menuList.map((menu, index) => {
         let Icon = menu.icon;
         let isMenuActive = activeMenu === menu.action;
@@ -44,7 +48,6 @@ const TabNavigator: React.FC<{
           <ButtonBase
             key={index}
             className={classes.menuButton}
-            style={{ width: menu.action === 'action' ? 50 : '100%' }}
             onClick={() => handleSetActiveMenu(menu.action, menu.path)}>
             <Icon style={{ color: isMenuActive ? color.themeBlue : '#5F6368' }} />
             {isMenuActive && (
