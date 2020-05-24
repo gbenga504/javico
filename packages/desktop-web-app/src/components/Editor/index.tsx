@@ -267,6 +267,11 @@ const Editor: React.FC<IProps> = ({
             onChangeValue={handleSourceCodeChange}
             onSaveValue={handleSaveSourceCode}
             onHighlightValue={handleCodeHighlight}
+            onPressEscape={
+              Boolean(commentAnchorDistanceY) === true
+                ? handleCloseInlineCodeComment
+                : undefined
+            }
           />
           <InlineCodeComment
             visible={Boolean(commentAnchorDistanceY)}
