@@ -119,7 +119,7 @@ const useStyles = makeStyles({
     position: "absolute",
     top: 0,
     bottom: 0,
-    width: 1,
+    width: 4,
     zIndex: 5,
     backgroundColor: "transparent"
   }

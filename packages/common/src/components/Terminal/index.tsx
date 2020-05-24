@@ -21,8 +21,8 @@ type TerminalMessagesType = TerminalMessageType[];
 
 const Terminal: React.FC<{
   terminalMessages: TerminalMessagesType;
-  onHandleClearConsole: () => void;
-}> = ({ terminalMessages, onHandleClearConsole }) => {
+  onClearConsole: () => void;
+}> = ({ terminalMessages, onClearConsole }) => {
   const classes = useStyles();
   return (
     <>
@@ -34,7 +34,7 @@ const Terminal: React.FC<{
           Clear console
           <ClearIcon
             className={classes.consoleTerminalClearIcon}
-            onClick={onHandleClearConsole}
+            onClick={onClearConsole}
           />
         </Typography>
         <ConsoleFeeds

@@ -19,7 +19,7 @@ import SourceCodeHeading from "./SourceCodeHeading";
 import SignInViaGithubHandler from "../SignInViaGithubHandler";
 import * as Constants from "../../utils/Constants";
 import { getCurrentUserState } from "../../redux/auth/reducers";
-import ResizeListener from "./ResizeListener";
+import ResizeListener from "../../atoms/ResizeListener";
 
 interface IProps {
   value?: string;

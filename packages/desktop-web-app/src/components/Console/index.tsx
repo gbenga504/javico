@@ -14,7 +14,7 @@ import Readme from "./Readme";
 import Preview from "./Preview";
 import SignInViaGithubHandler from "../SignInViaGithubHandler";
 import { getCurrentUserState } from "../../redux/auth/reducers";
-import ResizeListener from "../Editor/ResizeListener";
+import ResizeListener from "../../atoms/ResizeListener";
 
 function a11yProps(index: number) {
   return {
@@ -177,7 +177,7 @@ const Console: React.FC<{
         <div className={classes.terminalSection}>
           <Terminal
             terminalMessages={terminalMessages}
-            onHandleClearConsole={handleClearConsole}
+            onClearConsole={handleClearConsole}
           />
         </div>
       </ResizeListener>
