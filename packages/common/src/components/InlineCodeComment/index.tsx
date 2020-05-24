@@ -159,7 +159,7 @@ const InlineCodeComment: React.FC<IProps> = ({
       onKeyUp={handleKeyUp}
       className={`${classes.commentBoxContainer} ${commonCss.fullHeightAndWidth}`}
       style={{
-        top: distanceY || 0 //+ 20
+        top: distanceY || 0
       }}
     >
       <form

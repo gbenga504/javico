@@ -27,8 +27,7 @@ interface IProps {
   ) => void;
   theme?: "light" | "dark" | "ace" | "night-dark" | "vs-dark";
   language?: string;
-  isInlineCodeCommentVisible: boolean;
-  onHandleCloseInlineCodeComment: () => void;
+  onPressEscape?: () => void;
 }
 
 const MonacoEditor = React.forwardRef(
@@ -40,8 +39,7 @@ const MonacoEditor = React.forwardRef(
       onHighlightValue,
       theme = "vs-dark",
       language = "javascript",
-      isInlineCodeCommentVisible,
-      onHandleCloseInlineCodeComment
+      onPressEscape
     }: IProps,
     ref
   ) => {
@@ -249,9 +247,9 @@ const MonacoEditor = React.forwardRef(
     }
 
     function handleKeyUp(event: React.KeyboardEvent) {
-      if (event.key === "Escape" && !!isInlineCodeCommentVisible) {
+      if (event.key === "Escape") {
         event.preventDefault();
-        onHandleCloseInlineCodeComment();
+        onPressEscape && onPressEscape();
       }
       handleHideCommentIcon();
     }
