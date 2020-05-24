@@ -263,7 +263,7 @@ const useStyles = makeStyles({
     flex: 1,
     height: "100%",
     borderLeft: `1px solid ${color.darkThemeLightBorder}`,
-    minWidth: "50%",
+    minWidth: "30%",
     overflow: "hidden",
     backgroundColor: color.darkThemeBlack,
     position: "relative"

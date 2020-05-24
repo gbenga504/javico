@@ -19,6 +19,7 @@ import SourceCodeHeading from "./SourceCodeHeading";
 import SignInViaGithubHandler from "../SignInViaGithubHandler";
 import * as Constants from "../../utils/Constants";
 import { getCurrentUserState } from "../../redux/auth/reducers";
+import ResizeListener from "../../atoms/ResizeListener";
 
 interface IProps {
   value?: string;
@@ -243,41 +244,49 @@ const Editor: React.FC<IProps> = ({
 
   return (
     <>
-      <div className={classes.monacoEditorContainer}>
-        <SourceCodeHeading
-          sourceCodeTitle={sourceCodeTitle}
-          toggleProgressBarVisibility={toggleProgressBarVisibility}
-          saveNewSourcecode={saveNewSourcecode}
-          updateSourcecode={updateSourcecode}
-          isFetchingSourceCodeMetaData={isFetchingSourceCodeMetaData}
-          sourceCode={sourceCode}
-          readme={readme}
-          ownerId={ownerId}
-        />
-        <MonacoEditor
-          ref={editorRef}
-          onChangeValue={handleSourceCodeChange}
-          onSaveValue={handleSaveSourceCode}
-          onHighlightValue={handleCodeHighlight}
-          onHandleCloseInlineCodeComment={handleCloseInlineCodeComment}
-          isInlineCodeCommentVisible={Boolean(commentAnchorDistanceY)}
-        />
-        <InlineCodeComment
-          visible={Boolean(commentAnchorDistanceY)}
-          distanceY={commentAnchorDistanceY}
-          onRequestClose={handleCloseInlineCodeComment}
-          onOk={handleSubmitComment}
-          loading={isSubmittingComment}
-        />
-      </div>
-      <Fab
-        color="primary"
-        onClick={handleSourceCodeExecution}
-        variant="round"
-        classes={{ root: classes.monacoEditorRunButton }}
+      <ResizeListener
+        initialWidth="50%"
+        resizeDirection="width"
+        style={{
+          minWidth: "30%"
+        }}
       >
-        <PlayArrowIcon className={classes.monacoEditorRunButtonIcon} />
-      </Fab>
+        <div className={classes.monacoEditorContainer}>
+          <SourceCodeHeading
+            sourceCodeTitle={sourceCodeTitle}
+            toggleProgressBarVisibility={toggleProgressBarVisibility}
+            saveNewSourcecode={saveNewSourcecode}
+            updateSourcecode={updateSourcecode}
+            isFetchingSourceCodeMetaData={isFetchingSourceCodeMetaData}
+            sourceCode={sourceCode}
+            readme={readme}
+            ownerId={ownerId}
+          />
+          <MonacoEditor
+            ref={editorRef}
+            onChangeValue={handleSourceCodeChange}
+            onSaveValue={handleSaveSourceCode}
+            onHighlightValue={handleCodeHighlight}
+            onHandleCloseInlineCodeComment={handleCloseInlineCodeComment}
+            isInlineCodeCommentVisible={Boolean(commentAnchorDistanceY)}
+          />
+          <InlineCodeComment
+            visible={Boolean(commentAnchorDistanceY)}
+            distanceY={commentAnchorDistanceY}
+            onRequestClose={handleCloseInlineCodeComment}
+            onOk={handleSubmitComment}
+            loading={isSubmittingComment}
+          />
+          <Fab
+            color="primary"
+            onClick={handleSourceCodeExecution}
+            variant="round"
+            classes={{ root: classes.monacoEditorRunButton }}
+          >
+            <PlayArrowIcon className={classes.monacoEditorRunButtonIcon} />
+          </Fab>
+        </div>
+      </ResizeListener>
       <SignInViaGithubHandler
         visible={isSignInModalVisible}
         onRequestClose={handleCloseSignInModal}
@@ -289,14 +298,14 @@ const Editor: React.FC<IProps> = ({
 
 const useStyles = makeStyles({
   monacoEditorContainer: {
-    width: "50%",
-    position: "relative",
-    background: color.darkThemeBlack
+    background: color.darkThemeBlack,
+    width: "100%",
+    height: "100%"
   },
   monacoEditorRunButton: {
     position: "absolute",
     bottom: 15,
-    right: "50%",
+    right: 20,
     zIndex: 2000
   },
   monacoEditorRunButtonIcon: {
@@ -306,4 +315,4 @@ const useStyles = makeStyles({
   }
 });
 
-export default React.memo(withNotificationBanner(Editor));
+export default withNotificationBanner(Editor);
