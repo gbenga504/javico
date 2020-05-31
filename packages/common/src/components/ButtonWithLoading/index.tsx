@@ -1,18 +1,37 @@
 import React from "react";
-import { Button, CircularProgress, makeStyles } from "@material-ui/core";
+import {
+  Button,
+  CircularProgress,
+  makeStyles,
+  withStyles
+} from "@material-ui/core";
 import { ButtonProps } from "@material-ui/core/Button";
-import { color } from "../../design-language/Css";
+import { color, fontsize, fonts } from "../../design-language/Css";
 
 interface IProps extends ButtonProps {
   loading: boolean;
 }
+
+const MuiButton = withStyles({
+  root: {
+    fontSize: fontsize.base,
+    fontFamily: fonts.semiBold,
+    textTransform: "capitalize"
+  },
+  containedPrimary: {
+    background: `${color.themeBlue} !important`,
+    "&:hover": {
+      background: color.themeBlueDarker
+    }
+  }
+})(Button);
 
 const ButtonWithLoading: React.FC<IProps> = props => {
   const { loading, children, ...rest } = props;
   const classes = useStyles();
 
   return (
-    <Button
+    <MuiButton
       className={`${classes.button} ${loading && classes.buttonLoading}`}
       color="primary"
       variant="contained"
@@ -31,7 +50,7 @@ const ButtonWithLoading: React.FC<IProps> = props => {
           classes={{ root: classes.spinner }}
         />
       )}
-    </Button>
+    </MuiButton>
   );
 };
 

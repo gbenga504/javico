@@ -7,7 +7,8 @@ import {
   useStyles as commonUseStyles,
   color,
   fontsize,
-  padding
+  padding,
+  fonts
 } from "../../design-language/Css";
 import Typography from "../Typography";
 import ContentLoader from "../ContentLoader";
@@ -260,7 +261,7 @@ const useStyles = makeStyles(theme => ({
   commentsBody: {
     overflowY: "scroll",
     marginTop: 38,
-    paddingBottom: theme.spacing(25)
+    paddingBottom: 100
   },
   commentInput: {
     position: "absolute",
@@ -279,7 +280,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: "space-between",
     backgroundColor: color.deepBlue,
     borderRadius: 3,
-    margin: theme.spacing(0, 4, 4),
+    margin: "0 16px 16px",
     "&.hide-border": {
       borderTopLeftRadius: 0,
       borderTopRightRadius: 0,
@@ -292,9 +293,10 @@ const useStyles = makeStyles(theme => ({
     border: "1px solid transparent",
     backgroundColor: "transparent",
     fontSize: fontsize.base,
+    fontFamily: fonts.regular,
     resize: "none",
-    padding: theme.spacing(3, 0),
-    paddingLeft: theme.spacing(4),
+    padding: "12px 0",
+    paddingLeft: 12,
     "&:focus": {
       outline: "none"
     }
@@ -304,14 +306,14 @@ const useStyles = makeStyles(theme => ({
     alignSelf: "flex-end",
     width: 18,
     color: color.themeBlue,
-    marginBottom: theme.spacing(3),
-    marginRight: theme.spacing(2),
+    marginBottom: 12,
+    marginRight: 8,
     cursor: "pointer"
   },
   commentQuotedCommentContainer: {
-    margin: theme.spacing(0, 4),
+    margin: "0 16px",
     border: `1px solid ${color.darkThemeDarkBorder}`,
-    padding: theme.spacing(2, 3, 0.5, 3),
+    padding: "8px 12px 2px 12px",
     borderRadius: 3,
     borderBottom: 0,
     borderBottomRightRadius: 0,

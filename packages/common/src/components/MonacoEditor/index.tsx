@@ -5,7 +5,11 @@ import React, {
   useCallback,
   useImperativeHandle
 } from "react";
-import { Tooltip, CircularProgress } from "@material-ui/core";
+import {
+  Tooltip,
+  CircularProgress as MuiCircularProgress,
+  withStyles
+} from "@material-ui/core";
 import { ModeComment as ModeCommentIcon } from "@material-ui/icons";
 import {
   useStyles as commonUseStyles,
@@ -30,6 +34,12 @@ interface IProps {
   language?: string;
   onPressEscape?: () => void;
 }
+
+const CircularProgress = withStyles({
+  colorPrimary: {
+    color: `${color.themeBlue} !important`
+  }
+})(MuiCircularProgress);
 
 const MonacoEditor = React.forwardRef(
   (
@@ -66,7 +76,10 @@ const MonacoEditor = React.forwardRef(
         language
       );
       editorRef.current = monacoRef.current.editor.create(nodeRef.current, {
-        automaticLayout: true
+        automaticLayout: true,
+        minimap: {
+          enabled: false
+        }
       });
       editorRef.current.setModel(model);
 

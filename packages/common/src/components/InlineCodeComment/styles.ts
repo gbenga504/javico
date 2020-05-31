@@ -13,7 +13,7 @@ export const useStyles = makeStyles(theme => ({
   commentForm: {
     position: "relative",
     backgroundColor: color.gray20,
-    padding: theme.spacing(3),
+    padding: 12,
     borderRadius: 5
   },
   inlineCommentContainer: {
@@ -23,7 +23,7 @@ export const useStyles = makeStyles(theme => ({
     width: "100%",
     minHeight: 50,
     fontSize: fontsize.base,
-    padding: theme.spacing(3),
+    padding: 12,
     zIndex: 99999,
     "& > textarea": {
       width: "100%",

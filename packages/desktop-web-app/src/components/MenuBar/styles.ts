@@ -41,7 +41,7 @@ export const useStyles = makeStyles(theme => ({
     cursor: "pointer",
     textAlign: "center",
     "& svg": {
-      fontSize: 25
+      fontSize: 20
     },
     "&:hover": {
       color: color.white
