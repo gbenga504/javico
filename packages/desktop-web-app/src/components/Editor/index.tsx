@@ -169,7 +169,7 @@ const Editor: React.FC<IProps> = ({
           ownerId: me.uid,
           sourceCodeId: res.id
         });
-        updateUrl(res, me.uid);
+        updateUrl(res, currentUser.username);
       })
       .catch((error: any) => {
         toggleProgressBarVisibility(false);
