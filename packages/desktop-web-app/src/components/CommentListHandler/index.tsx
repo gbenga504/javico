@@ -173,7 +173,7 @@ const CommentListHandler: React.FC<IProps> = ({
               sourceCodeId,
               author: {
                 id: currentUser.uid,
-                name: currentUser.displayName,
+                name: currentUser.username,
                 photoURL: currentUser.photoURL
               },
               text: newMessage
@@ -214,7 +214,7 @@ const CommentListHandler: React.FC<IProps> = ({
             data: {
               author: {
                 id: currentUser.uid,
-                name: currentUser.displayName,
+                name: currentUser.username,
                 photoURL: currentUser.photoURL
               },
               text: newMessage,

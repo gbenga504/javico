@@ -84,8 +84,8 @@ export const theme = createMuiTheme({
     },
     MuiMenuItem: {
       root: {
-        fontFamily: fonts.regular,
-        fontSize: fontsize.small
+        fontFamily: `${fonts.regular} !important`,
+        fontSize: `${fontsize.small}px !important`
       }
     },
     MuiFab: {
@@ -119,9 +119,15 @@ export const theme = createMuiTheme({
     },
     MuiButton: {
       root: {
-        fontSize: fontsize.base,
-        fontFamily: fonts.semiBold,
-        textTransform: "capitalize"
+        fontSize: `${fontsize.base}px !important`,
+        fontFamily: `${fonts.semiBold} !important`,
+        textTransform: "initial"
+      },
+      containedPrimary: {
+        background: `${color.themeBlue} !important`,
+        "&:hover": {
+          background: color.themeBlueDarker
+        }
       }
     },
     MuiTooltip: {

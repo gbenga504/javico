@@ -7,7 +7,7 @@ import {
 import { Apis } from "@javico/common/lib/utils/Apis";
 import { getSourceCodeIdFromUrl } from "@javico/common/lib/utils/UrlUtils";
 import { useSelector } from "react-redux";
-import { color } from "@javico/common/lib/design-language/Css";
+import { color, fonts } from "@javico/common/lib/design-language/Css";
 
 import { useStyles } from "./styles";
 import Readme from "./Readme";
@@ -38,7 +38,9 @@ type TerminalMessagesType = TerminalMessageType[];
 
 const Tab = withStyles({
   root: {
-    color: `${color.white} !important`
+    color: `${color.white} !important`,
+    fontSize: `11px !important`,
+    fontFamily: `${fonts.semiBold} !important`
   }
 })(MuiTab);
 

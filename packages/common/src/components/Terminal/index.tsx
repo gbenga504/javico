@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { makeStyles } from "@material-ui/core";
 import { Console as ConsoleFeeds } from "console-feed";
 
@@ -24,6 +24,19 @@ const Terminal: React.FC<{
   onClearConsole: () => void;
 }> = ({ terminalMessages, onClearConsole }) => {
   const classes = useStyles();
+
+  const _terminalMessages = useCallback((): TerminalMessagesType => {
+    let data = terminalMessages.map(message => ({
+      method: message.method,
+      data: message.data.map(d =>
+        d.isEncoded === true ? decodeURI(d.value) : d.value
+      ),
+      id: message.id
+    }));
+
+    return data;
+  }, [terminalMessages]);
+
   return (
     <>
       <div className={classes.consoleTerminalLogMessages}>
@@ -38,7 +51,7 @@ const Terminal: React.FC<{
           />
         </Typography>
         <ConsoleFeeds
-          logs={terminalMessages}
+          logs={_terminalMessages()}
           variant="dark"
           styles={{
             BASE_FONT_FAMILY: "Eina regular",

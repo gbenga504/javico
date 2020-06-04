@@ -7,7 +7,8 @@ import ButtonWithLoading from "../ButtonWithLoading";
 import {
   useStyles as commonUseStyles,
   color,
-  fontsize
+  fontsize,
+  fonts
 } from "../../design-language/Css";
 import { useStyles } from "./styles";
 import MarkdownRenderer from "../MarkDownRenderer";
@@ -44,6 +45,14 @@ const MuiTab = withStyles({
     color: `${color.black} !important`
   }
 } as any)(Tab);
+
+const MuiButton = withStyles({
+  root: {
+    fontSize: `${fontsize.base} !important`,
+    fontFamily: `${fonts.semiBold} !important`,
+    textTransform: "capitalize"
+  }
+})(Button);
 
 function a11yProps(index: number) {
   return {
@@ -127,9 +136,12 @@ const InlineCodeComment: React.FC<IProps> = ({
             <OpenInNewIcon className={classes.openInNewIcon} />
           </Typography>
           <div className={commonCss.flexRow}>
-            <Button className={commonCss.cancelButton} onClick={onRequestClose}>
+            <MuiButton
+              className={commonCss.cancelButton}
+              onClick={onRequestClose}
+            >
               Cancel
-            </Button>
+            </MuiButton>
             <ButtonWithLoading
               loading={loading}
               color="primary"

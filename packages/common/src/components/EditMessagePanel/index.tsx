@@ -6,7 +6,8 @@ import {
   color,
   fontsize,
   useStyles as commonUseStyles,
-  margin
+  margin,
+  fonts
 } from "../../design-language/Css";
 import ButtonWithLoading from "../ButtonWithLoading";
 
@@ -81,7 +82,7 @@ const EditMessagePanel: React.FC<IProps> = ({
           onClick={onOk}
           startIcon={<KeyboardReturnIcon />}
         >
-          Save Changes
+          Save changes
         </ButtonWithLoading>
       </div>
     </div>
@@ -94,26 +95,28 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: "transparent",
     fontSize: fontsize.small + 0.5,
     resize: "none",
+    fontFamily: fonts.regular,
     borderRadius: 3,
     padding: `4px 10px`,
-    paddingRight: theme.spacing(1),
+    paddingRight: 4,
     "&:focus": {
       outline: "none",
       border: `1px solid #1B9BD1`
     }
   },
   button: {
-    fontSize: fontsize.small,
+    fontSize: `${fontsize.small}px !important`,
     height: 28,
     minWidth: 56,
     padding: "0 12px 1px",
-    width: "auto"
+    width: "auto",
+    textTransform: "initial"
   },
   cancelButton: {
     border: `1px solid ${color.darkThemeLightBorder}`
   },
   editButton: {
-    margin: theme.spacing(0, 2),
+    margin: "0 8px",
     "& ion-icon": {
       fontSize: 18
     }

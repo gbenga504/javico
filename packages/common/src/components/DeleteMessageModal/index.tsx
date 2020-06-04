@@ -62,9 +62,9 @@ const DeleteMessageModal: React.FC<IProps> = ({
 
 const useStyles = makeStyles({
   button: {
-    background: "#E01E5A",
+    background: "#E01E5A !important",
     "&:hover": {
-      background: "#E22F67"
+      background: "#E22F67 !important"
     }
   }
 });

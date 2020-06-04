@@ -19,11 +19,23 @@ const MessageType = {
   COUNT: `count`
 };
 
+function parseArguments(args) {
+  let parsed = [];
+  for (let i = 0; i < args.length; i++) {
+    if (typeof args[i] === "function") {
+      parsed.push({ value: encodeURI(args[i].toString), isEncoded: true });
+    } else {
+      parsed.push({ value: args[i], isEncoded: false });
+    }
+  }
+  return parsed;
+}
+
 const console = {
   log: function() {
     worker.postMessage({
       method: MessageType.LOG,
-      data: [...arguments]
+      data: parseArguments(arguments)
     });
   },
   error: function() {

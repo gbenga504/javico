@@ -8,8 +8,8 @@ export const getSourcecodeUrl = (): string => window.location.href;
 
 export const getBaseUrl = (): string => window.location.origin;
 
-export const updateUrl = (res: any, ownerId: string): void => {
+export const updateUrl = (res: any, owner: string): void => {
   const location = window.location.origin;
-  const href = `${location}/${ownerId}/${res.id}`;
+  const href = `${location}/${owner}/${res.id}`;
   window.location.href = href;
 };

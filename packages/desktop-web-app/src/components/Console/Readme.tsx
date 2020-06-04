@@ -2,7 +2,7 @@ import React from "react";
 import { makeStyles } from "@material-ui/core";
 import { ButtonWithLoading } from "@javico/common/lib/components";
 
-import { color, fontsize } from "@javico/common/lib/design-language/Css";
+import { color, fontsize, fonts } from "@javico/common/lib/design-language/Css";
 
 const Readme: React.FC<{
   onHandleReadMeTextChange: any;
@@ -47,6 +47,7 @@ const useStyles = makeStyles(theme => ({
     width: "100%",
     height: "100%",
     fontSize: fontsize.base,
+    fontFamily: fonts.regular,
     resize: "none",
     background: "transparent",
     outline: "none",

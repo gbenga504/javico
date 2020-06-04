@@ -134,7 +134,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: "center",
     cursor: "pointer",
     color: color.themeBlue,
-    marginTop: theme.spacing(2),
+    marginTop: 8,
     "& ion-icon": {
       color: color.themeBlue,
       fontSize: 16
