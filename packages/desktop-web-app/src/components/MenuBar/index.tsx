@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Tooltip, Menu, MenuItem, Button } from "@material-ui/core";
-import { useDispatch } from "react-redux";
+import { Tooltip, Menu, MenuItem, Button, Avatar } from "@material-ui/core";
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import {
   Search as SearchIcon,
   Share as ShareoptionIcon,
@@ -24,6 +25,7 @@ import { getSourceCodeIdFromUrl } from "@javico/common/lib/utils/UrlUtils";
 import { useStyles } from "./styles";
 import ShareIcon from "./ShareIcon";
 import { SET_CURRENT_USER, LOGOUT_REQUEST } from "../../redux/auth/actionTypes";
+import { getCurrentUserState } from "../../redux/auth/reducers";
 
 interface IProps {
   onSetNotificationSettings: (
@@ -80,6 +82,7 @@ const shareOptionsList = [
 ];
 
 const MenuBar: React.FC<IProps> = ({ onSetNotificationSettings }) => {
+  const currentUser = useSelector(getCurrentUserState);
   const [fullScreenMode, setFullScreenMode] = useState<boolean>(
     !!fullScreenEnabled
   );
@@ -89,10 +92,12 @@ const MenuBar: React.FC<IProps> = ({ onSetNotificationSettings }) => {
   const [menuElement, setMenuElement] = React.useState<null | HTMLElement>(
     null
   );
-  const [currentUser, setCurrentUser] = React.useState<any>(null);
+  // const [currentUser, setCurrentUser] = React.useState<any>(null);
   const classes = useStyles();
   const commonCss = commonUseStyles();
   const dispatch = useDispatch();
+
+  console.log("hbkfhjbkjhbkhjbhjjfbfjh ", currentUser);
 
   useEffect(() => {
     window.addEventListener("resize", function() {
@@ -103,9 +108,10 @@ const MenuBar: React.FC<IProps> = ({ onSetNotificationSettings }) => {
 
     Apis.users.onAuthStateChanged(function(user: any) {
       if (user) {
-        setCurrentUser(user);
-      } else {
-        setCurrentUser(null);
+        // setCurrentUser(user);
+        Apis.users.fetchUserFromDB({ params: { ID: user.uid } }).then(user => {
+          dispatch({ type: SET_CURRENT_USER, payload: user });
+        });
       }
     });
 
@@ -154,7 +160,6 @@ const MenuBar: React.FC<IProps> = ({ onSetNotificationSettings }) => {
     Apis.users
       .logout()
       .then(function() {
-        setCurrentUser(null);
         handleCloseMenu();
         dispatch({
           type: LOGOUT_REQUEST
@@ -188,17 +193,16 @@ const MenuBar: React.FC<IProps> = ({ onSetNotificationSettings }) => {
   return (
     <section className={`${classes.menubarContainer} ${commonCss.flexColumn}`}>
       {!!currentUser === true && (
-        <Button onClick={handleOpenMenu}>
-          <div className={`${classes.menubarTitle} ${commonCss.flexColumn}`}>
-            <img
-              src={currentUser.photoURL}
-              alt="Current User"
-              className={classes.menubarUser}
-            />
-          </div>
-        </Button>
+        <Avatar
+          src={currentUser.photoURL}
+          component={Link}
+          to={`/${currentUser.username}`}
+          alt="Current User"
+          style={{ marginTop: 24 }}
+          className={classes.menubarUser}
+        />
       )}
-      <Menu
+      {/* <Menu
         id="current-user-menu"
         anchorEl={menuElement}
         keepMounted
@@ -206,7 +210,7 @@ const MenuBar: React.FC<IProps> = ({ onSetNotificationSettings }) => {
         onClose={handleCloseMenu}
       >
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
-      </Menu>
+      </Menu> */}
       {iconList(fullScreenMode).map(el => {
         if (el.text === "Share code" && !getSourceCodeIdFromUrl()) return null;
         if (el.text === "Sign in" && !!currentUser === true) return null;
@@ -247,6 +251,16 @@ const MenuBar: React.FC<IProps> = ({ onSetNotificationSettings }) => {
           </div>
         );
       })}
+      {!!currentUser && (
+        <Avatar
+          src={currentUser.photoURL}
+          component={Link}
+          to={`/${currentUser.username}`}
+          style={{ marginTop: "auto", marginBottom: 24 }}
+          alt="Current User"
+          className={classes.menubarUser}
+        />
+      )}
     </section>
   );
 };
