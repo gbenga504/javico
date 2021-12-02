@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Box,
@@ -11,22 +11,44 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { Apis } from "@javico/common/lib/utils";
 import { GitHub as GitHubIcon } from "@material-ui/icons";
+import {
+  IBannerStyle,
+  IDuration,
+  withNotificationBanner
+} from "@javico/common/lib/components/NotificationBanner";
 
 import digitalForAllLogo from "../assets/images/jc_logo.png";
 import { SET_CURRENT_USER } from "../redux/auth/actionTypes";
 import { getCurrentUserState } from "../redux/auth/reducers";
 
-const NavBar: React.FC = () => {
+interface IProps {
+  onSetNotificationSettings: (
+    text: string,
+    style?: IBannerStyle,
+    duration?: IDuration
+  ) => null;
+}
+
+const NavBar: React.FC<IProps> = ({ onSetNotificationSettings }) => {
+  const [
+    isFetchingCurrentUser,
+    setFetchingCurrentUser
+  ] = useState<Boolean | null>(null);
   const firebaseRef = useRef<any>(null);
   const currentUser = useSelector(getCurrentUserState);
   const dispatch = useDispatch();
+
   useEffect(() => {
+    setFetchingCurrentUser(true);
     firebaseRef.current = Apis.users.onAuthStateChanged(function(user: any) {
       if (user && currentUser === null) {
         Apis.users.fetchUserFromDB({ params: { ID: user.uid } }).then(user => {
+          setFetchingCurrentUser(false);
           dispatch({ type: SET_CURRENT_USER, payload: user });
         });
+        return;
       }
+      setFetchingCurrentUser(false);
     });
 
     return () => {
@@ -38,21 +60,15 @@ const NavBar: React.FC = () => {
     Apis.users
       .signInWithGithub()
       .then(function(user: any) {
-        /**
-         * @todo
-         * Save the users code in firestore
-         */
         dispatch({
           type: SET_CURRENT_USER,
           payload: user
         });
       })
       .catch(function(error: any) {
-        // onSetNotificationSettings(error.message, "danger", "long");
+        onSetNotificationSettings(error.message, "danger", "long");
       });
   }
-
-  console.log("hgkjhkgjhckjch ", currentUser);
 
   return (
     <AppBar
@@ -79,17 +95,38 @@ const NavBar: React.FC = () => {
             <Button
               size="large"
               component={Link}
+              to="/"
+              variant="text"
+              color="primary"
+              style={{ marginLeft: 16 }}
+            >
+              Home
+            </Button>
+            <Button
+              size="large"
+              component={Link}
+              to="/explore"
+              variant="text"
+              color="primary"
+              style={{ marginLeft: 16 }}
+            >
+              Explore
+            </Button>
+            <Button
+              size="large"
+              component={Link}
               to={
                 !!currentUser?.photoURL
                   ? `/${currentUser.username}/new`
                   : "/code"
               }
               variant="text"
-              style={{ marginLeft: 16, color: "white" }}
+              color="primary"
+              style={{ marginLeft: 16 }}
             >
               Code
             </Button>
-            {currentUser === null && (
+            {currentUser === null && isFetchingCurrentUser === false && (
               <Button
                 size="large"
                 component={Link}
@@ -120,4 +157,4 @@ const NavBar: React.FC = () => {
   );
 };
 
-export default React.memo(NavBar);
+export default React.memo(withNotificationBanner(NavBar));

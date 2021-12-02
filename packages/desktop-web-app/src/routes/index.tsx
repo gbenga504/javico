@@ -8,6 +8,7 @@ export const DesktopPaths = {
   HOME: `/`,
   PROFILE: `/:username`,
   CODE: `/code`,
+  EXPLORE: `/explore`,
   EDITOR: `/:username/:codeId`,
   SETTINGS: `/settings`
 };
@@ -22,7 +23,12 @@ const AppRoute: React.FC = () => {
     {
       path: DesktopPaths.CODE,
       exact: true,
-      component: lazy(() => import("../views/Home"))
+      component: lazy(() => import("../views/Code"))
+    },
+    {
+      path: DesktopPaths.EXPLORE,
+      exact: true,
+      component: lazy(() => import("../views/Explore"))
     },
     {
       path: DesktopPaths.PROFILE,
@@ -32,7 +38,7 @@ const AppRoute: React.FC = () => {
     {
       path: DesktopPaths.EDITOR,
       exact: false,
-      component: lazy(() => import("../views/Home"))
+      component: lazy(() => import("../views/Code"))
     }
     // { path: DesktopPaths.SETTINGS, exact: true, component: Settings },
   ];
