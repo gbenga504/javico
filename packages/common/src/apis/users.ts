@@ -7,6 +7,7 @@ interface IUserPayload {
     uid: string;
     githubRepoURL: string;
     location: string;
+    bio: string;
   };
   params?: {
     ID: string;
@@ -21,6 +22,7 @@ export interface IUser {
   uid: string;
   githubRepoURL: string;
   location: string;
+  bio: string;
 }
 
 interface Configuration {
@@ -42,13 +44,15 @@ export class UsersServiceApi {
 
   private updateUserInBackground = (response: any, ID: string) => {
     let user = {
-      displayName: response.user.displayName,
+      displayName:
+        response.user.displayName || response.additionalUserInfo.profile.name,
       username: response.additionalUserInfo.username,
       email: response.user.email,
       photoURL: response.user.photoURL,
       uid: response.user.uid,
       githubRepoURL: response.additionalUserInfo.profile.url,
-      location: response.additionalUserInfo.profile.location
+      location: response.additionalUserInfo.profile.location,
+      bio: response.additionalUserInfo.profile.bio
     };
     this.saveUser({ data: user, params: { ID } });
   };
@@ -65,13 +69,16 @@ export class UsersServiceApi {
             .then((userSnapshot: any) => {
               if (userSnapshot.size === 0) {
                 let user: IUser = {
-                  displayName: response.user.displayName,
+                  displayName:
+                    response.user.displayName ||
+                    response.additionalUserInfo.profile.name,
                   username: response.additionalUserInfo.username,
                   email: response.user.email,
                   photoURL: response.user.photoURL,
                   uid: response.user.uid,
                   githubRepoURL: response.additionalUserInfo.profile.url,
-                  location: response.additionalUserInfo.profile.location
+                  location: response.additionalUserInfo.profile.location,
+                  bio: response.additionalUserInfo.profile.bio
                 };
                 this.saveUser({ data: user })
                   .then(() => {

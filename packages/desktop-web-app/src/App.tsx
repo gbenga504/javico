@@ -9,7 +9,7 @@ import { theme } from "@javico/common/lib/design-language/Css";
 import { NotificationProvider } from "@javico/common/lib/components";
 import store from "./redux/store";
 
-import Home from "./views/Home";
+import AppRoute from "./routes";
 
 const generateClassName = createGenerateClassName({
   productionPrefix: "desktop-web"
@@ -21,7 +21,7 @@ const App: React.FC = () => {
       <Provider store={store}>
         <MuiThemeProvider theme={theme}>
           <NotificationProvider>
-            <Home />
+            <AppRoute />
           </NotificationProvider>
         </MuiThemeProvider>
       </Provider>

@@ -159,6 +159,9 @@ const Editor: React.FC<IProps> = ({
       .saveSourceCode({
         data: {
           ownerId: me.uid,
+          username: me.username,
+          photoURL: me.photoURL,
+          timestamp: Date.now(),
           ...data
         }
       })
@@ -251,7 +254,7 @@ const Editor: React.FC<IProps> = ({
   return (
     <>
       <ResizeListener
-        initialWidth="50%"
+        initialWidth="70%"
         resizeDirection="width"
         style={{
           minWidth: "30%"

@@ -257,7 +257,8 @@ const useStyles = makeStyles({
     width: "100%"
   },
   relative: {
-    position: "relative"
+    position: "relative",
+    overflow: "hidden"
   },
   mainRightSection: {
     flex: 1,
